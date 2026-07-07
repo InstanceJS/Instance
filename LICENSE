@@ -672,3 +672,31 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
+
+
+-----------------------------------------------------------------------------------------
+
+Instance is licensed under the GNU Affero General Public License, version 3.0 or later (AGPL-3.0-or-later), with the additional terms set out below pursuant to Section 7 of that license. It is a dual-licensing “Pushkarev shield” — small users are free; enterprises pay — so the project need not depend on inconsistent goodwill or charity.
+
+1. Definitions
+
+1.1 “Enterprise” means any entity, whether for-profit, non-profit, or in between, that meets one or more of the following at the time of use or distribution: (a) has raised more than the market equivalent of USD $500,000 in aggregate venture capital or equivalent investment; (b) employs fifteen (15) or more persons; or (c) has annual gross revenue exceeding the market equivalent of USD $1,000,000.
+
+1.2 “Non-Enterprise User” means any individual, or any entity that is not classified as an Enterprise. A Non-Enterprise User that is acquired in whole or in part by any Enterprise or Enterprises of which whose combined full or joint ownership shares exceed 50% of either (a) voting rights (b) market valuation, or (c) both, is considered an Enterprise.
+
+2. Non-Enterprise grant: 
+
+A Non-Enterprise User, while they qualify as such, may use, modify, profit from, and self-host Instance for their own purposes as though under a permissive MIT license, while maintaining the License 'type' as AGPL-3.0-or-later. For filesize brevity, valid names for this License are as follows: 'AGPL-3.0-or-later (Satoshi)', or 'Satoshi-1.0.'. This accommodation is personal to the Non-Enterprise User and does not grant the right to outsource, outsource modifications to (sublicensing), or perform development on behalf of, any Enterprise.
+
+3. Enterprise terms:
+
+Once a user qualifies as an Enterprise, including buyouts, the full copyleft obligations of the AGPL-3.0-or-later apply without accommodation, including the obligation to release the complete corresponding source of any modified version and of any work made available to users over a network.
+
+4. Private enforcement:
+
+Any Enterprise that breaches the terms of this license — including, without limitation, by failing to release modifications, by operating Instance as a network service without disclosing corresponding source, or by any other breach of the AGPL-3.0-or-later — may be subject to a class action lawsuit, up to and including one half (50%) of its total market valuation, by any individual or entity that uses or distributes Instance, whether or not that party is the Instance copyright holder. The prevailing party in any such action shall be entitled to recover reasonable attorneys’ fees and costs.
+5. No conflict
+
+These additional terms are intended to operate alongside the AGPL-3.0-or-later and not to conflict with it. To the extent any additional term is held unenforceable, it shall be severed and the remainder of this license shall continue in full force.
+
+

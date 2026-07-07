@@ -1,0 +1,2464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Instance 0.87.z — Unified Test Suite</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font: 13px/1.5 'Menlo','Consolas',monospace; background:#0d0d0d; color:#ccc; padding:24px; }
+.header { margin-bottom:22px; padding-bottom:16px; border-bottom:1px solid #1e1e1e; }
+.header h1 { font-size:13px; font-weight:700; color:#eeeef5; letter-spacing:.12em; text-transform:uppercase; margin-bottom:5px; }
+.header h1 .version-tag { display:inline-block; background:#1e1b38; color:#9d8fff; font-size:10px; padding:2px 7px; border-radius:3px; border:1px solid #2e2960; margin-left:10px; vertical-align:middle; letter-spacing:.06em; }
+.header .sub { font-size:11px; color:#555; letter-spacing:.04em; }
+.header .sub .n { color:#5ad4e6; } .header .sub .v { color:#9d8fff; } .header .sub .s { color:#ffcb6b; } .header .sub .arr { color:#333; margin:0 6px; }
+.summary { margin:14px 0 20px; font-size:13px; border-bottom:1px solid #222; padding-bottom:12px; }
+.summary .ok{color:#4caf50} .summary .bad{color:#f44336} .summary .warn{color:#f0a500} .summary .kf{color:#b0546a}
+details.area { border:1px solid #1e1e1e; border-radius:4px; margin-bottom:14px; background:#0a0a0a; }
+details.area>summary { list-style:none; cursor:pointer; padding:.6rem .85rem; display:flex; align-items:center; gap:.65rem; user-select:none; }
+details.area>summary::-webkit-details-marker { display:none; }
+details.area>summary::before { content:'▸'; color:#444; }
+details.area[open]>summary::before { content:'▾'; }
+.area-name { font-size:12px; color:#bbb; text-transform:uppercase; letter-spacing:.12em; }
+.area-count { font-size:11px; color:#555; margin-left:auto; }
+.area-blurb { font-size:11px; color:#4a6370; font-style:italic; padding:0 .95rem .5rem; }
+.test { display:flex; align-items:baseline; gap:10px; padding:2px 12px; }
+.badge { font-size:11px; font-weight:bold; width:44px; text-align:center; flex-shrink:0; border-radius:2px; padding:1px 0; background:#161616; color:#444; }
+.pass .badge { background:#1a3d1a; color:#4caf50; }
+.fail .badge { background:#3d1a1a; color:#f44336; }
+.fail.known .badge { background:#2c1220; color:#b0546a; }
+.warn .badge { background:#2e2200; color:#f0a500; }
+.label { color:#ddd; }
+.detail { color:#f44336; font-size:11px; margin:0 12px 2px 66px; }
+.warn-detail { color:#f0a500; font-size:11px; margin:0 12px 2px 66px; }
+.fail.known + .detail { color:#b0546a; }
+.diff-btn { margin-left:auto; flex-shrink:0; align-self:center; background:none; border:1px solid #2a2a2a; border-radius:2px; color:#444; font:10px/1 'Menlo','Consolas',monospace; padding:2px 7px; cursor:pointer; letter-spacing:.04em; transition:border-color .15s,color .15s; }
+.diff-btn + .diff-btn { margin-left:6px; }
+.diff-btn:hover { border-color:#555; color:#999; }
+.test.open .diff-btn { border-color:#555; color:#bbb; }
+.diff-panel { display:none; margin:2px 12px 8px 66px; border:1px solid #1e1e1e; border-radius:3px; overflow:hidden; background:#0a0a0a; flex-wrap:wrap; }
+.diff-panel.open { display:flex; }
+.diff-col { flex:1 1 46%; min-width:320px; padding:10px 14px; overflow:hidden; border-top:1px solid #161616; }
+.diff-col + .diff-col { border-left:1px solid #1e1e1e; }
+.diff-col-label { font-size:9px; font-weight:bold; letter-spacing:.14em; text-transform:uppercase; margin-bottom:8px; padding-bottom:5px; border-bottom:1px solid #1a1a1a; }
+.diff-col-label.is-native { color:#5ad4e6; }
+.diff-col-label.is-virtual { color:#9d8fff; }
+.diff-col-label.is-source { color:#ffcb6b; }
+.diff-col-label.is-output { color:#7a7a85; }
+.ed-wrap { position:relative; }
+.ed-hl, .ed-ta { font:11.5px/1.65 'Menlo','Consolas',monospace; white-space:pre; tab-size:4; overflow:auto; }
+.ed-hl { color:#b0b0b8; min-height:2em; }
+.ed-wrap .ed-hl { position:absolute; inset:0; pointer-events:none; }
+.ed-ta { position:relative; display:block; width:100%; background:transparent; color:transparent; caret-color:#eee; border:0; outline:none; resize:vertical; }
+.ed-ta::selection { background:rgba(90,212,230,.25); }
+.sk{color:#c792ea} .ss{color:#c3e88d} .sn{color:#f78c6c} .sc{color:#4a6370;font-style:italic}
+.scl{color:#ffcb6b} .sf{color:#82aaff} .sth{color:#f07178} .spu{color:#89ddff}
+.si{color:#56b4df} .sl{color:#56d4ef}
+.krausest { padding:8px 14px 14px; }
+.suite-title { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: .1em; margin: 14px 14px 8px; border-bottom: 1px solid #222; padding-bottom: 4px; display:flex; justify-content:space-between; }
+.suite-title .s-count { color:#666; letter-spacing:0; }
+.suite-title .s-count.all-pass { color:#3d8b57; }
+.k-note { font-size:11px; color:#8a8a8a; line-height:1.55; margin-bottom:12px; max-width:70em; }
+.k-note code { color:#b8c8a0; }
+.k-bench { margin:0 14px 10px; border:1px solid #1c1c1c; border-radius:4px; }
+.k-bench > summary { cursor:pointer; padding:7px 12px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#9fb3c8; }
+.k-bench.k-instance > summary { color:#b8c8a0; }
+.k-bench > div { padding:8px 12px 12px; }
+.k-op { text-align:left !important; }
+.k-x { color:#e0c068 !important; font-weight:bold; }
+.k-controls { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.k-controls button { background:#131a24; border:1px solid #23324a; color:#8fb6e8; font:11px 'Menlo','Consolas',monospace; padding:6px 10px; border-radius:3px; cursor:pointer; }
+.k-controls button:hover { border-color:#3a5a86; color:#cfe4ff; }
+table.k-timings { border-collapse:collapse; margin-bottom:12px; font-size:11px; }
+table.k-timings th, table.k-timings td { border:1px solid #1e1e1e; padding:3px 10px; text-align:right; color:#9fb3c8; }
+table.k-timings th { color:#555; text-transform:uppercase; font-size:9px; letter-spacing:.1em; }
+details.k-src { margin-bottom:12px; }
+details.k-src>summary { font-size:10px; color:#4a6370; cursor:pointer; }
+.k-pre { max-height:360px; overflow:auto; border:1px solid #161616; padding:10px; margin-top:6px; }
+table.test-data { border-collapse:collapse; width:100%; font-size:12px; }
+table.test-data td { padding:2px 8px; border-bottom:1px solid #141414; color:#a8b3a8; }
+table.test-data tr.danger td { background:#20141a; }
+table.test-data a { color:#8fb6e8; text-decoration:none; cursor:pointer; }
+.glyphicon-remove::after { content:'✕'; color:#b0546a; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Instance.js — Direct Element Architecture — Unified Test Suite <span class="version-tag">V0.87.z</span></h1>
+  <div class="sub">
+    <span class="n">Native class behaviour</span><span class="arr">↔</span><span class="v">Virtual prototype parity</span><span class="arr">↔</span><span class="s">Instance Source [.is] → compiled</span>
+  </div>
+</div>
+<div class="summary" id="suite-summary">booting…</div>
+<div id="suite-root"></div>
+<script src="Instance-0.88.0.js" ⚡ @pascal autoclass='core, baseline'></script>
+<script>
+/* suite-harness.js — runtime for the unified Instance test suite (Pass Q).
+ * Model: every test is a registry entry with FOUR column sources —
+ *   vanilla   Vanilla JS (Native Engine)
+ *   hybrid    Hybridized Virtual Class Inheritance (ES6-JS-DOM) [Instance.js]
+ *   is        Instance Source [.is]
+ *   output    compiled .is when present, else the captured runtime log
+ * Kinds: 'diff' (agreement, from the Protobridge suite) · 'divergence' (WARN)
+ * · 'is' (compile → run with asserts) · 'js' (run with asserts). Columns are
+ * textareas under a Compiler.prettify(format:false) overlay — edit and re-run.
+ * First-run badges for 'diff'/'divergence' use the LIVE closures captured at
+ * registration (original semantics, shared fixtures intact); re-runs eval the
+ * edited column text. KNOWN-FAIL: 'instanceof Instance is true' renders red
+ * and is tallied separately — red on purpose, by decision. */
+'use strict';
+
+var SUITE_REG = [];
+var SUITE_AREAS = ['CORE', 'COMPILER', 'CHIMERA', 'DSL', 'MISC', 'API', 'KRAUSEST'];
+var SUITE_BLURBS = {
+	CORE: 'Protobridge unit tests (verbatim, V0.74 lineage) + element-identity cases. Native ↔ virtual parity.',
+	KRAUSEST: 'js-framework-benchmark — vanillajs-keyed, verbatim, timed in-page.'
+};
+var KNOWN_FAIL_LABELS = {
+	// Pass Q5: 'instanceof Instance is true' + 'instanceof matches class-native prototype chain'
+	// now PASS via Instance[Symbol.hasInstance] (the mint is the brand). Promoted out of known-fail.
+	// The remaining identity divergence is getPrototypeOf only — see the 'synthetic proto parent'
+	// testDivergence, which stays a WARN by decision (solving it needs global-prototype colonization).
+};
+// author STUBS carried verbatim from the source file — empty bodies, no assertion; surfaced as WARN not fabricated PASS
+var STUB_LABELS = { 'statics defer correctly': 'empty test body in the source suite — both sides return undefined (nothing to assert)' };
+
+/* ── helpers lifted verbatim from the Protobridge suite ── */
+var fnSource = function getSource(input) {
+	if (typeof input !== 'function') return String(input == null ? '' : input).trim();
+	let src = input.toString()
+		.replace(/^(?:function\s*\w*\s*)?\([^)]*\)\s*(?:=>\s*)?\{/, '')
+		.replace(/\}[\s]*$/, '');
+	const lines = src.split('\n');
+	const nonEmpty = lines.filter(l => l.trim().length > 0);
+	const minIndent = nonEmpty.length
+		? nonEmpty.reduce((m, l) => Math.min(m, l.match(/^(\s*)/)[1].length), Infinity)
+		: 0;
+	return lines.map(l => l.slice(minIndent)).join('\n').trim();
+};
+function expectThrows(fn, msg) {
+	let threw = false;
+	try { fn(); } catch (e) { threw = true; }
+	if (!threw) throw new Error(msg || 'Expected a throw but nothing was thrown');
+}
+function expectNoThrow(fn, msg) {
+	try { fn(); } catch (e) { throw new Error((msg || 'Should not throw') + ': ' + e.message); }
+}
+
+/* ── registration shims — the Protobridge calls land here unchanged ── */
+function testDiff(suiteName, label, sides) {
+	SUITE_REG.push({
+		area: 'CORE', suite: suiteName, label, kind: 'diff',
+		vanilla: fnSource(sides['native']), hybrid: fnSource(sides['virtual']), is: '', output: '',
+		live: { native: sides['native'], virtual: sides['virtual'] },
+		known: Object.prototype.hasOwnProperty.call(KNOWN_FAIL_LABELS, label) ? KNOWN_FAIL_LABELS[label] : null,
+		stub: Object.prototype.hasOwnProperty.call(STUB_LABELS, label) ? STUB_LABELS[label] : null
+	});
+}
+function testDivergence(suiteName, label, reason, sides) {
+	SUITE_REG.push({
+		area: 'CORE', suite: suiteName, label, kind: 'divergence', reason,
+		vanilla: fnSource(sides['native']), hybrid: fnSource(sides['virtual']), is: '', output: '',
+		live: { native: sides['native'], virtual: sides['virtual'] }, known: null
+	});
+}
+
+/* ── PLAYGROUND_TESTS → registry (the dropdown suites, restyled) ── */
+function convertPlayground(T) {
+	var MAP = { COMPILER: 'COMPILER', CORE: 'CORE', DSL: 'DSL', KERNEL: 'CHIMERA', MISC: 'MISC', API: 'API' };
+	Object.keys(MAP).forEach(function (k) {
+		var src = T[k]; if (!src) return;
+		var area = MAP[k];
+		if (src.blurb && !SUITE_BLURBS[area]) SUITE_BLURBS[area] = src.blurb;
+		src.cases.forEach(function (c) {
+			var isLang = src.lang === 'is';
+			SUITE_REG.push({
+				area, suite: c.suite || null, label: c.name, kind: isLang ? 'is' : 'js',
+				vanilla: '', hybrid: isLang ? '' : c.src, is: isLang ? c.src : '', output: '',
+				live: null, known: null
+			});
+		});
+	});
+}
+
+/* ── execution ── */
+function agreement(nativeFn, virtualFn) { // verbatim testDiff semantics
+	let nV, nE, nT = false, vV, vE, vT = false;
+	try { nV = nativeFn(); } catch (e) { nT = true; nE = e; }
+	try { vV = virtualFn(); } catch (e) { vT = true; vE = e; }
+	let pass = false, detail = '';
+	if (nT && vT) pass = true;
+	else if (nT !== vT) {
+		const who = nT ? 'native' : 'virtual';
+		const err = nT ? nE : vE;
+		detail = who + ' threw (' + err.message + ') but the other did not';
+	} else if (nV && vV) pass = true;
+	else if (!nV && !vV) detail = 'both falsy — native: ' + JSON.stringify(nV) + ', virtual: ' + JSON.stringify(vV);
+	else detail = (!nV ? 'native' : 'virtual') + ' returned ' + JSON.stringify(!nV ? nV : vV);
+	return { pass, detail, log: 'native  → ' + (nT ? 'THREW ' + nE.message : JSON.stringify(nV)) + '\nvirtual → ' + (vT ? 'THREW ' + vE.message : JSON.stringify(vV)) };
+}
+function colFn(body) { return new Function('"use strict";\n' + body); }
+
+var SANDBOX = null;
+function sandboxPlay() {
+	if (!SANDBOX) { SANDBOX = document.createElement('div'); SANDBOX.id = 'suite-sandbox'; document.body.appendChild(SANDBOX); }
+	var play = document.createElement('div');
+	SANDBOX.appendChild(play);
+	return play;
+}
+async function runWithAsserts(jsBody, logLines) {
+	var asserts = [];
+	var assert = function (x, m) { asserts.push({ ok: !!x, m: m || '' }); };
+	var log = function () { logLines.push([].map.call(arguments, function (a) { try { return typeof a === 'string' ? a : JSON.stringify(a); } catch (e) { return String(a); } }).join(' ')); };
+	var play = sandboxPlay();
+	var err = null;
+	try {
+		await new Function('Instance', 'Signal', 'Store', 'assert', 'log', 'play', 'document',
+			'return (async () => {\n' + jsBody + '\n})();'
+		)(window.Instance, window.Instance.Chimera.Signal, window.Instance.Chimera.Signal.Store, assert, log, play, document);
+	} catch (e) { err = e; }
+	try { if (play.parentNode) play.parentNode.removeChild(play); } catch (e) {}
+	return { asserts, err };
+}
+
+async function runEntry(entry, fromEditors) {
+	var ed = entry._editors || {};
+	var val = function (k) { return ed[k] ? ed[k].textarea.value : entry[k]; };
+	if (entry.kind === 'diff' || entry.kind === 'divergence') {
+		var res;
+		if (fromEditors || !entry.live) {
+			try { res = agreement(colFn(val('vanilla')), colFn(val('hybrid'))); }
+			catch (e) { res = { pass: false, detail: 'column eval error: ' + e.message, log: String(e) }; }
+		} else res = agreement(entry.live.native, entry.live.virtual);
+		entry.output = res.log;
+		if (entry.kind === 'divergence') { entry.state = 'warn'; entry.detail = entry.reason; }
+		else if (entry.stub) { entry.state = 'warn'; entry.detail = entry.stub; }
+		else { entry.state = res.pass ? 'pass' : 'fail'; entry.detail = res.detail; }
+	}
+	else if (entry.kind === 'is') {
+		var logLines = [];
+		var compiled = null, cerr = null;
+		try { compiled = window.Instance.Compiler.compile(val('is')).code; }
+		catch (e) { cerr = e; }
+		if (cerr) { entry.state = 'fail'; entry.detail = 'compile: ' + cerr.message; entry.output = '// COMPILE ERROR\n// ' + cerr.message; }
+		else {
+			entry.output = compiled; // the decided contract: .is present → output = compiled JS
+			var r = await runWithAsserts(compiled, logLines);
+			var bad = r.asserts.filter(function (a) { return !a.ok; });
+			entry.state = (!r.err && r.asserts.length && !bad.length) ? 'pass' : 'fail';
+			entry.detail = r.err ? 'threw: ' + r.err.message : (bad.length ? bad.map(function (a) { return a.m; }).join(' · ') : (r.asserts.length ? '' : 'no asserts ran'));
+		}
+	}
+	else if (entry.kind === 'js') {
+		var lines = [];
+		var r2 = await runWithAsserts(val('hybrid'), lines);
+		var bad2 = r2.asserts.filter(function (a) { return !a.ok; });
+		entry.state = (!r2.err && r2.asserts.length && !bad2.length) ? 'pass' : 'fail';
+		entry.detail = r2.err ? 'threw: ' + r2.err.message : (bad2.length ? bad2.map(function (a) { return a.m; }).join(' · ') : (r2.asserts.length ? '' : 'no asserts ran'));
+		entry.output = r2.asserts.map(function (a) { return (a.ok ? '✓ ' : '✗ ') + a.m; }).concat(lines, r2.err ? ['THREW: ' + r2.err.message] : []).join('\n');
+	}
+	if (entry._ui) paintEntry(entry);
+	refreshSummary();
+}
+
+/* ── editors: textarea over a prettified <pre> overlay ── */
+function makeEditor(labelText, sideClass, value, lang) {
+	var col = document.createElement('div'); col.className = 'diff-col';
+	var lbl = document.createElement('div'); lbl.className = 'diff-col-label ' + sideClass; lbl.textContent = labelText;
+	var wrap = document.createElement('div'); wrap.className = 'ed-wrap';
+	var pre = document.createElement('pre'); pre.className = 'ed-hl'; pre.setAttribute('aria-hidden', 'true');
+	var ta = document.createElement('textarea'); ta.className = 'ed-ta'; ta.spellcheck = false; ta.value = value || '';
+	var paint = function () {
+		var P = window.Instance && window.Instance.Compiler && window.Instance.Compiler.prettify;
+		pre.innerHTML = (P ? P(ta.value, { lang: lang }) : ta.value.replace(/&/g, '&amp;').replace(/</g, '&lt;')) + '\n';
+		var rows = ta.value.split('\n').length;
+		ta.rows = Math.max(3, Math.min(26, rows + 1));
+		pre.style.height = ta.scrollHeight ? '' : '';
+	};
+	ta.addEventListener('input', paint);
+	ta.addEventListener('scroll', function () { pre.scrollTop = ta.scrollTop; pre.scrollLeft = ta.scrollLeft; });
+	wrap.appendChild(pre); wrap.appendChild(ta);
+	col.appendChild(lbl); col.appendChild(wrap);
+	return { col, textarea: ta, paint, painted: false };
+}
+
+/* ── rendering ── */
+function paintEntry(entry) {
+	var ui = entry._ui;
+	var st = entry.known ? 'fail' : (entry.state || 'idle');
+	ui.row.className = 'test ' + (st === 'warn' ? 'warn' : st === 'pass' ? 'pass' : st === 'fail' ? 'fail' : 'idle') + (entry.known ? ' known' : '');
+	ui.badge.textContent = st === 'warn' ? 'WARN' : st === 'pass' ? 'PASS' : st === 'fail' ? (entry.known ? 'FAIL▪' : 'FAIL') : '·';
+	var d = entry.known ? (entry.detail ? entry.detail + '  —  ' + entry.known : entry.known) : entry.detail;
+	ui.detail.textContent = d ? '↳ ' + (entry.state === 'warn' ? '⚑ ' : '') + d : '';
+	ui.detail.style.display = d ? '' : 'none';
+	ui.detail.className = entry.state === 'warn' ? 'warn-detail' : 'detail';
+	if (entry._editors && entry._editors.output) {
+		entry._editors.output.textarea.value = entry.output || '';
+		if (entry._editors.output.painted) entry._editors.output.paint();
+	}
+}
+
+function buildRow(entry) {
+	var row = document.createElement('div'); row.className = 'test idle';
+	var badge = document.createElement('span'); badge.className = 'badge'; badge.textContent = '·';
+	var label = document.createElement('span'); label.className = 'label';
+	label.textContent = entry.label;
+	var runBtn = document.createElement('button'); runBtn.className = 'diff-btn'; runBtn.textContent = 'run';
+	var colsBtn = document.createElement('button'); colsBtn.className = 'diff-btn'; colsBtn.textContent = 'cols';
+	var panel = document.createElement('div'); panel.className = 'diff-panel';
+	var detail = document.createElement('div'); detail.className = 'detail'; detail.style.display = 'none';
+
+	var built = false;
+	function buildPanel() {
+		if (built) return; built = true;
+		var eds = entry._editors = {
+			vanilla: makeEditor('Vanilla JS (Native Engine)', 'is-native', entry.vanilla, 'js'),
+			hybrid: makeEditor('Hybridized Virtual Class Inheritance (ES6-JS-DOM) [Instance.js] {Still Vanilla JS}', 'is-virtual', entry.hybrid, 'js'),
+			is: makeEditor('Instance Source [.is]', 'is-source', entry.is, 'is'),
+			output: makeEditor('Output', 'is-output', entry.output, 'js')
+		};
+		panel.appendChild(eds.vanilla.col); panel.appendChild(eds.hybrid.col);
+		panel.appendChild(eds.is.col); panel.appendChild(eds.output.col);
+	}
+	colsBtn.addEventListener('click', function () {
+		buildPanel();
+		var open = panel.classList.toggle('open');
+		row.classList.toggle('open', open);
+		colsBtn.textContent = open ? 'close' : 'cols';
+		if (open) Object.keys(entry._editors).forEach(function (k) {
+			var e = entry._editors[k];
+			if (!e.painted) { e.paint(); e.painted = true; }
+		});
+	});
+	runBtn.addEventListener('click', function () { buildPanel(); runEntry(entry, panel.classList.contains('open')); });
+
+	row.appendChild(badge); row.appendChild(label); row.appendChild(runBtn); row.appendChild(colsBtn);
+	entry._ui = { row, badge, detail };
+	var frag = document.createDocumentFragment();
+	frag.appendChild(row); frag.appendChild(detail); frag.appendChild(panel);
+	return frag;
+}
+
+function refreshSummary() {
+	var p = 0, f = 0, w = 0, kf = 0;
+	SUITE_REG.forEach(function (e) {
+		if (!e.state) return;
+		if (e.known) { kf++; return; }
+		if (e.state === 'pass') p++; else if (e.state === 'warn') w++; else f++;
+	});
+	var el = document.getElementById('suite-summary');
+	if (el) el.innerHTML = '<span class="ok">✓ ' + p + ' passed</span>&nbsp;&nbsp;'
+		+ (f ? '<span class="bad">✗ ' + f + ' failed</span>' : '<span style="color:gray">✗ 0 failed</span>')
+		+ (w ? '&nbsp;&nbsp;<span class="warn">⚑ ' + w + ' diverged</span>' : '')
+		+ (kf ? '&nbsp;&nbsp;<span class="kf">◼ ' + kf + ' known-fail (by design)</span>' : '');
+	var spans = document.querySelectorAll('.s-count');
+	for (var si = 0; si < spans.length; si++) {
+		(function (sp) {
+			var A = sp.getAttribute('data-a'), S = sp.getAttribute('data-s');
+			var es = SUITE_REG.filter(function (e) { return e.area === A && (e.suite || 'General') === S; });
+			var sPass = es.filter(function (e) { return e.state === 'pass' && !e.known; }).length;
+			sp.textContent = '(' + sPass + '/' + es.length + ')';
+			sp.className = 's-count' + (sPass === es.length ? ' all-pass' : '');
+		})(spans[si]);
+	}
+	SUITE_AREAS.forEach(function (a) {
+		var lbl = document.getElementById('count-' + a);
+		if (!lbl) return;
+		var es = SUITE_REG.filter(function (e) { return e.area === a; });
+		var ap = es.filter(function (e) { return e.state === 'pass' && !e.known; }).length;
+		var akf = es.filter(function (e) { return e.known && e.state; }).length;
+		lbl.textContent = ap + '/' + es.length + (akf ? ' · ◼' + akf : '');
+	});
+}
+
+async function runArea(area) {
+	var es = SUITE_REG.filter(function (e) { return e.area === area; });
+	for (var i = 0; i < es.length; i++) await runEntry(es[i], false);
+}
+
+function renderAreas(root) {
+	SUITE_AREAS.forEach(function (a) {
+		var det = document.createElement('details'); det.className = 'area'; det.id = 'area-' + a;
+		var sum = document.createElement('summary');
+		sum.innerHTML = '<span class="area-name">' + a + '</span><span class="area-count" id="count-' + a + '"></span>';
+		if (a !== 'KRAUSEST') {
+			var rb = document.createElement('button'); rb.className = 'diff-btn'; rb.textContent = 'run all';
+			rb.addEventListener('click', function (ev) { ev.preventDefault(); ev.stopPropagation(); runArea(a); });
+			sum.appendChild(rb);
+		}
+		det.appendChild(sum);
+		if (SUITE_BLURBS[a]) {
+			var bl = document.createElement('div'); bl.className = 'area-blurb'; bl.textContent = SUITE_BLURBS[a];
+			det.appendChild(bl);
+		}
+		if (a === 'KRAUSEST') { buildKrausest(det); }
+		else {
+			var buckets = new Map();
+			SUITE_REG.forEach(function (e) {
+				if (e.area !== a) return;
+				var key = e.suite || 'General';
+				if (!buckets.has(key)) buckets.set(key, []);
+				buckets.get(key).push(e);
+			});
+			buckets.forEach(function (list, name) {
+				var h = document.createElement('div'); h.className = 'suite-title';
+				var nm = document.createElement('span'); nm.textContent = name;
+				var ct = document.createElement('span'); ct.className = 's-count';
+				ct.setAttribute('data-a', a); ct.setAttribute('data-s', name);
+				h.appendChild(nm); h.appendChild(ct);
+				det.appendChild(h);
+				list.forEach(function (e) { det.appendChild(buildRow(e)); });
+			});
+		}
+		root.appendChild(det);
+	});
+}
+
+/* ── KRAUSEST — vanillajs-keyed verbatim, timed from OUTSIDE (capture phase) ── */
+function buildKrausest(det) {
+	// A `document` scoped to one panel: id/tag/selector queries resolve INSIDE the
+	// panel, everything else (createElement, createRange, …) falls through to the
+	// real document. This is what lets the verbatim vanillajs-keyed Main.js run
+	// unedited — its `getElementsByTagName('table')[0]` reattach target (line 188)
+	// would otherwise grab the page's FIRST table (the ratio table up top) and the
+	// filled tbody would paint off-panel. Serving the file as its own page does the
+	// same scoping; here the proxy stands in for that page boundary.
+	function scopedDoc(root) {
+		return new Proxy(document, {
+			get: function (d, p) {
+				if (p === 'getElementById') return function (id) { return root.querySelector('#' + (window.CSS && CSS.escape ? CSS.escape(id) : id)); };
+				if (p === 'getElementsByTagName') return function (t) { return root.getElementsByTagName(t); };
+				if (p === 'querySelector') return function (q) { return root.querySelector(q); };
+				if (p === 'querySelectorAll') return function (q) { return root.querySelectorAll(q); };
+				var v = d[p];
+				return typeof v === 'function' ? v.bind(d) : v;
+			}
+		});
+	}
+	var K_OPS = ['run', 'runlots', 'add', 'update', 'clear', 'swaprows', 'select row', 'remove row'];
+	var K_LBL = { run: 'Create 1,000 rows', runlots: 'Create 10,000 rows', add: 'Append 1,000 rows', update: 'Update every 10th row', clear: 'Clear', swaprows: 'Swap Rows' };
+	var TT = {}; // op → { n:{last,best,c}, i:{last,best,c} }
+
+	var host = document.createElement('div'); host.className = 'krausest';
+	host.innerHTML =
+		'<div class="k-note">Numbers in isolation are machine speed — the <b>\u00d7</b> column is the story: Instance best \u00f7 native best per op. ' +
+		'Every op except one is raw DOM throughput, where Instance IS native JS plus the mint. ' +
+		'<b>Update every 10th row</b> is the reactivity test: native loops the data and pokes each row; Instance writes ONE class-level signal (<code>KRow.$mark = ++tick</code>) and every mounted row answers by its own live rowIndex. ' +
+		'Select is mild (class toggle). Remove/clear on the Instance side DISPOSE (<code>remove(true)</code>) so each row\u2019s subscription drains \u2014 honest teardown, flat memory.</div>' +
+		'<table class="k-timings"><thead><tr><th>op</th><th>native last</th><th>native best</th><th>Instance last</th><th>Instance best</th><th>\u00d7</th></tr></thead><tbody id="k-timings"></tbody></table>';
+	det.appendChild(host);
+
+	function paint() {
+		var tb = host.querySelector('#k-timings');
+		tb.innerHTML = K_OPS.filter(function (op) { return TT[op]; }).map(function (op) {
+			var t = TT[op], n = t.n, i = t.i;
+			var f = function (x) { return x ? x.toFixed(1) : '\u2014'; };
+			var ratio = n && i ? (i.best / n.best).toFixed(2) + '\u00d7' : '\u2014';
+			return '<tr><td class="k-op">' + op + '</td><td>' + f(n && n.last) + '</td><td>' + f(n && n.best) + '</td><td>' + f(i && i.last) + '</td><td>' + f(i && i.best) + '</td><td class="k-x">' + ratio + '</td></tr>';
+		}).join('');
+	}
+	function record(side, op, ms) {
+		var t = TT[op] || (TT[op] = {});
+		var r = t[side] || (t[side] = { last: 0, best: Infinity, c: 0 });
+		r.last = ms; r.best = Math.min(r.best, ms); r.c++;
+		paint();
+	}
+	function armTimer(container, side, normalize) {
+		container.addEventListener('click', function (e) {
+			var op = null;
+			var b = e.target.closest && e.target.closest('button');
+			if (b && b.id) op = normalize(b.id);
+			else if (e.target.closest && e.target.closest('.glyphicon')) op = 'remove row';
+			else if (e.target.closest && e.target.closest('tr')) op = 'select row';
+			if (!op) return;
+			var t0 = performance.now();
+			requestAnimationFrame(function () { requestAnimationFrame(function () { record(side, op, performance.now() - t0); }); });
+		}, true);
+	}
+	function bench(title, cls, ids, srcText, boot) {
+		var d = document.createElement('details'); d.className = 'k-bench ' + cls;
+		var sm = document.createElement('summary'); sm.textContent = title; d.appendChild(sm);
+		var body = document.createElement('div');
+		body.innerHTML =
+			'<div id="' + ids('main') + '">' +
+			'<div class="k-controls">' + ['run', 'runlots', 'add', 'update', 'clear', 'swaprows'].map(function (op) {
+				return '<button type="button" id="' + ids(op) + '">' + K_LBL[op] + '</button>';
+			}).join('') + '</div>' +
+			'<table class="table test-data"><tbody id="' + ids('tbody') + '"></tbody></table>' +
+			'</div>' +
+			'<details class="k-src"><summary>source \u2014 verbatim</summary><pre class="ed-hl k-pre"></pre></details>';
+		d.appendChild(body);
+		var booted = false;
+		d.addEventListener('toggle', function () {
+			if (!d.open || booted) return; booted = true;
+			var pre = body.querySelector('.k-pre');
+			var P = window.Instance && window.Instance.Compiler && window.Instance.Compiler.prettify;
+			pre.innerHTML = P ? P(srcText) : srcText.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+			armTimer(body, cls === 'k-native' ? 'n' : 'i', function (id) { return id.replace(/^k2-/, ''); });
+			try { boot(body); }
+			catch (e) { pre.insertAdjacentHTML('beforebegin', '<div class="detail">\u21b3 boot error: ' + e.message + '</div>'); }
+		});
+		det.appendChild(d);
+	}
+	bench('NATIVE \u2014 vanillajs-keyed (verbatim)', 'k-native',
+		function (op) { return op; }, window.KRAUSEST_MAIN,
+		function (body) { new Function('document', window.KRAUSEST_MAIN)(scopedDoc(body)); }); // Main.js ends with `new Main()`; scoped document keeps its reattach (getElementsByTagName('table')[0]) on THIS panel's table, so it paints in place
+	bench('INSTANCE \u2014 the element IS the row', 'k-instance',
+		function (op) { return 'k2-' + op; }, window.KRAUSEST_INSTANCE,
+		function (body) { new Function(window.KRAUSEST_INSTANCE)(); window.__K_INSTANCE_BOOT__(body); });
+}
+
+/* ── boot ── */
+async function suiteBoot() {
+	var I = await window.InstanceReady;
+	if (!window.Instance) { try { window.Instance = I; } catch (e) {} } // bundle exposes it read-only
+	if (typeof window.__SUITE_CORE__ === 'function') window.__SUITE_CORE__(); // registers CORE via shims
+	if (window.PLAYGROUND_TESTS) convertPlayground(window.PLAYGROUND_TESTS);
+	renderAreas(document.getElementById('suite-root'));
+	refreshSummary();
+	// first pass — badges for everything
+	for (var i = 0; i < SUITE_REG.length; i++) await runEntry(SUITE_REG[i], false);
+	var first = document.getElementById('area-CORE');
+	if (first) first.open = true;
+}
+if (typeof window !== 'undefined') {
+	if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', suiteBoot, { once: true });
+	else suiteBoot();
+}
+
+</script>
+<script>
+window.__SUITE_CORE__ = function () {
+'use strict';
+/* suite-core.js — the Protobridge unit tests, lifted EFFECTIVELY VERBATIM from
+ * Instance-Test-Suite-old-2.html (V0.74.0 era, green against 0.87.o): Suites 1-11
+ * unchanged, each a self-contained IIFE. Not carried: the console-exploration
+ * blocks before Suite 1 (GhostHandler sketch, proto probes — not tests) and the
+ * author-commented-out Suite 0 ('Environment Setup & Legal Doctrine'). The
+ * typeset boot line (originally top-level) is prepended — the suites need the
+ * Pascal element globals. Registration rides the harness shims: testDiff /
+ * testDivergence record {vanilla, hybrid} column sources AND the live closures —
+ * first-run badges use the LIVE fns (original semantics, shared fixtures intact);
+ * textarea re-runs sandbox-eval the edited columns. (Pass Q5: the former
+ * 'instanceof Instance' known-fail is now GREEN via Instance[Symbol.hasInstance];
+ * only the getPrototypeOf divergence remains, as a WARN by decision.) */
+const $_ = new Instance({ typeset: [{ key: 'pascal', value: '' }] });
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SUITE 1 — Construction & Identity
+// ═════════════════════════════════════════════════════════════════════════════
+(function() { const S = 'Construction & Identity';
+testDiff(S, 'Instance elements are real DOM nodes (Direct Element Architecture)', {
+    native:  () => { 
+        const div = document.createElement('div');
+        div.textContent = 'Hello world!';
+        document.body.appendChild(div);
+		let value = (
+			div.nodeType === 1 && 
+            div instanceof HTMLDivElement &&
+            div.tagName === "DIV" &&
+            div.textContent === 'Hello world!'
+		);
+		document.body.removeChild(div);
+        return value;
+    },
+    virtual: () => { 
+        const text = 'Hello world!';
+        const div = new Div(text); // defaults to text, excepting DSL flags
+        document.body.appendChild(div); // no wrapper. no el.component
+        console.log(Object.getPrototypeOf(Div.prototype));
+		let value = (
+			div.nodeType === 1 && 
+            div instanceof HTMLDivElement &&
+            div.tagName === "DIV" &&
+            div.textContent === 'Hello world!'
+		);
+		document.body.removeChild(div);
+		return value;
+    }
+});
+
+
+testDiff(S, 'Console logs <div> (Intrinsic DevTools)', {
+    native: () => {
+        console.log('Native', document.createElement('div'));
+        return true;
+    },
+    virtual: () => {
+        console.log('Virtual', new Div()); 
+		// note: data-is for intrinsic metas is a known redundancy; tabled for later
+        return true;
+    }
+});
+
+// new Div(new Span()) -> <div><span></span></div>
+
+testDiff(S, 'Instance constructors work for every element', {
+    native:  () => { 
+        const div = document.createElement('div'); 
+        const span = document.createElement('span');
+        const section = document.createElement('section');
+        const audio = document.createElement('audio');
+        return (
+            div.tagName === 'DIV' && 
+            span.tagName === 'SPAN' && 
+            section.tagName === 'SECTION' &&
+            audio.tagName === 'AUDIO'
+        );
+    },
+    virtual: () => { 
+        const div = new Div(); 
+        const span = new Span();
+        const section = new Section(); // and so on
+        const audio = new AudioElement();
+        return (
+            div.tagName === 'DIV' && 
+            span.tagName === 'SPAN' &&
+            section.tagName === 'SECTION' &&
+            audio.tagName === 'AUDIO'
+        );
+    }
+});
+
+testDiff(S, 'new Div() .tagName is DIV', {
+    native: () => {
+        const el = document.createElement('div');
+        return el.tagName === 'DIV';
+    },
+    virtual: () => {
+        const div = new Div();
+        return div.tagName === 'DIV';
+    }
+});
+
+
+testDiff(S, 'nodeType is 1', {
+    native: () => {
+        const el = document.createElement('div');
+        return el.nodeType === 1;
+    },
+    virtual: () => {
+        const div = new Div();
+        return div.nodeType === 1;
+    }
+});
+
+testDiff(S, 'Two instances are distinct objects', {
+    native:  () => { class A {}; const a = new A(), b = new A(); return a !== b; },
+    virtual: () => { const a = new Div(); const b = new Div(); return a !== b; }
+});
+
+testDiff(S, 'instanceof own class is true', {
+    native:  () => { 
+        class Test {}; // dummy engine class
+        const test = new Test(); 
+        return test instanceof Test; 
+    },
+    virtual: () => { const div = new Div(); return div instanceof Div; }
+});
+
+testDiff(S, 'instanceof parent class is true', {
+native:  () => { class Base {}; class Child extends Base {}; const c = new Child(); return c instanceof Base; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); return el instanceof Div; }
+});
+
+testDiff(S, 'instanceof Instance is true', {
+native:  () => { class A {}; const a = new A(); return a instanceof A; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); return el instanceof Instance; }
+});
+
+testDiff(S, 'Ergonomic subclassing is trivial', {
+    native: () => {
+        class A {
+            get someMethod() { return 'A' }
+        };
+        class B extends A {
+            get someMethodB() { return 'B' }
+        };
+
+        let b = new B();
+        return b.someMethod === 'A';
+    },
+    virtual: () => {
+        class FancyDiv extends Div {
+            get someMethod() { return 'FancyDiv' }
+        }
+        let fancydiv = new FancyDiv();
+        return (
+            fancydiv.someMethod === 'FancyDiv' && 
+            fancydiv.tagName === "DIV"
+        );
+    }
+
+
+});
+
+testDiff(S, 'instance-level instanceof matches class-native prototype chain', {
+    native: () => {
+        const div = document.createElement('div');
+        return (
+            div instanceof HTMLDivElement &&
+            div instanceof Element &&
+            div instanceof Node
+        )
+    },
+    virtual: () => {
+        class FancyDiv extends Div {};
+        class SuperFancyDiv extends FancyDiv {};
+        const sfdiv = new SuperFancyDiv();
+
+		let test1 = (
+			sfdiv instanceof SuperFancyDiv &&
+			sfdiv instanceof FancyDiv &&
+			sfdiv instanceof Div &&
+			sfdiv instanceof HTMLDivElement &&
+			sfdiv instanceof Element &&
+			sfdiv instanceof Node &&
+			sfdiv.tagName === "DIV"
+		);
+		let test2 = (
+			sfdiv instanceof Instance
+		);
+
+		console.log('instance-level instanceof matches class-native prototype chain', test1, test2);
+        return test1 && test2; // test1: true, test2: false
+    }
+});
+
+testDivergence(S, 'Subclass instanceof Class is true',
+    'Native returns false (OrdinaryHasInstance walks B\'s function chain, finds A itself but not A.prototype). ' +
+    'Virtual returns true via custom Symbol.hasInstance, which correctly detects B.__proto__ === A. ' +
+    'The spec (§7.3.22 step 4) looks for A.prototype, not A — a one-step mismatch. This Virtual Class behaviour is an intentional semantic edge-case extension of the instanceof spec.' +
+    '', {
+native:  () => { 
+    /* false — spec OrdinaryHasInstance looks for A.prototype in B's fn chain, not A itself */ 
+    class A {}; class B extends A {}; return B instanceof A; },
+virtual: () => { 
+    /* true — custom Symbol.hasInstance correctly detects B.__proto__ === A */
+    class CustomDiv extends Div {};
+	const test1 = CustomDiv instanceof Div;
+	const test2 = CustomDiv instanceof Instance;
+	const test3 = Div instanceof Instance;
+	console.log('Subclass instanceof Class = true:', test1, test2, test3);
+
+    return test1 && test2 && test3; // true false true
+}
+});
+
+/*
+console.log(888,Object.getOwnPropertyDescriptor(HTMLDivElement, Symbol.species));
+console.log(999,Object.getOwnPropertyDescriptor(HTMLDivElement.prototype, Symbol.species));
+//console.log(Object.getOwnPropertyDescriptor(HTMLDivElement.prototype, Symbol.species)
+*/
+
+
+testDivergence(S, 'getPrototypeOf — proto parent is native [[getPrototypeOf]]', 
+    'NOTE: in engine mode only; may be normalized to "always" if 99.5+% web compatible with third party scripts.'+
+	" Per-element-tag \"native\" prototypes are synthesized by default when missing / unimplemented by browser vendors. (you're welcome)", {
+    native:  () => { class A {}; const a = new A(); return Object.getPrototypeOf(a) === A.prototype; },
+    virtual: () => { const div = new Div(); return Object.getPrototypeOf(div) === HTMLDivElement.prototype; }
+});
+
+testDiff(S, 'Prototype chain does not throw on deep traversal', {
+native:  () => { class A {}; const a = new A(); expectNoThrow(() => { let p = a; while (p) p = Object.getPrototypeOf(p); }); return true; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); expectNoThrow(() => { const p = Object.getPrototypeOf(el); Object.getPrototypeOf(p); }); return true; }
+});
+
+})();
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SUITE 2 — get trap
+// ═════════════════════════════════════════════════════════════════════════════
+(function() { const S = 'get trap';
+
+testDiff(S, 'Public class methods are correctly defined on the instance prototype and not directly on the instance', {
+    native:  () => { 
+        class Vanilla { 
+            greet() { return 'hello'; }
+        }; 
+        const el = new Vanilla(); 
+        return (
+            el.greet() === 'hello' &&
+            Object.getOwnPropertyDescriptor(el, 'greet') === void 0
+        )
+    },
+    virtual: () => { 
+        class FancyDiv extends Div { 
+            greet() { return 'hello'; } 
+        }; 
+        const el = new FancyDiv(); 
+        return (
+            el.greet() === 'hello' &&
+            Object.getOwnPropertyDescriptor(el, 'greet') === void 0
+        );
+    }
+});
+
+testDiff(S, 'statics defer correctly', {
+    native: () => {
+        class A {
+            static foo = 1;   // own property on A itself
+            static bar() {}   // also own property on A itself
+        }
+
+        let a = A.hasOwnProperty('foo') // true
+        let b = A.hasOwnProperty('bar') // true
+
+        console.log('static', a,b);
+
+        console.log(Object.getOwnPropertyDescriptor(A, 'foo')); // { value: 1, writable: true, enumerable: true, configurable: true }
+        console.log(Object.getOwnPropertyDescriptor(A, 'bar')); // { value: f, writable: true, enumerable: false, configurable: true }
+
+    },
+    virtual: () => {
+
+    }
+
+
+})
+
+testDiff(S, 'Public class fields are correctly defined on the instance and not directly on the instance prototype', {
+    native: () => {
+        class Native {
+            field = 0;
+        }
+        const el = new Native();
+        return (
+            el.field === 0 &&
+            typeof GET_OWN_DESC(el, 'field') === 'object' &&
+            GET_OWN_DESC(Native.prototype, 'field') === void 0
+        );
+    },
+    virtual: () => {
+        class FancyDiv extends Div {
+            field = 0;
+        }
+        const el = new FancyDiv();
+
+        return (
+            el.field === 0 &&
+            typeof GET_OWN_DESC(el, 'field') === 'object' &&
+            GET_OWN_DESC(FancyDiv.prototype, 'field') === void 0
+        );
+    }
+});
+
+let c = new Div();
+class CDiv extends Div {};
+
+let cd = new CDiv();
+console.log(Object.getPrototypeOf(cd));
+console.log(Object.getPrototypeOf(c));
+console.log(Object.getPrototypeOf(document.createElement('div')));
+
+testDiff(S, 'Class methods have correct `this`', {
+native:  () => { class A { whoami() { return this; } }; const a = new A(); return a.whoami() === a; },
+virtual: () => { class FancyDiv extends Div { whoami() { return this; } }; const el = new FancyDiv(); return el.whoami() === el; }
+});
+
+testDiff(S, 'Native DOM property accessible (textContent)', {
+native:  () => { class A { constructor() { this.text = 'hi'; } }; const a = new A(); return a.text === 'hi'; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); el.textContent = 'hi'; return el.textContent === 'hi'; }
+});
+
+testDiff(S, 'Native DOM method accessible (setAttribute / getAttribute)', {
+native:  () => { class A { constructor() { this._data = '1'; } getData() { return this._data; } }; const a = new A(); return a.getData() === '1'; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); el.setAttribute('data-test', '1'); return el.getAttribute('data-test') === '1'; }
+});
+
+testDiff(S, 'Getter defined on class returns correct value', {
+native:  () => { class A { get label() { return 'fancy'; } }; const a = new A(); return a.label === 'fancy'; },
+virtual: () => { class FancyDiv extends Div { get label() { return 'fancy'; } }; const el = new FancyDiv(); return el.label === 'fancy'; }
+});
+
+testDiff(S, 'Getter has correct `this`', {
+native:  () => { class A { get self() { return this; } }; const a = new A(); return a.self === a; },
+virtual: () => { class FancyDiv extends Div { get self() { return this; } }; const el = new FancyDiv(); return el.self === el; }
+});
+
+testDiff(S, 'Inherited method from grandparent works', {
+native:  () => { class Base { base() { return 'base'; } }; class Child extends Base {}; const c = new Child(); return c.base() === 'base'; },
+virtual: () => { class Base extends Div { base() { return 'base'; } }; class Child extends Base {}; const el = new Child(); return el.base() === 'base'; }
+});
+
+testDiff(S, 'Symbol property on class is reachable', {
+native:  () => { const SYM = Symbol('t'); class A { [SYM]() { return 'sym'; } }; const a = new A(); return a[SYM]() === 'sym'; },
+virtual: () => { const SYM = Symbol('t'); class FancyDiv extends Div { [SYM]() { return 'sym'; } }; const el = new FancyDiv(); return el[SYM]() === 'sym'; }
+});
+
+testDiff(S, 'Class field is own property of instance', {
+native:  () => { class A { myField = 42; }; const a = new A(); return a.myField === 42 && Object.prototype.hasOwnProperty.call(a, 'myField'); },
+virtual: () => { class FancyDiv extends Div { myField = 42; }; const el = new FancyDiv(); return el.myField === 42 && Object.prototype.hasOwnProperty.call(el, 'myField'); }
+});
+
+testDiff(S, 'super.method() call from child works', {
+native:  () => { class Base { greet() { return 'base'; } }; class Child extends Base { greet() { return super.greet() + '+child'; } }; return new Child().greet() === 'base+child'; },
+virtual: () => { class Base extends Div { greet() { return 'base'; } }; class Child extends Base { greet() { return super.greet() + '+child'; } }; return new Child().greet() === 'base+child'; }
+});
+
+testDiff(S, 'Deeply chained super calls (4 levels)', {
+native:  () => { class A { v() { return 'A'; } }; class B extends A { v() { return super.v()+'B'; } }; class C extends B { v() { return super.v()+'C'; } }; class D extends C { v() { return super.v()+'D'; } }; return new D().v() === 'ABCD'; },
+virtual: () => { class A extends Div { v() { return 'A'; } }; class B extends A { v() { return super.v()+'B'; } }; class C extends B { v() { return super.v()+'C'; } }; class D extends C { v() { return super.v()+'D'; } }; return new D().v() === 'ABCD'; }
+});
+
+testDiff(S, 'Private class field accessible via method', {
+native:  () => { class A { #secret = 99; getSecret() { return this.#secret; } }; return new A().getSecret() === 99; },
+virtual: () => { class FancyDiv extends Div { #secret = 99; getSecret() { return this.#secret; } }; return new FancyDiv().getSecret() === 99; }
+});
+
+testDiff(S, 'Private class field brand check (#field in x)', {
+native:  () => { class A { #tag = true; static is(x) { return #tag in x; } }; return A.is(new A()) === true; },
+virtual: () => { class FancyDiv extends Div { #tag = true; static is(x) { return #tag in x; } }; return FancyDiv.is(new FancyDiv()) === true; }
+});
+
+testDiff(S, 'Readonly getter throws on write attempt', {
+native:  () => { class A { get readOnly() { return 'x'; } }; const a = new A(); let threw; try { a.readOnly = 'y'; } catch(e) { threw = true; } return threw === true; },
+virtual: () => { class FancyDiv extends Div { get readOnly() { return 'x'; } }; const el = new FancyDiv(); let threw; try { el.readOnly = 'y'; } catch(e) { threw = true; } return threw === true; }
+});
+
+testDiff(S, 'Readonly getter does not shadow — value unchanged after attempted write', {
+native:  () => { class A { get readOnly() { return 'x'; } }; const a = new A(); try { a.readOnly = 'y'; } catch(e) {}; return a.readOnly === 'x'; },
+virtual: () => { class FancyDiv extends Div { get readOnly() { return 'x'; } }; const el = new FancyDiv(); try { el.readOnly = 'y'; } catch(e) {}; return el.readOnly === 'x'; }
+});
+
+})();
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SUITE 3 — set trap
+// ═════════════════════════════════════════════════════════════════════════════
+(function() { const S = 'set trap';
+
+testDiff(S, 'Own property assignment lands on instance, not prototype', {
+native:  () => { class A {}; const a = new A(); const b = new A(); a.x = 1; return b.x === undefined && Object.prototype.hasOwnProperty.call(a, 'x'); },
+virtual: () => { class FancyDiv extends Div {}; const a = new FancyDiv(); const b = new FancyDiv(); a.x = 1; return b.x === undefined && Object.prototype.hasOwnProperty.call(a, 'x'); }
+});
+
+testDiff(S, 'Two instances have independent own properties', {
+native:  () => { class A {}; const a = new A(); const b = new A(); a.c = 1; b.c = 2; return a.c === 1 && b.c === 2; },
+virtual: () => { class FancyDiv extends Div {}; const a = new FancyDiv(); const b = new FancyDiv(); a.c = 1; b.c = 2; return a.c === 1 && b.c === 2; }
+});
+
+testDiff(S, 'Native DOM setter works (textContent)', {
+native:  () => { class A { constructor() { this.text = 'written'; } }; const a = new A(); return a.text === 'written'; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); el.textContent = 'written'; return el.textContent === 'written'; }
+});
+
+testDiff(S, 'Class setter is invoked (not shadowed)', {
+native:  () => { let called = false; class A { set label(v) { called = true; this._l = v; } get label() { return this._l; } }; const a = new A(); a.label = 'hi'; return called && a.label === 'hi'; },
+virtual: () => { let called = false; class FancyDiv extends Div { set label(v) { called = true; this._l = v; } get label() { return this._l; } }; const el = new FancyDiv(); el.label = 'hi'; return called && el.label === 'hi'; }
+});
+
+testDiff(S, 'Class setter has correct `this`', {
+native:  () => { let t; class A { set x(v) { t = this; } }; const a = new A(); a.x = 1; return t === a; },
+virtual: () => { let t; class FancyDiv extends Div { set x(v) { t = this; } }; const el = new FancyDiv(); el.x = 1; return t === el; }
+});
+
+testDiff(S, 'Getter-without-setter does NOT create shadow own property', {
+native:  () => { class A { get ro() { return 'fixed'; } }; const a = new A(); try { a.ro = 'shadow'; } catch(e) {}; return !Object.prototype.hasOwnProperty.call(a, 'ro'); },
+virtual: () => { class FancyDiv extends Div { get ro() { return 'fixed'; } }; const el = new FancyDiv(); try { el.ro = 'shadow'; } catch(e) {}; return !Object.prototype.hasOwnProperty.call(el, 'ro'); }
+});
+
+testDiff(S, 'Non-writable prototype property — value unchanged after attempted write', {
+native:  () => { class A {}; Object.defineProperty(A.prototype, 'CONST', { value: 'immutable', writable: false, configurable: true }); const a = new A(); try { a.CONST = 'changed'; } catch(e) {}; return a.CONST === 'immutable'; },
+virtual: () => { class FancyDiv extends Div {}; Object.defineProperty(FancyDiv.prototype, 'CONST', { value: 'immutable', writable: false, configurable: true }); const el = new FancyDiv(); try { el.CONST = 'changed'; } catch(e) {}; return el.CONST === 'immutable'; }
+});
+
+testDiff(S, 'Prototype property does not bleed to sibling on write', {
+native:  () => { class A {}; const a = new A(); const b = new A(); Object.defineProperty(A.prototype, 'shared', { value: 0, writable: true, configurable: true }); a.shared = 99; return a.shared === 99 && b.shared === 0 && Object.prototype.hasOwnProperty.call(a, 'shared') && !Object.prototype.hasOwnProperty.call(b, 'shared'); },
+virtual: () => { class FancyDiv extends Div {}; const a = new FancyDiv(); const b = new FancyDiv(); Object.defineProperty(FancyDiv.prototype, 'shared', { value: 0, writable: true, configurable: true }); a.shared = 99; return a.shared === 99 && b.shared === 0 && Object.prototype.hasOwnProperty.call(a, 'shared') && !Object.prototype.hasOwnProperty.call(b, 'shared'); }
+});
+
+testDiff(S, 'Setter defined on grandparent is invoked (deep chain)', {
+native:  () => { const log = []; class Base { set val(v) { log.push(v); } }; class Mid extends Base {}; class Child extends Mid {}; new Child().val = 'deep'; return log[0] === 'deep'; },
+virtual: () => { const log = []; class Base extends Div { set val(v) { log.push(v); } }; class Mid extends Base {}; class Child extends Mid {}; new Child().val = 'deep'; return log[0] === 'deep'; }
+});
+
+testDiff(S, 'Multiple inheritance levels with chained super setters fire in order', {
+native:  () => { const log = []; class A { set v(x) { log.push('A:'+x); } }; class B extends A { set v(x) { log.push('B:'+x); super.v = x; } }; class C extends B { set v(x) { log.push('C:'+x); super.v = x; } }; new C().v = 1; return log.join(',') === 'C:1,B:1,A:1'; },
+virtual: () => { const log = []; class VA extends Div { set v(x) { log.push('A:'+x); } }; class VB extends VA { set v(x) { log.push('B:'+x); super.v = x; } }; class VC extends VB { set v(x) { log.push('C:'+x); super.v = x; } }; new VC().v = 1; return log.join(',') === 'C:1,B:1,A:1'; }
+});
+
+testDiff(S, 'Writing same prop on 5 instances — all independent', {
+native:  () => { class A {}; const els = Array.from({length:5}, () => new A()); els.forEach((e,i) => e.idx = i); return els.every((e,i) => e.idx === i); },
+virtual: () => { class FancyDiv extends Div {}; const els = Array.from({length:5}, () => new FancyDiv()); els.forEach((e,i) => e.idx = i); return els.every((e,i) => e.idx === i); }
+});
+
+})();
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SUITE 4 — has trap (`in` operator)
+// ═════════════════════════════════════════════════════════════════════════════
+(function() { const S = 'has trap (in operator)';
+
+testDiff(S, 'Class method found via `in`', {
+native:  () => { class A { greet() {} }; return 'greet' in new A(); },
+virtual: () => { class FancyDiv extends Div { greet() {} }; return 'greet' in new FancyDiv(); }
+});
+
+testDiff(S, 'Inherited grandparent method found via `in`', {
+native:  () => { class Base { baseMethod() {} }; class Child extends Base {}; return 'baseMethod' in new Child(); },
+virtual: () => { class Base extends Div { baseMethod() {} }; class Child extends Base {}; return 'baseMethod' in new Child(); }
+});
+
+testDiff(S, 'Own Symbol property found via `in`', {
+native:  () => { class A {}; const a = new A(); const SYM = Symbol('s'); Object.defineProperty(a, SYM, { value: 1, configurable: true }); return SYM in a; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); const SYM = Symbol('s'); Object.defineProperty(el, SYM, { value: 1, configurable: true }); return SYM in el; }
+});
+
+testDiff(S, 'Non-existent property not found via `in`', {
+native:  () => { class A {}; return !('totally_nonexistent_xyz' in new A()); },
+virtual: () => { class FancyDiv extends Div {}; return !('totally_nonexistent_xyz' in new FancyDiv()); }
+});
+
+testDiff(S, 'Native DOM property found via `in` (virtual only, native skips)', {
+native:  () => { class A {}; const a = new A(); return !('totallyFakeProperty' in a); },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); return ('textContent' in el) && ('addEventListener' in el); }
+});
+
+})();
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SUITE 5 — getOwnPropertyDescriptor trap
+// ═════════════════════════════════════════════════════════════════════════════
+(function() { const S = 'getOwnPropertyDescriptor trap';
+
+testDiff(S, 'Own property descriptor shape matches — value, writable, enumerable', {
+    native:  () => { 
+        class A {}; 
+        const a = new A(); 
+        a.foo = 'bar'; 
+        const d = Object.getOwnPropertyDescriptor(a, 'foo'); 
+        return d && d.value === 'bar' && d.writable === true && d.enumerable === true;
+    },
+    virtual: () => { 
+        class FancyDiv extends Div {}; 
+        const el = new FancyDiv();
+        el.foo = 'bar'; 
+        const d = Object.getOwnPropertyDescriptor(el, 'foo'); 
+        return d && d.value === 'bar' && d.writable === true && d.enumerable === true;
+    }
+});
+
+testDiff(S, 'classProto getter descriptor has correct shape (get fn, no set)', {
+    native: () => { 
+        class A { 
+            get label() { return 'x'; }
+        }; 
+        const a = new A(); 
+        const d = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(a), 'label'); 
+        return d && typeof d.get === 'function' && d.set === undefined;
+    },
+    virtual: () => { 
+        class FancyDiv extends Div { 
+            get label() { return 'x'; }
+        }; 
+        const el = new FancyDiv(); 
+        const d = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'label'); 
+        return d && typeof d.get === 'function' && d.set === undefined;
+    }
+});
+
+testDiff(S, 'Non-existent property descriptor returns undefined', {
+native:  () => { class A {}; return Object.getOwnPropertyDescriptor(new A(), 'nope_xyz') === undefined; },
+virtual: () => { class FancyDiv extends Div {}; return Object.getOwnPropertyDescriptor(new FancyDiv(), 'nope_xyz') === undefined; }
+});
+
+testDiff(S, 'Non-configurable classProto descriptor returned accurately', {
+    native:  () => { 
+        class A {}; 
+        Object.defineProperty(A.prototype, 'FROZEN', { value: 42, writable: false, configurable: false, enumerable: true }); 
+        const a = new A();
+        const aProto = Object.getPrototypeOf(a);
+        const d = Object.getOwnPropertyDescriptor(aProto, 'FROZEN'); 
+        return d && d.value === 42 && d.configurable === false;
+    },
+    virtual: () => { 
+        class FancyDiv extends Div {};
+        Object.defineProperty(FancyDiv.prototype, 'FROZEN', { value: 42, writable: false, configurable: false, enumerable: true }); 
+        const el = new FancyDiv(); 
+        const elProto = Object.getPrototypeOf(el);
+        const d = Object.getOwnPropertyDescriptor(elProto, 'FROZEN');
+         return d && d.value === 42 && d.configurable === false;
+    }
+});
+
+testDiff(S, 'GOPD sees classProto descriptor — hasOwnProperty correctly returns false', {
+    native:  () => { 
+        class A { greet() {} }; 
+        const a = new A(); 
+        return (
+            Object.getOwnPropertyDescriptor(a, 'greet') === void 0 && 
+            !Object.prototype.hasOwnProperty.call(a, 'greet')
+        );
+    },
+    virtual: () => { 
+        class FancyDiv extends Div { greet() {} }; 
+        const el = new FancyDiv(); 
+        return (
+            Object.getOwnPropertyDescriptor(el, 'greet') === undefined && 
+            !Object.prototype.hasOwnProperty.call(el, 'greet')
+        ); 
+    }
+});
+
+testDiff(S, 'After defineProperty on instance, GOPD and hasOwnProperty both see instance version', {
+native:  () => { class A { greet() { return 'proto'; } }; const a = new A(); Object.defineProperty(a, 'greet', { value: 'own', configurable: true }); return Object.getOwnPropertyDescriptor(a, 'greet').value === 'own' && Object.prototype.hasOwnProperty.call(a, 'greet'); },
+virtual: () => { class FancyDiv extends Div { greet() { return 'proto'; } }; const el = new FancyDiv(); Object.defineProperty(el, 'greet', { value: 'own', configurable: true }); return Object.getOwnPropertyDescriptor(el, 'greet').value === 'own' && Object.prototype.hasOwnProperty.call(el, 'greet'); }
+});
+
+})();
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SUITE 6 — defineProperty trap
+// ═════════════════════════════════════════════════════════════════════════════
+(function() { const S = 'defineProperty trap';
+
+testDiff(S, 'defineProperty lands on instance, not prototype', {
+native:  () => { class A {}; const a = new A(); const b = new A(); Object.defineProperty(a, 'special', { value: 'mine', writable: false, configurable: true, enumerable: true }); return a.special === 'mine' && b.special === undefined && Object.prototype.hasOwnProperty.call(a, 'special'); },
+virtual: () => { class FancyDiv extends Div {}; const a = new FancyDiv(); const b = new FancyDiv(); Object.defineProperty(a, 'special', { value: 'mine', writable: false, configurable: true, enumerable: true }); return a.special === 'mine' && b.special === undefined && Object.prototype.hasOwnProperty.call(a, 'special'); }
+});
+
+testDiff(S, 'Non-writable property defined on instance is honoured', {
+native:  () => { class A {}; const a = new A(); Object.defineProperty(a, 'CONST', { value: 1, writable: false, configurable: true }); try { a.CONST = 2; } catch(e) {}; return a.CONST === 1; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); Object.defineProperty(el, 'CONST', { value: 1, writable: false, configurable: true }); try { el.CONST = 2; } catch(e) {}; return el.CONST === 1; }
+});
+
+testDiff(S, 'classProto is not polluted by defineProperty on instance', {
+native:  () => { class A {}; const a = new A(); const b = new A(); Object.defineProperty(a, 'solo', { value: 'a', configurable: true }); return !Object.prototype.hasOwnProperty.call(A.prototype, 'solo') && b.solo === undefined; },
+virtual: () => { class FancyDiv extends Div {}; const a = new FancyDiv(); const b = new FancyDiv(); Object.defineProperty(a, 'solo', { value: 'a', configurable: true }); return !Object.prototype.hasOwnProperty.call(FancyDiv.prototype, 'solo') && b.solo === undefined; }
+});
+
+testDiff(S, 'Accessor descriptor defined on instance works', {
+native:  () => { class A {}; const a = new A(); let _v = 0; Object.defineProperty(a, 'acc', { get() { return _v; }, set(v) { _v = v*2; }, configurable: true }); a.acc = 5; return a.acc === 10; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); let _v = 0; Object.defineProperty(el, 'acc', { get() { return _v; }, set(v) { _v = v*2; }, configurable: true }); el.acc = 5; return el.acc === 10; }
+});
+
+testDiff(S, 'Reflect.defineProperty routes to instance', {
+native:  () => { class A {}; const a = new A(); Reflect.defineProperty(a, 'x', { value: 42, configurable: true }); return a.x === 42 && Object.prototype.hasOwnProperty.call(a, 'x'); },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); Reflect.defineProperty(el, 'x', { value: 42, configurable: true }); return el.x === 42 && Object.prototype.hasOwnProperty.call(el, 'x'); }
+});
+
+testDiff(S, 'Reflect.defineProperty with accessor works', {
+native:  () => { class A {}; const a = new A(); let _v = 0; Reflect.defineProperty(a, 'acc', { get() { return _v; }, set(v) { _v = v*10; }, configurable: true }); a.acc = 3; return a.acc === 30; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); let _v = 0; Reflect.defineProperty(el, 'acc', { get() { return _v; }, set(v) { _v = v*10; }, configurable: true }); el.acc = 3; return el.acc === 30; }
+});
+
+})();
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SUITE 7 — deleteProperty trap
+// ═════════════════════════════════════════════════════════════════════════════
+(function() { const S = 'deleteProperty trap';
+
+testDiff(S, 'delete removes own property from instance', {
+native:  () => { class A {}; const a = new A(); a.temp = 'gone'; delete a.temp; return !Object.prototype.hasOwnProperty.call(a, 'temp') && a.temp === undefined; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); el.temp = 'gone'; delete el.temp; return !Object.prototype.hasOwnProperty.call(el, 'temp') && el.temp === undefined; }
+});
+
+testDiff(S, 'delete own-prop shadow restores access to prototype method', {
+native:  () => { class A { greet() { return 'proto'; } }; const a = new A(); a.greet = 'shadow'; delete a.greet; return a.greet() === 'proto' && !Object.prototype.hasOwnProperty.call(a, 'greet'); },
+virtual: () => { class FancyDiv extends Div { greet() { return 'proto'; } }; const el = new FancyDiv(); el.greet = 'shadow'; delete el.greet; return el.greet() === 'proto' && !Object.prototype.hasOwnProperty.call(el, 'greet'); }
+});
+
+testDiff(S, 'delete on one instance does not affect siblings', {
+native:  () => { class A {}; const a = new A(); const b = new A(); a.x = 1; b.x = 2; delete a.x; return a.x === undefined && b.x === 2; },
+virtual: () => { class FancyDiv extends Div {}; const a = new FancyDiv(); const b = new FancyDiv(); a.x = 1; b.x = 2; delete a.x; return a.x === undefined && b.x === 2; }
+});
+
+testDiff(S, 'Deleting non-existent property returns true (spec)', {
+native:  () => { class A {}; return delete (new A()).doesNotExist === true; },
+virtual: () => { class FancyDiv extends Div {}; return delete (new FancyDiv()).doesNotExist === true; }
+});
+
+testDiff(S, 'delete does not corrupt classProto', {
+native:  () => { class A { greet() { return 'hi'; } }; const a = new A(); a.greet = 'overridden'; delete a.greet; return a.greet() === 'hi'; },
+virtual: () => { class FancyDiv extends Div { greet() { return 'hi'; } }; const el = new FancyDiv(); el.greet = 'overridden'; delete el.greet; return el.greet() === 'hi'; }
+});
+
+})();
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SUITE 8 — ownKeys trap
+// ═════════════════════════════════════════════════════════════════════════════
+(function() { const S = 'ownKeys trap';
+
+testDiff(S, 'Object.keys includes instance own enumerable props', {
+native:  () => { class A {}; const a = new A(); a.x = 1; a.y = 2; const k = Object.keys(a); return k.includes('x') && k.includes('y'); },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); el.x = 1; el.y = 2; const k = Object.keys(el); return k.includes('x') && k.includes('y'); }
+});
+
+testDiff(S, 'Object.keys does NOT include class methods', {
+native:  () => { class A { greet() {} }; const a = new A(); return !Object.keys(a).includes('greet'); },
+virtual: () => { class FancyDiv extends Div { greet() {} }; const el = new FancyDiv(); return !Object.keys(el).includes('greet'); }
+});
+
+testDiff(S, 'Reflect.ownKeys includes Symbols on instance', {
+native:  () => { class A {}; const a = new A(); const SYM = Symbol('t'); Object.defineProperty(a, SYM, { value: 1, configurable: true }); return Reflect.ownKeys(a).includes(SYM); },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); const SYM = Symbol('t'); Object.defineProperty(el, SYM, { value: 1, configurable: true }); return Reflect.ownKeys(el).includes(SYM); }
+});
+
+class JK {}
+console.log(JK);
+
+testDiff(S, 'for...in does not yield class method names', {
+    native:  () => { 
+        class A { greet() {} }; 
+        const a = new A();
+        a.own = 1; 
+        const found = []; 
+        for (const k in a) found.push(k); 
+        console.log('native found', a);
+        return !found.includes('greet') && found.includes('own');
+    },
+    virtual: () => { 
+        class FancyDiv extends Div { greet() {} }; 
+        const el = new FancyDiv(); 
+        el.own = 1; 
+        const found = []; 
+        for (const k in el) found.push(k); 
+        console.log('virtual found', found);
+        return !found.includes('greet') && found.includes('own'); }
+});
+
+class A {}
+class B extends A {}
+let c = new B();
+console.log('constr', c.constructor);
+
+
+testDiff(S, 'Non-configurable classProto key appears in ownKeys (Proxy invariant)', {
+    native:  () => { 
+        class A {}; 
+        Object.defineProperty(A.prototype, 'LOCKED', { value: 1, configurable: false, writable: false, enumerable: true }); 
+        const a = new A(); 
+        const aProto = Object.getPrototypeOf(a);
+                        console.log('777', new Div().constructor.prototype);
+        return Reflect.ownKeys(aProto).includes('LOCKED');
+    },
+    virtual: () => { 
+        class FancyDiv extends Div {}; 
+        Object.defineProperty(FancyDiv.prototype, 'LOCKED', { value: 1, configurable: false, writable: false, enumerable: true }); 
+        const el = new FancyDiv(); 
+        const elProto = Object.getPrototypeOf(el);
+        return Reflect.ownKeys(elProto).includes('LOCKED');
+    }
+});
+
+testDiff(S, 'JSON.stringify only includes own enumerable props', {
+native:  () => { class A { greet() {} }; const a = new A(); a.name = 'test'; a.value = 42; const p = JSON.parse(JSON.stringify(a)); return p.name === 'test' && p.value === 42 && p.greet === undefined; },
+virtual: () => { class FancyDiv extends Div { greet() {} }; const el = new FancyDiv(); el.name = 'test'; el.value = 42; const p = JSON.parse(JSON.stringify(el)); return p.name === 'test' && p.value === 42 && p.greet === undefined; }
+});
+
+})();
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SUITE 9 — getPrototypeOf / setPrototypeOf traps
+// ═════════════════════════════════════════════════════════════════════════════
+(function() { const S = 'getPrototypeOf / setPrototypeOf traps';
+
+testDiff(S, 'instanceof HTMLDivElement is true', {
+native:  () => { class A {}; return new A() instanceof A; },
+virtual: () => { class FancyDiv extends Div {}; return new FancyDiv() instanceof HTMLDivElement; }
+});
+
+testDiff(S, 'instanceof HTMLElement is true', {
+native:  () => { class A {}; return new A() instanceof A; },
+virtual: () => { class FancyDiv extends Div {}; return new FancyDiv() instanceof HTMLElement; }
+});
+
+testDiff(S, 'setPrototypeOf routes to instance, does not corrupt classProto', {
+native:  () => { class A {}; const a = new A(); const b = new A(); const np = Object.create(A.prototype); np.injected = () => 'yes'; Object.setPrototypeOf(a, np); return typeof a.injected === 'function' && b.injected === undefined && !Object.prototype.hasOwnProperty.call(A.prototype, 'injected'); },
+virtual: () => { class FancyDiv extends Div {}; const a = new FancyDiv(); const b = new FancyDiv(); const np = Object.create(HTMLDivElement.prototype); np.injected = () => 'yes'; Object.setPrototypeOf(a, np); return typeof a.injected === 'function' && b.injected === undefined && !Object.prototype.hasOwnProperty.call(FancyDiv.prototype, 'injected'); }
+});
+
+
+
+})();
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SUITE 10 — isExtensible / preventExtensions traps
+// ═════════════════════════════════════════════════════════════════════════════
+(function() { const S = 'isExtensible / preventExtensions traps';
+
+testDiff(S, 'Instance is extensible by default', {
+native:  () => { class A {}; return Object.isExtensible(new A()); },
+virtual: () => { class FancyDiv extends Div {}; return Object.isExtensible(new FancyDiv()); }
+});
+
+testDiff(S, 'Freezing one instance does not freeze classProto or siblings', {
+native:  () => { class A {}; const a = new A(); const b = new A(); Object.freeze(a); return Object.isExtensible(A.prototype) && Object.isExtensible(b); },
+virtual: () => { class FancyDiv extends Div {}; const a = new FancyDiv(); const b = new FancyDiv(); Object.freeze(a); return Object.isExtensible(FancyDiv.prototype) && Object.isExtensible(b); }
+});
+
+testDiff(S, 'Object.freeze(instance) — before prop preserved, new prop rejected', {
+native:  () => { class A {}; const a = new A(); a.before = 'yes'; Object.freeze(a); let threw = false; try { a.after = 'no'; } catch(e) { threw = true; } return a.before === 'yes' && (threw || a.after === undefined); },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); el.before = 'yes'; Object.freeze(el); let threw = false; try { el.after = 'no'; } catch(e) { threw = true; } return el.before === 'yes' && (threw || el.after === undefined); }
+});
+/*
+testDiff(S, 'preventExtensions on syntheticProto returns false (shared proto must stay open)', {
+native:  () => { class A {}; const a = new A(); return Reflect.preventExtensions(Object.getPrototypeOf(a)) !== false; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); const sp = Object.getPrototypeOf(el); return Reflect.preventExtensions(sp) === false && Object.isExtensible(el) && Object.isExtensible(FancyDiv.prototype); }
+});
+*/
+})();
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SUITE 11 — Frozen / Sealed prototypes
+// ═════════════════════════════════════════════════════════════════════════════
+(function() { const S = 'Frozen / Sealed prototypes';
+
+testDiff(S, 'Methods on frozen classProto are still callable', {
+native:  () => { class A { greet() { return 'hello'; } }; Object.freeze(A.prototype); return new A().greet() === 'hello'; },
+virtual: () => { class FancyDiv extends Div { greet() { return 'hello'; } }; Object.freeze(FancyDiv.prototype); return new FancyDiv().greet() === 'hello'; }
+});
+
+testDiff(S, 'Writing to frozen classProto method name is refused', {
+native:  () => { class A { greet() { return 'hello'; } }; Object.freeze(A.prototype); const a = new A(); let threw = false; try { a.greet = 'overwrite'; } catch(e) { threw = true; } return threw; },
+virtual: () => { class FancyDiv extends Div { greet() { return 'hello'; } }; Object.freeze(FancyDiv.prototype); const el = new FancyDiv(); let threw = false; try { el.greet = 'overwrite'; } catch(e) { threw = true; } return threw; }
+});
+
+testDiff(S, 'New own property can be added to instance with frozen classProto', {
+native:  () => { class A { greet() {} }; Object.freeze(A.prototype); const a = new A(); a.newProp = 'yes'; return a.newProp === 'yes' && Object.prototype.hasOwnProperty.call(a, 'newProp'); },
+virtual: () => { class FancyDiv extends Div { greet() {} }; Object.freeze(FancyDiv.prototype); const el = new FancyDiv(); el.newProp = 'yes'; return el.newProp === 'yes' && Object.prototype.hasOwnProperty.call(el, 'newProp'); }
+});
+
+testDiff(S, 'Instance own property shadows frozen classProto property (via defineProperty)', {
+native:  () => { class A { greet() { return 'frozen'; } }; Object.freeze(A.prototype); const a = new A(); Object.defineProperty(a, 'greet', { value: () => 'shadowed', writable: true, configurable: true }); return a.greet() === 'shadowed'; },
+virtual: () => { class FancyDiv extends Div { greet() { return 'frozen'; } }; Object.freeze(FancyDiv.prototype); const el = new FancyDiv(); Object.defineProperty(el, 'greet', { value: () => 'shadowed', writable: true, configurable: true }); return el.greet() === 'shadowed'; }
+});
+
+testDiff(S, 'Frozen proto — delete shadow restores proto method', {
+native:  () => { class A { greet() { return 'frozen'; } }; Object.freeze(A.prototype); const a = new A(); Object.defineProperty(a, 'greet', { value: () => 'shadow', configurable: true }); delete a.greet; return a.greet() === 'frozen'; },
+virtual: () => { class FancyDiv extends Div { greet() { return 'frozen'; } }; Object.freeze(FancyDiv.prototype); const el = new FancyDiv(); Object.defineProperty(el, 'greet', { value: () => 'shadow', configurable: true }); delete el.greet; return el.greet() === 'frozen'; }
+});
+
+testDiff(S, 'Sealed proto — assignment creates own property (writable preserved by seal)', {
+native:  () => { class A { greet() { return 'sealed'; } }; Object.seal(A.prototype); const a = new A(); a.greet = 'own'; return a.greet === 'own' && Object.prototype.hasOwnProperty.call(a, 'greet'); },
+virtual: () => { class FancyDiv extends Div { greet() { return 'sealed'; } }; Object.seal(FancyDiv.prototype); const el = new FancyDiv(); el.greet = 'own'; return el.greet === 'own' && Object.prototype.hasOwnProperty.call(el, 'greet'); }
+});
+
+testDiff(S, 'Sealed proto — cannot add new property to prototype itself', {
+native:  () => { class A { greet() {} }; Object.seal(A.prototype); let threw = false; try { A.prototype.newMethod = function() {}; } catch(e) { threw = true; } return threw && !('newMethod' in A.prototype); },
+virtual: () => { class FancyDiv extends Div { greet() {} }; Object.seal(FancyDiv.prototype); let threw = false; try { FancyDiv.prototype.newMethod = function() {}; } catch(e) { threw = true; } return threw && !('newMethod' in FancyDiv.prototype); }
+});
+
+testDiff(S, 'Subclass can shadow frozen parent method', {
+native:  () => { class Base { greet() { return 'base'; } }; Object.freeze(Base.prototype); class Child extends Base { greet() { return 'child'; } }; return new Child().greet() === 'child'; },
+virtual: () => { class Base extends Div { greet() { return 'base'; } }; Object.freeze(Base.prototype); class Child extends Base { greet() { return 'child'; } }; return new Child().greet() === 'child'; }
+});
+
+testDiff(S, 'Subclass shadow does not unfreeze parent — parent still frozen', {
+native:  () => { class Base { greet() { return 'base'; } }; Object.freeze(Base.prototype); class Child extends Base { greet() { return 'child'; } }; return !Object.isExtensible(Base.prototype) && Object.isExtensible(Child.prototype); },
+virtual: () => { class Base extends Div { greet() { return 'base'; } }; Object.freeze(Base.prototype); class Child extends Base { greet() { return 'child'; } }; return !Object.isExtensible(Base.prototype) && Object.isExtensible(Child.prototype); }
+});
+
+testDiff(S, 'Frozen parent — super call from child works', {
+native:  () => { class Base { greet() { return 'base'; } }; Object.freeze(Base.prototype); class Child extends Base { greet() { return super.greet() + '+child'; } }; return new Child().greet() === 'base+child'; },
+virtual: () => { class Base extends Div { greet() { return 'base'; } }; Object.freeze(Base.prototype); class Child extends Base { greet() { return super.greet() + '+child'; } }; return new Child().greet() === 'base+child'; }
+});
+
+testDiff(S, 'Multiple frozen layers in chain — all methods reachable', {
+native:  () => { class A { a() { return 'A'; } }; Object.freeze(A.prototype); class B extends A { b() { return 'B'; } }; Object.freeze(B.prototype); class C extends B { c() { return 'C'; } }; const el = new C(); return el.a() === 'A' && el.b() === 'B' && el.c() === 'C'; },
+virtual: () => { class A extends Div { a() { return 'A'; } }; Object.freeze(A.prototype); class B extends A { b() { return 'B'; } }; Object.freeze(B.prototype); class C extends B { c() { return 'C'; } }; const el = new C(); return el.a() === 'A' && el.b() === 'B' && el.c() === 'C'; }
+});
+
+testDiff(S, 'Frozen classProto GOPD returns accurate non-configurable descriptor', {
+    native:  () => { 
+        class A { greet() {} }; 
+        Object.freeze(A.prototype); 
+        const d = Object.getOwnPropertyDescriptor(A.prototype, 'greet'); 
+        return d && typeof d.value === 'function' && d.configurable === false && d.writable === false;
+    },
+    virtual: () => { 
+        class FancyDiv extends Div { greet() {} }; 
+        Object.freeze(FancyDiv.prototype); 
+        const d = Object.getOwnPropertyDescriptor(FancyDiv.prototype, 'greet'); 
+        return d && typeof d.value === 'function' && d.configurable === false && d.writable === false; }
+    });
+})();
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SUITE 12 — Adversarial / Pathological
+// ═════════════════════════════════════════════════════════════════════════════
+(function() { const S = 'Adversarial / Pathological';
+
+testDiff(S, 'Deeply inherited chain (10 levels) — all methods reachable', {
+native:  () => { let C = class {}; for (let i = 0; i < 10; i++) { const p = C, ii = i; C = class extends p { [`level${ii}`]() { return ii; } }; } const el = new C(); return el.level0() === 0 && el.level9() === 9; },
+virtual: () => { let C = Div; for (let i = 0; i < 10; i++) { const p = C, ii = i; C = class extends p { [`level${ii}`]() { return ii; } }; } const el = new C(); return el.level0() === 0 && el.level9() === 9; }
+});
+
+testDiff(S, '100 methods on classProto — all reachable, none enumerable on instance', {
+native:  () => { class A {}; for (let i = 0; i < 100; i++) A.prototype[`m${i}`] = function() { return i; }; const a = new A(); const allWork = Array.from({length:100},(_,i) => a[`m${i}`]() === i).every(Boolean); return allWork && !Object.keys(a).some(k => k.startsWith('m')); },
+virtual: () => { class FancyDiv extends Div {}; for (let i = 0; i < 100; i++) FancyDiv.prototype[`m${i}`] = function() { return i; }; const el = new FancyDiv(); const allWork = Array.from({length:100},(_,i) => el[`m${i}`]() === i).every(Boolean); return allWork && !Object.keys(el).some(k => k.startsWith('m')); }
+});
+
+testDiff(S, '1000 instances with independent own properties — no cross-contamination', {
+native:  () => { class A {}; const els = []; for (let i = 0; i < 1000; i++) { const a = new A(); a.count = i; els.push(a); } return els.every((e,i) => e.count === i) && !Object.prototype.hasOwnProperty.call(A.prototype, 'count'); },
+virtual: () => { class FancyDiv extends Div {}; const els = []; for (let i = 0; i < 1000; i++) { const el = new FancyDiv(); el.count = i; els.push(el); } return els.every((e,i) => e.count === i) && !Object.prototype.hasOwnProperty.call(FancyDiv.prototype, 'count'); }
+});
+
+testDiff(S, 'Setter receives correct `this` across mixed reads and writes', {
+native:  () => { const log = []; class A { get x() { return this._x ?? 0; } set x(v) { log.push([this, v]); this._x = v; } }; const a = new A(); const b = new A(); a.x = 1; b.x = 2; a.x = 3; return log[0][0] === a && log[1][0] === b && log[2][0] === a && a.x === 3 && b.x === 2; },
+virtual: () => { const log = []; class FancyDiv extends Div { get x() { return this._x ?? 0; } set x(v) { log.push([this, v]); this._x = v; } }; const a = new FancyDiv(); const b = new FancyDiv(); a.x = 1; b.x = 2; a.x = 3; return log[0][0] === a && log[1][0] === b && log[2][0] === a && a.x === 3 && b.x === 2; }
+});
+
+testDiff(S, 'Object.assign into instance works — multiple own props', {
+native:  () => { class A {}; const a = new A(); Object.assign(a, { a: 1, b: 2, c: 3 }); return a.a === 1 && a.b === 2 && a.c === 3; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); Object.assign(el, { a: 1, b: 2, c: 3 }); return el.a === 1 && el.b === 2 && el.c === 3; }
+});
+
+testDiff(S, 'Symbol.iterator defined on class works', {
+native:  () => { class A { *[Symbol.iterator]() { yield 1; yield 2; yield 3; } }; return [...new A()].join(',') === '1,2,3'; },
+virtual: () => { class FancyDiv extends Div { *[Symbol.iterator]() { yield 1; yield 2; yield 3; } }; return [...new FancyDiv()].join(',') === '1,2,3'; }
+});
+
+testDiff(S, 'Getter that throws — error propagates correctly', {
+native:  () => { class A { get explode() { throw new Error('must be React'); } }; expectThrows(() => new A().explode); return true; },
+virtual: () => { class FancyDiv extends Div { get explode() { throw new Error('must be React'); } }; expectThrows(() => new FancyDiv().explode); return true; }
+});
+
+testDiff(S, 'Object.create(instance) inherits from it correctly', {
+    native:  () => { 
+        class A { greet() { return 'hi'; } }; 
+        const a = new A(); 
+        const child = Object.create(a); 
+        child.own = 'yes'; 
+        return child.own === 'yes' && child.greet() === 'hi';
+    },
+    virtual: () => { 
+        class FancyDiv extends Div { greet() { return 'hi'; } }; 
+        const el = new FancyDiv(); 
+        const child = Object.create(el); 
+        child.own = 'yes'; 
+        return child.own === 'yes' && child.greet() === 'hi';
+    }
+});
+
+testDiff(S, 'Adding a method to classProto after construction is visible on instance', {
+native:  () => { class A {}; const a = new A(); A.prototype.newMethod = function() { return 'new'; }; return a.newMethod() === 'new'; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); FancyDiv.prototype.newMethod = function() { return 'new'; }; return el.newMethod() === 'new'; }
+});
+
+testDiff(S, 'Writing to native non-configurable property fails gracefully (nodeType stays 1)', {
+native:  () => { class A { constructor() { Object.defineProperty(this, 'IMMUTABLE', { value: 1, writable: false, configurable: false }); } }; const a = new A(); let threw = false; try { a.IMMUTABLE = 999; } catch(e) { threw = true; } return a.IMMUTABLE === 1; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); let threw = false; try { el.nodeType = 999; } catch(e) { threw = true; } return el.nodeType === 1; }
+});
+
+testDiff(S, 'Static method does not pollute instance', {
+native:  () => { class A { static create() { return new A(); } }; const a = new A(); return typeof A.create === 'function' && a.create === undefined; },
+virtual: () => { class FancyDiv extends Div { static create() { return new FancyDiv(); } }; const el = new FancyDiv(); return typeof FancyDiv.create === 'function' && el.create === undefined; }
+});
+
+testDiff(S, 'Reflect.set works equivalently to direct assignment', {
+native:  () => { class A {}; const a = new A(); Reflect.set(a, 'reflectProp', 'worked'); return a.reflectProp === 'worked' && Object.prototype.hasOwnProperty.call(a, 'reflectProp'); },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); Reflect.set(el, 'reflectProp', 'worked'); return el.reflectProp === 'worked' && Object.prototype.hasOwnProperty.call(el, 'reflectProp'); }
+});
+
+testDiff(S, '__proto__ key as plain data property (not proto mutation)', {
+native:  () => { class A {}; const a = new A(); Object.defineProperty(a, '__proto__', { value: 'a string', configurable: true, enumerable: true }); return Object.getOwnPropertyDescriptor(a, '__proto__').value === 'a string'; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); Object.defineProperty(el, '__proto__', { value: 'a string', configurable: true, enumerable: true }); return Object.getOwnPropertyDescriptor(el, '__proto__').value === 'a string'; }
+});
+
+})();
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SUITE 13 — Post-instantiation prototype mutations
+// ═════════════════════════════════════════════════════════════════════════════
+(function() { const S = 'Post-instantiation prototype mutations';
+
+testDiff(S, 'Method added to prototype after construction is visible on existing instance', {
+native:  () => { class A {}; const a = new A(); A.prototype.newMethod = function() { return 'new'; }; return a.newMethod() === 'new'; },
+virtual: () => { class FancyDiv extends Div {}; const el = new FancyDiv(); FancyDiv.prototype.newMethod = function() { return 'new'; }; return el.newMethod() === 'new'; }
+});
+
+testDiff(S, 'Mutation cascades from parent class to grandchild instance', {
+native:  () => { class Base {}; class Child extends Base {}; const c = new Child(); Base.prototype.inherited = function() { return true; }; return c.inherited() === true && Object.getOwnPropertyDescriptor(c, 'inherited') === undefined; },
+virtual: () => { class FancyDiv extends Div {}; class SuperFancyDiv extends FancyDiv {}; const el = new SuperFancyDiv(); FancyDiv.prototype.inherited = function() { return true; }; return el.inherited() === true && Object.getOwnPropertyDescriptor(el, 'inherited') === undefined; }
+});
+
+testDiff(S, 'Post-mutation inheritance is shadowed by existing subclass override', {
+native:  () => { class Base {}; class Child extends Base { inherited() { return 'shadowed'; } }; Base.prototype.inherited = function() { return true; }; const c = new Child(); return c.inherited() === 'shadowed'; },
+virtual: () => { class FancyDiv extends Div {}; class SuperFancyDiv extends FancyDiv { inherited() { return 'shadowed'; } }; FancyDiv.prototype.inherited = function() { return true; }; return new SuperFancyDiv().inherited() === 'shadowed'; }
+});
+
+testDiff(S, 'Delete of subclass override reveals post-mutation parent method', {
+native:  () => { class Base {}; class Child extends Base { inherited() { return 'shadowed'; } }; Base.prototype.inherited = function() { return true; }; const c = new Child(); delete Child.prototype.inherited; return c.inherited() === true; },
+virtual: () => { class FancyDiv extends Div {}; class SuperFancyDiv extends FancyDiv { inherited() { return 'shadowed'; } }; FancyDiv.prototype.inherited = function() { return true; }; const el = new SuperFancyDiv(); delete SuperFancyDiv.prototype.inherited; return el.inherited() === true; }
+});
+
+})();
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  Render
+// ═════════════════════════════════════════════════════════════════════════════
+
+};
+</script>
+<script>
+// pg-tests.js — playground test cases (CLASSIC script). Each case is one source string:
+// shown on the left, compiled to .js on the right (if lang 'is'), executed via console.eval below.
+// Sandbox globals: Instance, Signal, Store, assert(cond,msg), log(...), play.  Elements attach via el.appendTo(play).
+(function () {
+'use strict';
+var T = {
+
+COMPILER: { lang:'is', blurb:'.is → .js. Watch fields, accessors and async members transform.', cases:[
+{ suite:'Fields & Accessors', name:'reactive field → snapshot + effect', src:
+`class Counter extends Div {
+	$count = 0
+	show$() { this.textContent = 'count: ' + this.$count }
+}
+const c = new Counter().appendTo(play)
+assert(c.textContent === 'count: 0', 'initial value rendered')
+c.$count = 5
+assert(c.textContent === 'count: 5', 'writing the field re-ran the effect')` },
+{ suite:'Fields & Accessors', name:'getter + setter pass through', src:
+`class Temp extends Div {
+	$c = 20
+	get $f() { return this.$c * 9 / 5 + 32 }
+	set $f(v) { this.$c = (v - 32) * 5 / 9 }
+	show$() { this.textContent = this.$c + 'C = ' + this.$f + 'F' }
+}
+const t = new Temp().appendTo(play)
+assert(t.textContent === '20C = 68F', 'getter computed from the field')
+t.$f = 212
+assert(t.$c === 100, 'the setter ran')` },
+{ suite:'Async Members', name:'async field — settles on await new', src:
+`class Loader extends Div {
+	async $data = Promise.resolve('loaded')
+	show$() { this.textContent = String(this.$data) }
+}
+const l = (await new Loader()).appendTo(play)
+assert(l.$data === 'loaded', 'async field resolved')
+assert(l.textContent === 'loaded', 'effect saw the settled value')` },
+{ suite:'Fields & Accessors', name:'one field, two effects — both re-run on a single write', src:
+`class Twin extends Div {
+	$n = 0
+	a$() { this.setAttribute('data-a', String(this.$n)) }
+	b$() { this.setAttribute('data-b', String(this.$n * 2)) }
+}
+const t = new Twin().appendTo(play)
+assert(t.getAttribute('data-a') === '0' && t.getAttribute('data-b') === '0', 'both effects armed')
+t.$n = 3
+assert(t.getAttribute('data-a') === '3' && t.getAttribute('data-b') === '6', 'one write, two subscribers, both current')` },
+{ suite:'Fields & Accessors', name:'one effect, two plain $ reads — CONSENSUS: fires when every dependency has moved', src:
+`class Pair extends Div {
+	$a = 1
+	$b = 2
+	sum$() { this.textContent = String(this.$a + this.$b) }
+}
+const p = new Pair().appendTo(play)
+assert(p.textContent === '3', 'armed over both dependencies')
+p.$a = 10
+assert(p.textContent === '3', 'one of two moved — the consensus barrier holds')
+p.$b = 20
+assert(p.textContent === '30', 'both moved — the effect fires once, seeing both new values (union is what Δ is for)')` }
+]},
+
+CORE: { lang:'is', blurb:'The element IS the instance — a real node, identity sacred.', cases:[
+{ suite:'Identity', name:'identity — element IS the instance', src:
+`class Hello extends Div {
+	$name = 'world'
+	constructor() { super(); this.textContent = 'Hello, ' + this.$name + '!' }
+}
+const h = new Hello().appendTo(play)
+assert(h instanceof Div && h.tagName === 'DIV', 'a real <div>')
+assert(h === play.querySelector('div'), 'new Hello() === the mounted node')
+assert(h.textContent === 'Hello, world!', 'constructor read the field')` },
+{ suite:'Inheritance', name:'3-level inheritance + leaf effect on inherited field', src:
+`class A extends Div { $a = 1 }
+class B extends A { $b = 2 }
+class C extends B {
+	$c = 3
+	show$() { this.textContent = 'inherited a = ' + this.$a }
+}
+const c = new C().appendTo(play)
+assert(c instanceof A && c instanceof B && c instanceof Div, 'instanceof at every level')
+assert(c.$a === 1 && c.$b === 2 && c.$c === 3, 'fields from all three levels')
+c.$a = 50
+assert(c.textContent === 'inherited a = 50', 'leaf effect re-ran on inherited field')` },
+{ suite:'Thenable Protocol', name:'self-settling thenable — await new', src:
+`class Async extends Div {
+	async $v = Promise.resolve(7)
+	show$() { this.textContent = 'v = ' + String(this.$v) }
+}
+const el = await new Async()
+assert(el.$v === 7, 'awaiting the element settled the field')
+assert(el.textContent === 'v = 7', 'effect ran against the settled value')
+el.appendTo(play)` },
+{ suite:'Identity', name:'instanceof Instance — the mint is the brand (Q5); tag-specificity survives', src:
+`class FancyDiv extends Div {}
+class SuperFancyDiv extends FancyDiv {}
+const sf = new SuperFancyDiv()
+assert(sf instanceof SuperFancyDiv && sf instanceof FancyDiv && sf instanceof Div, 'the class chain')
+assert(sf instanceof Instance, 'and Instance itself — via Symbol.hasInstance, not a proto-chain link')
+assert(sf instanceof HTMLDivElement && sf instanceof Element && sf instanceof Node, 'every native ancestor still answers true')
+assert(!(new Span() instanceof Div) && (new Span() instanceof Instance), 'tag-specificity holds: a span is an Instance but not a Div')
+assert(!(document.createElement('div') instanceof Instance), 'a native div that never went through the mint is NOT an Instance')
+assert(Div instanceof Instance && !({} instanceof Instance), 'a Meta is an Instance; a plain object is not')` }
+]},
+
+DSL: { lang:'js', blurb:'Placement grammar — the directive decides where the element lands.', cases:[
+{ suite:'Placement', name:'@append — last child', src:
+`const target = document.createElement('section'); target.className = 'demo-append'; play.appendChild(target)
+const child = new Div('@append .demo-append'); child.textContent = 'appended child'
+assert(target.contains(child), 'placed inside .demo-append')
+assert(target.lastElementChild === child, 'and it is the last child')` },
+{ suite:'Placement', name:'@prepend — first child', src:
+`const target = document.createElement('section'); target.className = 'demo-prepend'; target.innerHTML = '<b>existing</b>'; play.appendChild(target)
+const first = new Div('@prepend .demo-prepend'); first.textContent = 'prepended child'
+assert(target.firstElementChild === first, '@prepend made it the first child')` },
+{ suite:'Placement', name:'@before / @after — siblings', src:
+`const anchor = document.createElement('div'); anchor.className = 'the-anchor'; anchor.textContent = 'anchor'; play.appendChild(anchor)
+const b = new Div('@before .the-anchor'); b.textContent = 'before'
+const a = new Div('@after .the-anchor');  a.textContent = 'after'
+assert(b.nextElementSibling === anchor, '@before sits just before the anchor')
+assert(a.previousElementSibling === anchor, '@after sits just after the anchor')` },
+{ suite:'Placement', name:'@after × 2 — each insert lands immediately after the target (newest closest)', src:
+`const anchor = document.createElement('section'); anchor.className = 'demo-stack'; play.appendChild(anchor)
+const first = new Div('@after .demo-stack'); first.textContent = 'first'
+const second = new Div('@after .demo-stack'); second.textContent = 'second'
+assert(anchor.nextElementSibling === second, 'the newest @after sits closest to the target')
+assert(second.nextElementSibling === first, 'and the earlier one was pushed outward — native insertion semantics')` },
+{ suite:'Placement', name:'placement wants a selector — an element target throws the [DSL] guidance error', src:
+`const t = document.createElement('section'); t.className = 'demo-guard'; play.appendChild(t)
+let msg = null
+try { new Div('@append', t) } catch (e) { msg = e.message }
+assert(msg !== null, 'element-as-target is rejected, not silently misplaced')
+assert(msg.includes('[DSL]'), 'and the error self-identifies: ' + msg.slice(0, 60))` }
+]},
+
+KERNEL: { lang:'is', blurb:'The Chimera V17 trit-kernel through .is sigils. Prefix=computed, suffix=effect; Δ=union(OR), $=consensus(AND); depth: @=atomic (reference-update), $=shallow, $$=deep; @-names lower to brackets; get X()=volatile, this.X(fn)=active.', cases:[
+
+{ suite:'Effects (suffix · active)', name:'show$() — the render effect (consensus atomic)', src:
+`// name$() is a Semantic Consensus Atomic Effect. show$ is the canonical one.
+class Counter extends Div {
+	$count = 0
+	show$() { this.textContent = 'count: ' + this.$count }
+}
+const c = new Counter().appendTo(play)
+assert(c.textContent === 'count: 0', 'effect ran on construction')
+c.$count = 5
+assert(c.textContent === 'count: 5', 're-ran when its dependency moved')` },
+
+{ suite:'Computed (prefix)', name:'get $x() — volatile computed (never memoized)', src:
+`// get $name() is a Volatile Passive Consensus Atomic Computed — re-evaluated on every read.
+class T extends Div {
+	$a = 3
+	get $double() { return this.$a * 2 }
+	show$() { this.textContent = String(this.$double) }
+}
+const t = new T().appendTo(play)
+assert(t.$double === 6, 'getter computed from the field')
+t.$a = 10
+assert(t.$double === 20, 'recomputed live on the next read')
+assert(t.textContent === '20', 'the effect that reads it re-ran too')` },
+
+{ suite:'Computed (prefix)', name:'$x() — method computed returns the reactive value', src:
+`// $name() (method form) returns the computed value, tracking its dependency.
+class T extends Div {
+	$a = 4
+	$triple() { return this.$a * 3 }
+}
+const t = new T().appendTo(play)
+assert(t.$triple() === 12, 'method computed returns 12')
+t.$a = 5
+assert(t.$triple() === 15, 'reflects the updated field')` },
+
+{ suite:'Effects (suffix · active)', name:'name$() — a consensus effect auto-arms and re-runs', src:
+`// A suffix-$ method is an effect: it arms itself at construction and re-runs on change.
+class T extends Div {
+	$a = 0
+	hits = 0
+	watch$() { this.hits = this.hits + 1; this.$a }
+}
+const t = new T()
+assert(t.hits === 1, 'the effect armed itself at construction')
+t.$a = 1
+assert(t.hits === 2, 'and re-ran when its dependency changed')
+t.appendTo(play)` },
+
+{ suite:'Union vs Consensus', name:'Union (Δ) vs Consensus ($) — OR vs AND', src:
+`// Two effects over the SAME two deps. Δ = union (fires on ANY); $ = consensus (fires when ALL move).
+class T extends Div {
+	$a = 0
+	$b = 0
+	u = 0
+	c = 0
+	watchΔ() { this.u = this.u + 1; this.$a; this.$b }
+	watch$() { this.c = this.c + 1; this.$a; this.$b }
+}
+const t = new T()
+assert(t.u === 1 && t.c === 1, 'both ran once at construction')
+t.$a = 1
+assert(t.u === 2, 'UNION fired — one dep moved')
+assert(t.c === 1, 'CONSENSUS held — not every dep has moved yet')
+t.$b = 1
+assert(t.u === 3, 'union fired again')
+assert(t.c === 2, 'consensus fired — now both deps have moved')
+t.appendTo(play)` },
+
+{ suite:'Union vs Consensus', name:'consensus barrier resets after firing', src:
+`// After a consensus effect fires, every dep must move AGAIN before it fires once more.
+class T extends Div {
+	$a = 0
+	$b = 0
+	c = 0
+	watch$() { this.c = this.c + 1; this.$a; this.$b }
+}
+const t = new T()
+assert(t.c === 1, 'ran at construction')
+t.$a = 1; t.$b = 1
+assert(t.c === 2, 'both moved → fired once')
+t.$a = 2
+assert(t.c === 2, 'only a moved again → barrier holds')
+t.$b = 2
+assert(t.c === 3, 'b moved → barrier satisfied, fires again')
+t.appendTo(play)` },
+
+{ suite:'Union vs Consensus', name:'Δ union effect — fires on every change', src:
+`// nameΔ() is a Union effect: any tracked dep moving fires it, every time.
+class T extends Div {
+	$a = 0
+	$b = 0
+	fires = 0
+	syncΔ() { this.fires = this.fires + 1; this.$a; this.$b }
+}
+const t = new T()
+assert(t.fires === 1, 'armed at construction')
+t.$a = 1; assert(t.fires === 2, 'fired on a')
+t.$b = 1; assert(t.fires === 3, 'fired on b')
+t.$a = 2; assert(t.fires === 4, 'fires on every change (OR semantics)')
+t.appendTo(play)` },
+
+{ suite:'Effects (suffix · active)', name:'this.$(fn) — active effect runs immediately', src:
+`// this.$(fn) registers a Semantic Active Consensus Effect that runs at once, then on change.
+class T extends Div {
+	$a = 0
+	runs = 0
+	constructor() { super(); this.$(() => { this.runs = this.runs + 1; this.$a }) }
+}
+const t = new T()
+assert(t.runs === 1, 'the active effect ran immediately on registration')
+t.$a = 1
+assert(t.runs === 2, 'and re-ran when the dependency changed')
+t.appendTo(play)` },
+
+{ suite:'Effects (suffix · active)', name:'this.Δ(fn) vs this.$(fn) — active union vs consensus', src:
+`// The active forms carry the same union/consensus split as the declared ones.
+class T extends Div {
+	$a = 0
+	$b = 0
+	u = 0
+	c = 0
+	constructor() {
+		super()
+		this.Δ(() => { this.u = this.u + 1; this.$a; this.$b })
+		this.$(() => { this.c = this.c + 1; this.$a; this.$b })
+	}
+}
+const t = new T()
+assert(t.u === 1 && t.c === 1, 'both active effects ran immediately')
+t.$a = 1
+assert(t.u === 2 && t.c === 1, 'union fired on one dep; consensus waited')
+t.$b = 1
+assert(t.u === 3 && t.c === 2, 'union fired again; consensus fired once both moved')
+t.appendTo(play)` },
+
+{ suite:'Depth Tiers (@ · $ · $$)', name:'@value — atomic field, reference-update semantics', src:
+`// @name is atomic: only replacing the reference fires; mutating the referent does not.
+class T extends Div {
+	@obj = { a: { b: 1 } }
+	renders = 0
+	show$() { this.renders = this.renders + 1; this.textContent = String(this.@obj.a.b) }
+}
+const t = new T().appendTo(play)
+assert(t.renders === 1, 'rendered once')
+t.@obj.a.b = 99
+assert(t.renders === 1, 'nested mutation does NOT fire \u2014 atomic is reference-only')
+assert(t.@obj.a.b === 99, 'the raw value is untouched \u2014 opaque both ways')
+t.@obj = { a: { b: 2 } }
+assert(t.renders === 2 && t.textContent === '2', 'reassigning the reference fires')` },
+
+{ suite:'Depth Tiers (@ · $ · $$)', name:'$value — shallow field, top-level keys fire, nested does not', src:
+`// $name (single $) is shallow: a top-level property change fires; a nested one does not.
+class T extends Div {
+	$o = { a: { b: 1 } }
+	renders = 0
+	show$() { this.renders = this.renders + 1; this.textContent = String(this.$o.a.b) }
+}
+const t = new T().appendTo(play)
+assert(t.renders === 1, 'rendered once')
+t.$o.a.b = 99
+assert(t.renders === 1, 'nested mutation does NOT fire \u2014 shallow tracks one level')
+t.$o.a = { b: 9 }
+assert(t.renders === 2, 'replacing a top-level property fires')` },
+
+{ suite:'Depth Tiers (@ · $ · $$)', name:'$$tree — deep field, nested mutation is reactive', src:
+`// $$name (double $) is deeply proxied: mutating a nested leaf fires readers.
+class T extends Div {
+	$$tree = { user: { name: 'ada' } }
+	renders = 0
+	show$() { this.renders = this.renders + 1; this.textContent = this.$$tree.user.name }
+}
+const t = new T().appendTo(play)
+assert(t.textContent === 'ada' && t.renders === 1, 'deep field rendered')
+t.$$tree.user.name = 'lovelace'
+assert(t.textContent === 'lovelace' && t.renders === 2, 'a nested mutation re-ran the effect')` },
+
+{ suite:'@-Names & Shadows', name:'@-named members — fields, methods, suffix-@ all lower to brackets', src:
+`// @x \u2192 ['@x'], @fn() \u2192 ['@fn'](), fn@() \u2192 ['fn@'](); the AOT compiler converts every position.
+class T extends Div {
+	@count = 0
+	@greet() { return 'hi' }
+	bump@() { this.@count = this.@count + 1; return this.@count }
+}
+const t = new T().appendTo(play)
+assert(t.@count === 0, '@-field seeded')
+assert(typeof t.@greet === 'function' && t.@greet() === 'hi', '@-prefix method lowered + callable')
+assert(t.bump@() === 1 && t.@count === 1, 'suffix-@ method lowered + callable, mutates the atomic field')` },
+
+{ name:"this['@'](fn) — active atomic effect", src:
+`// the inline atomic effect: runs once at construction.
+class T extends Div {
+	ran = 0
+	constructor() { super(); this['@'](() => { this.ran = this.ran + 1 }) }
+}
+const t = new T()
+assert(t.ran === 1, "this['@'](fn) ran as an atomic active effect")` },
+
+{ suite:'@-Names & Shadows', name:'@-shadow: atomic key inside a deep object (isolated watchers show the prune)', src:
+`// Inside a $$-deep object, an @-key is atomic: opaque value, fires only when its reference is swapped.
+// Two isolated watchers (one dep each) keep the consensus AND-barrier out of the picture.
+class Model extends Div {
+	$$state = { @stamp: new Date(0), items: [] }
+	stampRuns = 0
+	itemRuns = 0
+	stamp$() { this.stampRuns = this.stampRuns + 1; this.$$state.@stamp }
+	items$() { this.itemRuns = this.itemRuns + 1; this.$$state.items.length }
+}
+const m = new Model()
+assert(m.stampRuns === 1 && m.itemRuns === 1, 'both watchers armed at construction')
+m.$$state.@stamp.setFullYear(1999)
+assert(m.stampRuns === 1, '@stamp atomic: in-place Date mutation does not fire')
+m.$$state.items.push('x')
+assert(m.itemRuns === 2, 'deep sibling: push fires the items watcher')
+assert(m.stampRuns === 1, 'and is shadowed from the @stamp watcher (pruned from deep tracking)')
+m.$$state.@stamp = new Date(1)
+assert(m.stampRuns === 2, 'swapping the @stamp reference fires its watcher')
+m.appendTo(play)` },
+{ suite:'Write Semantics', name:'same-value write — the arena dedupes; a changed write fires', src:
+`class Ded extends Div {
+	$v = 1
+	runs = 0
+	see$() { void this.$v; this.runs++ }
+}
+const d = new Ded().appendTo(play)
+const armed = d.runs
+assert(armed >= 1, 'effect armed')
+d.$v = 1
+assert(d.runs === armed, 'writing the SAME value does not re-fire (epoch dedupe)')
+d.$v = 2
+assert(d.runs === armed + 1, 'a changed value fires exactly once')` },
+{ suite:'Write Semantics', name:'derived computed over two sources — the chain honors the consensus barrier', src:
+`class Sum extends Div {
+	$x = 2
+	$y = 3
+	get $total() { return this.$x * this.$y }
+	show$() { this.textContent = String(this.$total) }
+}
+const s = new Sum().appendTo(play)
+assert(s.textContent === '6', 'computed armed through the effect')
+s.$x = 5
+assert(s.textContent === '6', 'one source moved — the barrier holds through the derivation')
+s.$y = 4
+assert(s.textContent === '20' && s.$total === 20, 'both moved — one recompute, both new values visible')` },
+{ suite:'Write Semantics', name:'disposed store is inert — writes after teardown neither throw nor re-fire', src:
+`class Late extends Div {
+	$k = 1
+	runs = 0
+	tick$() { void this.$k; this.runs++ }
+}
+const l = new Late().appendTo(play)
+const before = l.runs
+l.remove(true)
+await new Promise(r => setTimeout(r, 15))
+let threw = false
+try { l.$k = 99 } catch (e) { threw = true }
+assert(!threw, 'a write to a disposed element does not throw')
+assert(l.runs === before, 'and the drained effect never re-fires — the store died with the element')` }
+]},
+
+MISC: { lang:'is', blurb:'Events and full-stack integration — everything wired together.', cases:[
+{ suite:'Events → Effects', name:'event — onclick → field → effect', src:
+`class Btn extends Button {
+	$n = 0
+	constructor() { super(); this.onclick = () => { this.$n = this.$n + 1 } }
+	show$() { this.textContent = 'count ' + this.$n }
+}
+const b = new Btn().appendTo(play)
+assert(b.textContent === 'count 0', 'initial render')
+b.click()
+assert(b.textContent === 'count 1', 'native .click() incremented and re-rendered')
+b.click()
+assert(b.textContent === 'count 2', 'and again')` },
+{ suite:'Events → Effects', name:'event — addEventListener + dispatchEvent', src:
+`class Box extends Div {
+	$hits = 0
+	constructor() { super(); this.addEventListener('ping', () => { this.$hits = this.$hits + 1 }) }
+	show$() { this.textContent = 'hits ' + this.$hits }
+}
+const x = new Box().appendTo(play)
+assert(x.textContent === 'hits 0', 'initial render')
+x.dispatchEvent(new Event('ping'))
+assert(x.textContent === 'hits 1', 'custom event mutated the field and re-rendered')` },
+{ suite:'Full Assimilation', name:'assimilated — every layer in tandem', src:
+`const host = document.createElement('section'); host.className = 'app-host'; play.appendChild(host)
+class CounterApp extends Button {
+	$count = 0
+	get $label() { return this.$count === 0 ? 'Click me' : 'Clicked ' + this.$count + 'x' }
+	constructor(...args) { super(...args); this.onclick = () => { this.$count = this.$count + 1 } }
+	show$() { this.textContent = this.$label }
+}
+const app = new CounterApp('@append .app-host')
+assert(host.contains(app), 'DSL @append dropped the app into .app-host')
+assert(app.textContent === 'Click me', 'getter-driven initial label')
+app.click(); app.click(); app.click()
+assert(app.$count === 3, 'three clicks → state is 3')
+assert(app.textContent === 'Clicked 3x', 'event → field → getter → effect, all in tandem')` },
+]},
+
+API: { lang:'js', blurb:'Ported runtime API (0.87.3): collection queries, on/off events with delegation, .set sigil-dispatch, makeChainable sequencing. 0.87 semantics (V17 store + Lifecycle) override; custom-element model discarded.', cases:[
+{ suite:'Collections & Registry', name:'collection — .find returns an iterable Collection; Class.where queries the registry', src:
+`const host = new Div().appendTo(play)
+host.appendChild(new Span()); host.appendChild(new Span())
+const found = host.find('span')
+assert(found.length === 2, 'find() returns a Collection of matches')
+assert(found.first().tagName.toLowerCase() === 'span', 'collection.first()')
+assert([...found].length === 2, 'a Collection is iterable')
+assert(Div.where(el => el === host).length === 1, 'Class.where() queries the live-instance registry')` },
+
+{ suite:'Events', name:'events — on / trigger / emit + delegation + named off', src:
+`const el = new Div().appendTo(play)
+let n = 0
+el.on('ping', () => n++)
+el.trigger('ping'); el.emit('ping')
+assert(n === 2, 'on() handler ran for both trigger and emit')
+let last = null
+el.on('click', 'button', (e, t) => { last = t.tagName.toLowerCase() })
+const btn = new Button(); el.appendChild(btn)
+btn.dispatchEvent(new Event('click', { bubbles: true }))
+assert(last === 'button', 'delegated handler receives the matched target')
+let m = 0
+el.on('tap#save', () => m++)
+el.trigger('tap'); assert(m === 1, 'named listener fired')
+el.off('#save'); el.trigger('tap'); assert(m === 1, "off('#save') removed exactly that listener")` },
+
+{ suite:'Events', name:'events — reactive condition tier on({ $field: value })', src:
+`const el = new Div().appendTo(play)
+el.$count = 0
+let fired = 0
+el.on({ $count: 3 }, () => fired++)
+el.$count = 1; assert(fired === 0, 'condition not yet met')
+el.$count = 3; assert(fired === 1, 'fires when the field reaches the value (V17 effect)')
+el.$count = 3; assert(fired === 1, 'no re-fire on an unchanged value')` },
+
+{ suite:'Events', name:'events — afterFn (5th arg): runs after the handler, sync or async', src:
+`const el = new Div().appendTo(play)
+let order = []
+el.on('go', () => { order.push('handler'); return 42 }, (rv, d) => {
+  order.push('after')
+  assert(rv === 42, 'afterFn receives the handler return value')
+  assert(d.e && d.e.type === 'go', 'details carry the event')
+  assert(d.count === 1 && typeof d.time === 'number', 'details carry a 1-based count + time')
+  assert(d.error === undefined, 'no error on the happy path')
+})
+el.trigger('go')
+assert(order.join() === 'handler,after', 'afterFn runs immediately after a sync handler')
+let settled = false
+el.on('aw', async () => { await Promise.resolve(); return 'ok' }, (rv) => { settled = true; assert(rv === 'ok', 'afterFn receives the resolved value') })
+el.trigger('aw')
+assert(settled === false, 'afterFn waits — the async handler has not settled yet')
+await new Promise(r => setTimeout(r, 0))
+assert(settled === true, 'afterFn ran after the async handler settled')` },
+
+{ suite:'Effects Hook', name:'effects — [EFFECTS] descriptors: at:"new" / at:"mount" / arbitrary event', src:
+`const E = Symbol.for('Instance.effects')
+const { code } = Instance.Compiler.compile('class FX extends Div { $n = 1 }')
+const FX = new Function('Div', code + '\\nreturn FX')(Div)
+FX.prototype[E] = function () { return [
+  { at: 'new',   fn(el) { el.dataset.n = 'new:' + el.$n } },
+  { at: 'go',    fn(el) { el.dataset.go = 'v' + el.$n } },
+  { at: 'mount', fn(el) { el.dataset.m = 'm' + el.$n } },
+] }
+const el = new FX()
+assert(el.dataset.n === 'new:1', 'at:"new" minted at construction')
+assert(el.dataset.go === undefined && el.dataset.m === undefined, 'deferred descriptors not armed yet')
+el.trigger('go')
+assert(el.dataset.go === 'v1', 'arbitrary event ("go") armed on first occurrence')
+el.$n = 5
+assert(el.dataset.n === 'new:5' && el.dataset.go === 'v5', 'both are LIVE effects (re-run on dep change)')
+el.appendTo(play)
+await new Promise(r => setTimeout(r, 20))
+assert(el.dataset.m === 'm5', 'at:"mount" armed when @mount fired')` },
+
+{ suite:'Triad & ψ', name:'triad — $count tracked · $("k") untracked · $.k is the Signal handle', src:
+`const { code } = Instance.Compiler.compile('class TR extends Div { $count = 1\\n @at = 2\\n øn = 3 }')
+const TR = new Function('Div', code + '\\nreturn TR')(Div)
+const el = new TR()
+let tracked = 0, untracked = 0
+new Signal.Effect(() => { void el.$count; tracked++ })
+new Signal.Effect(() => { void el.$('count'); untracked++ })
+el.$count = 5
+await Promise.resolve()
+assert(tracked === 2 && untracked === 1, 'accessor tracks; function syntax peeks')
+assert(el.$('count', 9) === 9 && el.$count === 9, 'two-arg function form writes + notifies')
+const h = el.$.count
+assert(typeof h.get === 'function' && h.get() === 9, '$.count is the Signal handle')
+assert(el.$.count + 1 === 10, 'Symbol.toPrimitive coerces the handle')
+assert(el['@']('at') === 2 && typeof el['@'].at.get === 'function', '@ triad')
+assert(el.ø('n') === 3 && typeof el.ø.n.get === 'function', 'ø triad exists')
+assert(typeof el.$.toString.get === 'function', 'ghost functor: protocol names are ordinary cells')` },
+
+{ suite:'Triad & ψ', name:'ψ — chainable seeding functor: writes · effect · unwrap · ghost triads', src:
+`const { code } = Instance.Compiler.compile('class PS extends Div { $n = 1 }')
+const PS = new Function('Div', code + '\\nreturn PS')(Div)
+const el = new PS()
+const back = el.ψ('$count', 0)('$abc', 1)(() => { void el.$count })()
+assert(back === el, 'zero-arg unwraps to the element')
+assert(el.$count === 0 && el.$abc === 1, 'chained writes landed')
+el.ψ('plain', 7)
+assert(el.$plain === 7, 'bare key defaults to the $ tier')
+let runs = 0
+el.ψ(() => { void el.$count; runs++ })
+el.$count = 5
+await Promise.resolve()
+assert(runs === 2, 'ψ(fn) is a live shallow effect')
+assert(el.ψ === el.ψ && el.$ === el.$, 'accessors are identity-stable')
+const t = el.$
+const r = await Promise.resolve(t)
+assert(r === t, 'triads are await-safe (then reserved)')` },
+
+{ suite:'0.73 Ports', name:'once / bind / callbind — the 0.73 ports', src:
+`const el = new Div().appendTo(play)
+let n = 0; el.once('ping', () => n++)
+el.trigger('ping'); el.trigger('ping')
+assert(n === 1, 'once fires exactly once')
+el.$count = 1
+el.bind('bump', '$count', ($) => $.count.get() + 1)
+el.trigger('bump')
+assert(el.$count === 2, 'bind(event, key, fn) writes the computed result')
+el.bind({ '$label': ($) => 'n:' + $.count.get() })
+el.$count = 7
+await Promise.resolve()
+assert(el.$label === 'n:7', 'bind({}) stays live via ψ')
+const { set, peek, once } = el.callbind()
+assert(set('$count', 10) === el && peek('count') === 10, 'callbind: mutators chain, readers return')
+let o = 0; once('pong', () => o++); el.trigger('pong'); el.trigger('pong')
+assert(o === 1, 'destructured once — this-loss solved')` },
+
+{ suite:'Events', name:'event tiers — #hot-swap · ##scope · :: · ::: · : · per-cb off', src:
+`const el = new Div().appendTo(play)
+let a = 0, b = 0
+el.on('ping#save', () => a++)
+el.on('ping#save', () => b++)
+el.trigger('ping')
+assert(a === 0 && b === 1, 'identity hot-swap replaces')
+let sh = 0; el.on('::fade', (ctx) => sh += ctx.n)
+el['::fade']({ n: 5 })
+assert(sh === 5, '::shadow tier fans')
+let seen = 0; el.on(':::fade', () => seen++)
+el.on('@fade', () => {}); el.on('::fade', () => {})
+assert(seen === 2, ':::meta observes @/:: registrations')
+let mc = 0; el.on(':click', () => mc++)
+el.addEventListener('click', () => {})
+assert(mc === 1, ':meta observes native addEventListener')
+let l1 = 0, l2 = 0; const f1 = () => l1++
+el.on('@tick', f1); el.on('@tick', () => l2++)
+el.off('@tick', f1); el['@tick']({})
+assert(l1 === 0 && l2 === 1, 'per-callback lifecycle off')` },
+
+{ suite:'Store', name:'Store — unified constructor: manual / engine / seed / factory(memo)', src:
+`const S = Signal.Store
+const man = new S(); man.write('$name', 'Ada')
+assert(man.read('$name') === 'Ada' && man.isMemo === false, 'manual mode preserved')
+const eng = new S(Signal.get())
+assert(eng.engine === Signal.get(), 'engine handle detected')
+const seeded = new S({ name: 'Ada', $count: 3 })
+assert(seeded.read('name') === 'Ada' && seeded.get('$count') === 3, 'seed mode writes entries verbatim')
+let calls = 0
+const cache = new S((a, b) => { calls++; return a + b }, { maxSize: 2 })
+assert(cache.get(1, 2) === 3 && cache.get(1, 2) === 3 && calls === 1, 'factory mode caches via memo trie')
+cache.get(2, 3); cache.get(3, 4); cache.get(1, 2)
+assert(calls === 4, 'FIFO eviction at maxSize recomputes evicted signature')
+let threw = false; try { cache.set('x', 1) } catch (e) { threw = true }
+assert(threw, 'set() on a factory store throws')
+assert(cache.has(1, 2) && !cache.has(9, 9), 'has() peeks a signature without computing')
+assert(cache.delete(1, 2) === true && !cache.has(1, 2), 'per-signature delete()')
+assert(typeof cache.size === 'number', 'size reflects live signatures')
+cache.clear(); assert(cache.size === 0, 'clear() empties the cache')
+const mg = new S({ a: 1, b: 2 })
+assert(mg.size === 2 && mg.delete('a') && !mg.has('a') && mg.get('a') === undefined, 'manual per-key: delete/has/get unified')
+assert(mg.delete('a') === false && mg.size === 1, 'deleted keys stay deleted (Map-like get, no resurrection)')` },
+
+{ suite:'Sigil Dispatch', name:'set — sigil-dispatch (.class / $store / attribute / text)', src:
+`const el = new Div().appendTo(play)
+el.set('.active', true); assert(el.classList.contains('active'), '.key toggles a class')
+el.set('$label', 'hi'); assert(el.$label === 'hi', '$key writes the reactive store')
+el.set('data-role', 'nav'); assert(el.getAttribute('data-role') === 'nav', 'plain key sets an attribute')
+el.set('just text'); assert(el.textContent === 'just text', 'a bare string becomes textContent')` },
+
+{ suite:'Chaining', name:'makeChainable — async methods sequence; await el stays honest', src:
+`const el = new Div().appendTo(play)
+const chain = el.sleep(10).set('done')
+assert(el.textContent === '', 'set is deferred behind the sleep (t=0)')
+await chain
+assert(el.textContent === 'done', 'set ran AFTER the sleep resolved (sequential lane)')
+let slept = false
+const el2 = new Div().appendTo(play)
+el2.sleep(10, () => { slept = true })
+assert(slept === false, 'the work has not run yet')
+await el2
+assert(slept === true, 'await el waits for work started through the sequential lane (AWAITING fold)')` },
+{ suite:'Vocabulary', name:'vocabulary — semantic tags are Instance classes (boot ring, no flag)', src:
+`const em = document.createElement('email'); em.textContent = 'a@b.co';
+const rs = document.createElement('reset');
+const st = document.createElement('static');
+play.appendChild(em); play.appendChild(rs); play.appendChild(st);
+await new Promise(r => setTimeout(r, 40));
+const a = em.querySelector('a');
+assert(a && a.getAttribute('href') === 'mailto:a@b.co', '<email> decorated into a mailto anchor');
+assert(rs.getAttribute('role') === 'button' && rs.getAttribute('tabindex') === '0', '<reset> is activatable');
+assert(st.hasAttribute('data-static'), '<static> marked');
+assert(Object.getPrototypeOf(em) === Instance.elements.Email.prototype, 'the element IS an Email instance (proto-spliced in place)');
+em.dispose(); rs.dispose(); st.dispose();` },
+{ suite:'Vocabulary', name:'vocabulary — <intl> + Instance.i18n dictionary swap', src:
+`Instance.i18n({ 'pp.hello': 'Hallo' });
+const t = document.createElement('intl'); t.setAttribute('key', 'pp.hello');
+play.appendChild(t);
+await new Promise(r => setTimeout(r, 40));
+assert(t.textContent === 'Hallo', '<intl> translated on upgrade');
+Instance.i18n({ 'pp.hello': 'Bonjour' });
+assert(t.textContent === 'Bonjour', 'dictionary swap re-applies in place');
+t.dispose();
+Instance.i18n(null);` },
+{ suite:'Vocabulary', name:'vocabulary — <sync> is detach-honest: pause / resume / dispose', src:
+`const realFetch = globalThis.fetch; let polls = 0;
+globalThis.fetch = async () => ({ text: async () => 'tick ' + (++polls) });
+const sy = document.createElement('sync'); sy.setAttribute('src', '/pp'); sy.setAttribute('interval', '25');
+play.appendChild(sy);
+await new Promise(r => setTimeout(r, 90));
+assert(polls >= 2, 'polling live (' + polls + ' polls)');
+assert(sy.textContent.indexOf('tick') === 0, 'content synced');
+sy.remove(); // Instance remove = detach, NOT death
+await new Promise(r => setTimeout(r, 40));
+const paused = polls;
+await new Promise(r => setTimeout(r, 80));
+assert(polls === paused, 'removal paused the poll (remove is detach)');
+play.appendChild(sy);
+await new Promise(r => setTimeout(r, 90));
+assert(polls > paused, 'reattachment resumed polling');
+sy.dispose();
+await new Promise(r => setTimeout(r, 30));
+const dead = polls;
+await new Promise(r => setTimeout(r, 80));
+assert(polls === dead, 'dispose() — the only teardown — stopped it for good');
+globalThis.fetch = realFetch;` },
+{ suite:'Router', name:'router — ONE class, two faces: element declares, statics drive', src:
+`const R = Instance.router;
+assert(R === Instance.elements.Router, 'Instance.router IS the class (singleton retired)');
+R.configure({ history: 'memory', base: '' });
+const seen = [];
+const onNav = (from, to) => seen.push(to.path);
+R.on('navigate', onNav);
+const out = document.createElement('outlet'); play.appendChild(out);
+const ro = document.createElement('router'); ro.setAttribute('history', 'memory');
+const rt = document.createElement('route'); rt.setAttribute('path', '/pp/:id'); rt.setAttribute('src', 'pp-src');
+ro.appendChild(rt); play.appendChild(ro);
+await new Promise(r => setTimeout(r, 40));
+assert(Object.getPrototypeOf(ro) === R.prototype, '<router> upgraded in place');
+R.navigate('/pp/42');
+assert(R.current.path === '/pp/42' && R.current.params.id === '42', 'element-declared table commits (params parsed)');
+assert(seen.indexOf('/pp/42') >= 0, 'navigate listeners fired');
+ro.remove();
+R.navigate('/pp/7');
+assert(R.current.path === '/pp/42', 'detached router unregistered — no commit into a gone tree');
+play.appendChild(ro);
+await new Promise(r => setTimeout(r, 40));
+R.navigate('/pp/9');
+assert(R.current.params.id === '9', 'reattachment re-registered the table');
+R.off('navigate', onNav);
+ro.dispose(); out.dispose();` },
+{ suite:'Super Mode', name:'⚡⚡ super mode — declarative USER elements + dispose harmonization', src:
+`let downs = 0;
+class PpGizmo extends Instance {
+	['@mount']() { this.setAttribute('data-up', ''); }
+	['@unmount']() { downs++; }
+}
+void Instance.define(PpGizmo);
+const g1 = document.createElement('ppgizmo'); play.appendChild(g1);
+await new Promise(r => setTimeout(r, 40));
+assert(!g1.hasAttribute('data-up'), 'user tags stay cold without ⚡⚡');
+assert(Instance.upgrade(g1) === g1 && g1.hasAttribute('data-up'), 'explicit Instance.upgrade wakes it in place');
+Instance.superup();
+const g2 = document.createElement('ppgizmo'); play.appendChild(g2);
+await new Promise(r => setTimeout(r, 40));
+assert(g2.hasAttribute('data-up'), '⚡⚡ observer upgrades added user tags');
+Instance.powerdown();
+const g3 = document.createElement('ppgizmo'); play.appendChild(g3);
+await new Promise(r => setTimeout(r, 40));
+assert(!g3.hasAttribute('data-up'), 'powerdown force-supers-down (⚡⚡ never outlives ⚡)');
+g1.dispose();
+assert(downs === 1, "sync dispose fires ['@unmount'] methods (harmonized with disposeAsync)");
+g2.dispose(); g3.remove();` },
+{ suite:'Lifecycle Seams', name:'remove() unified — Lifecycle contract + sigil dispatch (one method)', src:
+`let rems = 0, downs = 0;
+class PpBox extends Instance {
+	['@removal']() { rems++; }
+	['@unmount']() { downs++; }
+}
+const b = new PpBox(); b.classList.add('pp-x'); b.setAttribute('data-k','1');
+play.appendChild(b);
+await new Promise(r => setTimeout(r, 30));
+b.remove('.pp-x');
+assert(!b.classList.contains('pp-x') && b.isConnected, "remove('.cls') — sigil dispatch, still attached");
+b.remove('data-k');
+assert(!b.hasAttribute('data-k'), "remove('attr') dispatch");
+b.remove();
+assert(rems === 1 && !b.isConnected, 'bare remove = SYNCHRONOUS detach (@removal already fired)');
+play.appendChild(b);
+await new Promise(r => setTimeout(r, 30));
+b.remove(true);
+assert(downs === 1, 'remove(true) = dispose — the only real teardown');` },
+{ suite:'Lifecycle Seams', name:'upgrade seam — proto-splice, store, once-mount, idempotence', src:
+`let mounts = 0;
+class PpChip extends Instance { ['@mount']() { mounts++; this.$n = 1; } }
+void Instance.define(PpChip);
+const raw = document.createElement('ppchip');
+play.appendChild(raw);
+await new Promise(r => setTimeout(r, 30));
+assert(!raw.hasAttribute('data-up') && mounts === 0, 'raw stays cold (no ⚡⚡, user tag)');
+const up = Instance.upgrade(raw);
+assert(up === raw && Object.getPrototypeOf(raw) === PpChip.prototype, 'upgrade: same node, proto-spliced');
+assert(mounts === 1 && raw.$n === 1, 'connected upgrade fired @mount once; store live');
+raw.$n = 5;
+assert(raw.$n === 5, 'reactive write-through on the upgraded node');
+assert(Instance.upgrade(raw) === raw && mounts === 1, 'idempotent — LEAF guard, no re-mount');
+raw.dispose();` },
+{ suite:'Router', name:'Router.parse — null-origin hardening (about:blank / sandboxed frames)', src:
+`const p = Instance.router.parse('/pq/7?a=1#h');
+assert(p.path === '/pq/7' && p.query.a === '1' && p.hash === 'h', "parse works where location.origin === 'null' (this window)");` },
+{ suite:'Static Signals', name:'static $ signals — class-level broadcast · this-chain · on(@change)', src:
+`class QRow extends Div { static $mark = 0; }
+const a = new QRow(), b = new QRow();
+play.append(a, b);
+await new Promise(r => setTimeout(r, 30));
+assert(a.this === QRow && QRow.this === Div, 'canonical this-chain: el.this → class → super');
+assert(QRow.$mark === 0, 'static sigil reads through the class store');
+const fires = [];
+a.on('@change', '$mark', (v, el) => fires.push(['a', v, el === a]));
+b.on('@change', '$mark', (v, el) => fires.push(['b', v, el === b]));
+QRow.$mark = 1;
+await new Promise(r => setTimeout(r, 10));
+assert(fires.length === 2 && fires.every(f => f[1] === 1 && f[2]), 'broadcast: every subscribed instance fired once with (value, el) — no arming fire');
+a.remove(true);
+QRow.$mark = 2;
+await new Promise(r => setTimeout(r, 10));
+assert(fires.length === 3 && fires[2][0] === 'b' && QRow.$mark === 2, 'dispose drains the subscription — only the live row heard the second broadcast');` },
+{ suite:'Live-DOM Registry', name:'registry — detached elements do not exist; reattach restores the slot; Div[n] indexes the living', src:
+`class R extends Div {}
+const a = new R().appendTo(play), b = new R().appendTo(play), c = new R().appendTo(play);
+assert(R.all().length === 3 && R[0] === a && R[1] === b && R[2] === c, 'three attached → three registered, numerically indexable');
+assert(Instance.this === window, 'the chain roots at the global: Instance.this → window');
+assert(a.this === R && R.this === Div, 'this-chain: minted class, then its super');
+b.remove(); // detach — NOT dispose: leaves the document, stays alive
+assert(R.all().length === 2 && R[0] === a && R[1] === c, 'detached ⇒ does not exist: indices shift like a native array');
+assert(b.isConnected === false && b instanceof Object, 'the detached element itself is alive, just unqueryable');
+play.appendChild(b); // reattach
+await new Promise(r => setTimeout(r, 30));
+assert(R.all().length === 3 && R[1] === b, 'reattach restores the element at its remembered slot: [a,(b),c]');
+b.remove(true); // dispose — the only teardown
+await new Promise(r => setTimeout(r, 20));
+assert(R.all().length === 2 && R[0] === a && R[1] === c, 'dispose forgets forever — no saved slot, no resurrection');
+const col = R.all();
+assert(col[0] === a && col[1] === c && col[5] === a, 'Collections are index-addressable; out-of-range falls back to [0]');` },
+{ suite:'Teardown Protocol', name:'teardown — element face, async twin, using-alias, class self-destruct', src:
+`class E extends Div {}
+const e1 = new E().appendTo(play);
+e1[Instance.TEARDOWN]();
+await new Promise(r => setTimeout(r, 15));
+assert(!e1.isConnected && E.all().length === 0, 'el[TEARDOWN]() disposes: detached, unregistered');
+const e2 = new E().appendTo(play);
+const usingKey = typeof Symbol.dispose === 'symbol' ? Symbol.dispose : Symbol.for('Instance.dispose.shim');
+e2[usingKey]();
+await new Promise(r => setTimeout(r, 15));
+assert(!e2.isConnected, 'the well-known alias routes to the protocol (Symbol.dispose where the realm has it, the shim key where it does not)');
+const e3 = new E().appendTo(play);
+await e3[Instance.TEARDOWN_ASYNC]();
+assert(!e3.isConnected && E.all().length === 0, 'the async twin awaits @removal/@unmount, then reclaims');
+class A2 extends Div {} class B2 extends A2 {}
+new A2().appendTo(play); new B2().appendTo(play);
+B2[Instance.TEARDOWN]();
+await new Promise(r => setTimeout(r, 15));
+assert(B2.all().length === 0 && A2.all().length === 1, 'subclass self-destruct via the inherited symbol static — siblings untouched');
+await A2.teardownAsync();
+assert(A2.all().length === 0, 'named async orchestrator on a subclass');` },
+{ suite:'Callable Proxies', name:'[PROXIES] — memoized callable interfaces; listen roundtrip; dispose drains', src:
+`const L = new Div().appendTo(play);
+assert(typeof L.listen === 'function' && L.listen === L.listen, 'the interface is callable and memoized per element');
+assert(typeof L.worker === 'function' && L.worker === L.worker && typeof L.socket === 'function', 'worker and socket faces mint the same way');
+let got = null;
+const chained = L.listen('q4', d => { got = d; });
+assert(typeof chained === 'function', 'apply returns the callable proxy for chaining');
+L.listen.post('q4', { x: 42 });
+await new Promise(r => setTimeout(r, 30));
+assert(got && got.x === 42, 'post → window message → channel dispatch → callback(data)');
+L.remove(true);
+await new Promise(r => setTimeout(r, 15));
+got = null;
+window.postMessage({ channel: 'q4', data: { x: 9 } }, '*');
+await new Promise(r => setTimeout(r, 30));
+assert(got === null, 'dispose drained the interface — the message listener is unbound with its element');` },
+{ suite:'DOM Events', name:'events are pulses — new fires (outcome readable) · bare mints inert · no replay · atomic re-entry · collision naming', src:
+`const btn = new Div().appendTo(play);
+assert(typeof MouseDown === 'function' && typeof KeyUp === 'function' && typeof FocusIn === 'function', 'the vocabulary minted (MouseDown, KeyUp, FocusIn)');
+assert(typeof globalThis.Key === 'undefined' && typeof DblClick === 'function' && typeof PopState === 'function', 'grammar honored: no bare Key; compounds resolved (DblClick, PopState)');
+assert(Instance.Events.SelectEvent && Instance.Events.ResetEvent && Instance.Events.StorageEvent, "collisions postfixed: select/reset/storage → …Event (element + native-global rules)");
+new MouseDown({ target: btn });                       // fire BEFORE subscribing — must not replay
+let heard = 0, seen = null;
+const off = btn.on(MouseDown, (ev, el) => { heard++; seen = ev; });
+assert(heard === 0, 'no replay: the pre-subscription mousedown was not delivered');
+const ev = new MouseDown({ target: btn, clientX: 7 });
+assert(heard === 1 && seen === ev && ev instanceof MouseEvent && ev.clientX === 7, 'new fires: a REAL MouseEvent, delivered to the subscriber, the very object returned');
+assert(ev instanceof MouseDown && !(ev instanceof KeyUp), 'type-branded instanceof');
+const off2 = btn.on(MouseDown, e => e.preventDefault());
+const ev2 = new MouseDown({ target: btn });
+assert(ev2.defaultPrevented === true, 'dispatch is synchronous ⇒ the constructor returns the SPENT event: the outcome is readable');
+const inert = MouseDown({ clientX: 3 });
+const h0 = heard;
+assert(heard === h0 && inert instanceof MouseEvent, 'bare call mints INERT');
+btn.dispatchEvent(inert);
+assert(heard === h0 + 1, '…and a later native dispatch converges through the same pump');
+const order = []; let depth = 0;
+const off3 = btn.on(Wheel, () => { order.push('h' + depth); if (depth++ < 2) new Wheel({ target: btn }); });
+new Wheel({ target: btn });
+assert(order.join(',') === 'h0,h1,h2', 'self re-entrant fires deliver IN ORDER — handlers are atomic (got ' + order.join(',') + ')');
+off(); off2(); off3();` },
+{ suite:'DOM Events', name:'lifecycle + combinators — dispose drains subscriptions; pulses compose into the signal graph', src:
+`const c = new Div().appendTo(play);
+c.$count = 0;                                          // runtime reactive field — the trap routes it to the element store
+let armed = false;
+new Signal.Effect(() => { const n = c.$count; if (!armed) { armed = true; c.textContent = 'n=' + n; return; } c.textContent = 'n=' + n; });
+assert(c.textContent === 'n=0', 'behavior face armed');
+c.on(Click, () => { c.$count = c.$count + 1 });      // the PULSE feeds the BEHAVIOR — the practical combinator
+new Click({ target: c }); new Click({ target: c });
+assert(c.$count === 2 && c.textContent === 'n=2', 'event → $state → effect: the pulse composes into the signal graph, every occurrence counted');
+const spy = new Div().appendTo(play);
+let alive = 0;
+spy.on(KeyDown, () => alive++);
+new KeyDown({ target: spy });
+assert(alive === 1, 'subscribed and hearing');
+spy.remove(true);                                     // dispose — the teardown spine must drain the event subscription
+await new Promise(r => setTimeout(r, 15));
+let threw = false;
+try { spy.dispatchEvent(new KeyboardEvent('keydown')) } catch (e) { threw = true }
+assert(!threw && alive === 1, 'disposed: the drained subscription never fires again, and dispatch on the corpse is harmless');
+assert(typeof MouseDown.on === 'function', 'class-face sugar exists: MouseDown.on(target, fn)');
+let viaSugar = 0;
+const offS = MouseDown.on(play, () => viaSugar++);
+new MouseDown({ target: play });
+assert(viaSugar === 1, '…and works');
+offS();
+const native = new Instance.Events.InputEvent('input', { data: 'x' });
+assert(native instanceof InputEvent && native.data === 'x', 'string-first-arg is the NATIVE signature: passthrough (foreign-code compat), built over the real InputEvent interface');` },
+{ suite:'DOM Events', name:'events are Signals — handles: config filter · map · combine · sleep · chain; subscribe(Class,…); DSL+text', src:
+`const el = new Div().appendTo(play);
+const click = MouseDown();
+let plain = 0;
+el.on(click, () => plain++);
+new MouseDown({ target: el });
+assert(plain === 1 && click instanceof MouseEvent, 'a bare-call handle reads like a signal — and is still a real (inert) MouseEvent');
+const counts = [];
+el.on(click.map((e, i) => i + 1), n => counts.push(n));
+new MouseDown({ target: el }); new MouseDown({ target: el });
+assert(counts.join(',') === '1,2', 'map derives — transform + occurrence index');
+const dbl = [];
+el.on(click.combine(DblClick, (c, d) => !!(c && d)), v => dbl.push(v));
+new MouseDown({ target: el });
+assert(dbl[dbl.length - 1] === false, 'combine fires on either — falsy until both sides seen');
+new DblClick({ target: el });
+assert(dbl[dbl.length - 1] === true, '…truthy once the latest pair is complete');
+let gest = 0;
+el.on(click.chain(click.sleep(40), (c, h) => !!(c && h)), v => { if (v === true) gest++; });
+new MouseDown({ target: el });
+await new Promise(r => setTimeout(r, 90));
+assert(gest >= 1, 'sleep delays per occurrence; chain detects the sequence — a hold gesture');
+let rights = 0;
+el.on(MouseDown({ button: 2 }), () => rights++);
+new MouseDown({ target: el, button: 0 }); new MouseDown({ target: el, button: 2 });
+assert(rights === 1, 'the bare-call init doubles as a subscription CONFIG — an own-key equality filter');
+class Feed extends Div { static $tick = 0; }
+const f = new Feed().appendTo(play);
+let got = null;
+f.subscribe(Feed, '$tick', v => got = v);
+Feed.$tick = 9;
+assert(got === 9, "subscribe(ParentClass, '$field', cb) — '@change' semantics, class explicit");
+let one = 0; f.subscribe(() => one++); f.notify();
+assert(one === 1, 'the 1-arg subscribe/notify pair is untouched');
+play.className = 'q8bplay';
+const t = new Div('@append .q8bplay', 'hello world');
+assert(t.textContent === 'hello world' && t.parentElement === play, 'a plain string beside a DSL route is CONTENT');
+const named = new Div('just-a-name');
+t.remove(true); named.remove(true);` },
+{ suite:'DOM Events', name:'the string protocol — five regex symbols, Instance-semantic (intentional divergence)', src:
+`class Doc extends Div {}
+const a = new Doc().appendTo(play); a.textContent = 'apple pie';
+const b = new Doc().appendTo(play); b.textContent = 'banana bread';
+const c = new Doc().appendTo(play); c.textContent = 'apple cider';
+// search = PREDICATE (Number). CLASS → registry index; round-trips through Class[n].
+assert('apple'.search(Doc) === 0, 'search(Class) → registry index of first match');
+assert(Doc['apple'.search(Doc)] === a, 'the index round-trips: q.search(Class) → n → Class[n]');
+assert('pie'.search(a) === 6, 'search(element) → char offset in its text');
+assert('zzz'.search(Doc) === -1 && 'zzz'.search(a) === -1, 'no match → -1');
+// match = FILTER → a real Collection of matching elements.
+const m = 'apple'.match(Doc);
+assert(m instanceof Instance.Collection, 'match(Class) → a real Collection');
+assert(m.length === 2 && m[0] === a && m[1] === c, 'Collection is indexable with the matches');
+assert(typeof m.where === 'function', 'the Collection is .where-able (the real type, live)');
+assert('apple'.match(a) === a && 'xyz'.match(a) === null, 'match(element) → self-test: the element or null');
+// matchAll = WALKER (lazy). CLASS → {element,index}; ELEMENT → {text,index}.
+const all = [...'apple'.matchAll(Doc)];
+assert(all.length === 2 && all[0].element === a && all[0].index === 0 && all[1].element === c && all[1].index === 2, 'matchAll(Class) → each matching {element, index}');
+const occ = [...'p'.matchAll(a)];
+assert(occ.length === 3 && occ.every(x => 'text' in x && 'index' in x), 'matchAll(element) → each {text, index} occurrence');
+// replace = MUTATOR — the one verb that writes: swaps matched text in the live DOM.
+'apple'.replace(a, 'APPLE');
+assert(a.textContent === 'APPLE pie', 'replace(element) swaps matched text IN the DOM');
+a.textContent = 'apple pie';
+const coll = 'apple'.replace(Doc, (seg, el) => '[' + el.tagName + ']');
+assert(coll instanceof Instance.Collection && coll.length === 2, 'replace(Class) → the matching Collection (chainable)');
+assert(a.textContent.indexOf('[DIV]') !== -1 && c.textContent.indexOf('[DIV]') !== -1, 'function replacer runs on every matching element, receiving (seg, element)');
+assert(b.textContent === 'banana bread', 'non-matching elements are untouched (pure where it does not match)');
+a.textContent = 'apple pie'; c.textContent = 'apple cider';
+// split = PARTITIONER. CLASS → [matching, nonmatching]; ELEMENT → [before, after].
+const [hits, misses] = 'apple'.split(Doc);
+assert(hits instanceof Instance.Collection && misses instanceof Instance.Collection, 'split(Class) → two Collections');
+assert(hits.length === 2 && misses.length === 1 && misses[0] === b, 'split(Class) partitions [matching, nonmatching]');
+assert(JSON.stringify('pie'.split(a)) === '["apple ",""]', 'split(element) → [before, after] around the first match');
+// PURITY: only replace writes. search/match/matchAll/split leave the DOM alone.
+const snap = a.textContent;
+'apple'.search(Doc); 'apple'.match(Doc); [...'apple'.matchAll(Doc)]; 'apple'.split(Doc);
+assert(a.textContent === snap, 'the four read verbs are pure — no hidden mutation');
+a.remove(true); b.remove(true); c.remove(true);` }
+]},
+
+};
+(typeof globalThis !== 'undefined' ? globalThis : window).PLAYGROUND_TESTS = T;
+})();
+
+</script>
+<script>
+window.KRAUSEST_MAIN = "\"use strict\";\n\nfunction _random(max) {\n  return Math.round(Math.random() * 1000) % max;\n}\n\nconst rowTemplate = document.createElement(\"tr\");\nrowTemplate.innerHTML =\n  \"\u003ctd class='col-md-1'> \u003c/td>\u003ctd class='col-md-4'>\u003ca> \u003c/a>\u003c/td>\u003ctd class='col-md-1'>\u003ca>\u003cspan class='glyphicon glyphicon-remove' aria-hidden='true'>\u003c/span>\u003c/a>\u003c/td>\u003ctd class='col-md-6'>\u003c/td>\";\n\nclass Store {\n  constructor() {\n    this.data = [];\n    this.backup = null;\n    this.selected = null;\n    this.id = 1;\n  }\n  buildData(count = 1000) {\n    var adjectives = [\n      \"pretty\",\n      \"large\",\n      \"big\",\n      \"small\",\n      \"tall\",\n      \"short\",\n      \"long\",\n      \"handsome\",\n      \"plain\",\n      \"quaint\",\n      \"clean\",\n      \"elegant\",\n      \"easy\",\n      \"angry\",\n      \"crazy\",\n      \"helpful\",\n      \"mushy\",\n      \"odd\",\n      \"unsightly\",\n      \"adorable\",\n      \"important\",\n      \"inexpensive\",\n      \"cheap\",\n      \"expensive\",\n      \"fancy\",\n    ];\n    var colours = [\"red\", \"yellow\", \"blue\", \"green\", \"pink\", \"brown\", \"purple\", \"brown\", \"white\", \"black\", \"orange\"];\n    var nouns = [\n      \"table\",\n      \"chair\",\n      \"house\",\n      \"bbq\",\n      \"desk\",\n      \"car\",\n      \"pony\",\n      \"cookie\",\n      \"sandwich\",\n      \"burger\",\n      \"pizza\",\n      \"mouse\",\n      \"keyboard\",\n    ];\n    var data = [];\n    for (var i = 0; i \u003c count; i++)\n      data.push({\n        id: this.id++,\n        label:\n          adjectives[_random(adjectives.length)] +\n          \" \" +\n          colours[_random(colours.length)] +\n          \" \" +\n          nouns[_random(nouns.length)],\n      });\n    return data;\n  }\n  updateData(mod = 10) {\n    for (let i = 0; i \u003c this.data.length; i += 10) {\n      this.data[i].label += \" !!!\";\n      // this.data[i] = Object.assign({}, this.data[i], {label: this.data[i].label +' !!!'});\n    }\n  }\n  delete(id) {\n    const idx = this.data.findIndex((d) => d.id == id);\n    this.data = this.data.filter((e, i) => i != idx);\n    return this;\n  }\n  run() {\n    this.data = this.buildData();\n    this.selected = null;\n  }\n  add() {\n    this.data = this.data.concat(this.buildData(1000));\n    this.selected = null;\n  }\n  update() {\n    this.updateData();\n    this.selected = null;\n  }\n  select(id) {\n    this.selected = id;\n  }\n  runLots() {\n    this.data = this.buildData(10000);\n    this.selected = null;\n  }\n  clear() {\n    this.data = [];\n    this.selected = null;\n  }\n  swapRows() {\n    if (this.data.length > 998) {\n      var a = this.data[1];\n      this.data[1] = this.data[998];\n      this.data[998] = a;\n    }\n  }\n}\n\nvar getParentId = function (elem) {\n  while (elem) {\n    if (elem.tagName === \"TR\") {\n      return elem.data_id;\n    }\n    elem = elem.parentNode;\n  }\n  return undefined;\n};\nclass Main {\n  constructor(props) {\n    this.store = new Store();\n    this.select = this.select.bind(this);\n    this.delete = this.delete.bind(this);\n    this.add = this.add.bind(this);\n    this.run = this.run.bind(this);\n    this.update = this.update.bind(this);\n    this.start = 0;\n    this.rows = [];\n    this.data = [];\n    this.selectedRow = undefined;\n\n    document.getElementById(\"main\").addEventListener(\"click\", (e) => {\n      //console.log(\"listener\",e);\n      if (e.target.matches(\"#add\")) {\n        e.stopPropagation();\n        //console.log(\"add\");\n        this.add();\n      } else if (e.target.matches(\"#run\")) {\n        e.stopPropagation();\n        //console.log(\"run\");\n        this.run();\n      } else if (e.target.matches(\"#update\")) {\n        e.stopPropagation();\n        //console.log(\"update\");\n        this.update();\n      } else if (e.target.matches(\"#runlots\")) {\n        e.stopPropagation();\n        //console.log(\"runLots\");\n        this.runLots();\n      } else if (e.target.matches(\"#clear\")) {\n        e.stopPropagation();\n        //console.log(\"clear\");\n        this.clear();\n      } else if (e.target.matches(\"#swaprows\")) {\n        e.stopPropagation();\n        //console.log(\"swapRows\");\n        this.swapRows();\n      }\n    });\n    document.getElementById(\"tbody\").addEventListener(\"click\", (e) => {\n      e.stopPropagation();\n      let p = e.target;\n      while (p && p.tagName !== \"TD\") {\n        p = p.parentNode;\n      }\n      if (!p) return;\n      if (p.parentNode.childNodes[1] == p) {\n        console.log(\"click on label\");\n        let id = getParentId(e.target);\n        let idx = this.data.findIndex((row) => row.id === id);\n        this.select(idx);\n      } else if (p.parentNode.childNodes[2] == p) {\n        console.log(\"click on remove\");\n        let id = getParentId(e.target);\n        let idx = this.data.findIndex((row) => row.id === id);\n        this.delete(idx);\n      }\n    });\n    this.tbody = document.getElementById(\"tbody\");\n    this.table = document.getElementsByTagName(\"table\")[0];\n  }\n  findIdx(id) {\n    for (let i = 0; i \u003c this.data.length; i++) {\n      if (this.data[i].id === id) return i;\n    }\n    return undefined;\n  }\n  run() {\n    this.removeAllRows();\n    this.store.clear();\n    this.rows = [];\n    this.data = [];\n    this.store.run();\n    this.appendRows();\n    this.unselect();\n  }\n  add() {\n    this.store.add();\n    this.appendRows();\n  }\n  update() {\n    this.store.update();\n    for (let i = 0; i \u003c this.data.length; i += 10) {\n      this.rows[i].childNodes[1].childNodes[0].firstChild.nodeValue = this.store.data[i].label;\n    }\n  }\n  unselect() {\n    if (this.selectedRow !== undefined) {\n      this.selectedRow.className = \"\";\n      this.selectedRow = undefined;\n    }\n  }\n  select(idx) {\n    this.unselect();\n    this.store.select(this.data[idx].id);\n    this.selectedRow = this.rows[idx];\n    this.selectedRow.className = \"danger\";\n  }\n  recreateSelection() {\n    let old_selection = this.store.selected;\n    let sel_idx = this.store.data.findIndex((d) => d.id === old_selection);\n    if (sel_idx >= 0) {\n      this.store.select(this.data[sel_idx].id);\n      this.selectedRow = this.rows[sel_idx];\n      this.selectedRow.className = \"danger\";\n    }\n  }\n  delete(idx) {\n    // Remove that row from the DOM\n    this.store.delete(this.data[idx].id);\n    this.rows[idx].remove();\n    this.rows.splice(idx, 1);\n    this.data.splice(idx, 1);\n    this.unselect();\n    this.recreateSelection();\n  }\n  removeAllRows() {\n    // ~258 msecs\n    // for(let i=this.rows.length-1;i>=0;i--) {\n    //     tbody.removeChild(this.rows[i]);\n    // }\n    // ~251 msecs\n    // for(let i=0;i\u003cthis.rows.length;i++) {\n    //     tbody.removeChild(this.rows[i]);\n    // }\n    // ~216 msecs\n    // var cNode = tbody.cloneNode(false);\n    // tbody.parentNode.replaceChild(cNode ,tbody);\n    // ~212 msecs\n    this.tbody.textContent = \"\";\n\n    // ~236 msecs\n    // var rangeObj = new Range();\n    // rangeObj.selectNodeContents(tbody);\n    // rangeObj.deleteContents();\n    // ~260 msecs\n    // var last;\n    // while (last = tbody.lastChild) tbody.removeChild(last);\n  }\n  runLots() {\n    this.removeAllRows();\n    this.store.clear();\n    this.rows = [];\n    this.data = [];\n    this.store.runLots();\n    this.appendRows();\n    this.unselect();\n  }\n  clear() {\n    this.store.clear();\n    this.rows = [];\n    this.data = [];\n    // This is actually a bit faster, but close to cheating\n    // requestAnimationFrame(() => {\n    this.removeAllRows();\n    this.unselect();\n    // });\n  }\n  swapRows() {\n    if (this.data.length > 10) {\n      this.store.swapRows();\n      this.data[1] = this.store.data[1];\n      this.data[998] = this.store.data[998];\n\n      this.tbody.insertBefore(this.rows[998], this.rows[2]);\n      this.tbody.insertBefore(this.rows[1], this.rows[999]);\n\n      let tmp = this.rows[998];\n      this.rows[998] = this.rows[1];\n      this.rows[1] = tmp;\n    }\n\n    // let old_selection = this.store.selected;\n    // this.store.swapRows();\n    // this.updateRows();\n    // this.unselect();\n    // if (old_selection>=0) {\n    //     let idx = this.store.data.findIndex(d => d.id === old_selection);\n    //     if (idx > 0) {\n    //         this.store.select(this.data[idx].id);\n    //         this.selectedRow = this.rows[idx];\n    //         this.selectedRow.className = \"danger\";\n    //     }\n    // }\n  }\n  appendRows() {\n    // Using a document fragment is slower...\n    // var docfrag = document.createDocumentFragment();\n    // for(let i=this.rows.length;i\u003cthis.store.data.length; i++) {\n    //     let tr = this.createRow(this.store.data[i]);\n    //     this.rows[i] = tr;\n    //     this.data[i] = this.store.data[i];\n    //     docfrag.appendChild(tr);\n    // }\n    // this.tbody.appendChild(docfrag);\n\n    // ... than adding directly\n    // var rows = this.rows, s_data = this.store.data, data = this.data, tbody = this.tbody;\n    // for(let i=rows.length;i\u003cs_data.length; i++) {\n    //     let tr = this.createRow(s_data[i]);\n    //     rows[i] = tr;\n    //     data[i] = s_data[i];\n    //     tbody.appendChild(tr);\n    // }\n\n    var rows = this.rows,\n      s_data = this.store.data,\n      data = this.data,\n      tbody = this.tbody;\n    const empty = !tbody.firstChild;\n    empty && tbody.remove();\n    for (let i = rows.length; i \u003c s_data.length; i++) {\n      let tr = this.createRow(s_data[i]);\n      rows[i] = tr;\n      data[i] = s_data[i];\n      tbody.appendChild(tr);\n    }\n    empty && this.table.insertBefore(tbody, null);\n  }\n  createRow(data) {\n    const tr = rowTemplate.cloneNode(true),\n      td1 = tr.firstChild,\n      a2 = td1.nextSibling.firstChild;\n    tr.data_id = data.id;\n    td1.firstChild.nodeValue = data.id;\n    a2.firstChild.nodeValue = data.label;\n    return tr;\n  }\n}\n\nnew Main();\n";
+window.KRAUSEST_INSTANCE = "'use strict';\n/* Instance flavor of the krausest vanillajs-keyed benchmark.\n * DOCTRINE — native JS wherever the benchmark tests raw DOM throughput, because\n * Instance IS native: create / append / swap / remove / clear are the same\n * operations on real elements (each row pays the honest Instance mint).\n * Reactivity appears ONLY where the benchmark actually measures it:\n *   PARTIAL UPDATE — one class-level static signal write (`KRow.$mark = ++tick`);\n *   every mounted row holds one '@change' subscription and answers by its LIVE\n *   rowIndex — no data walk, no loop over rows, no diffing.\n *   SELECT — the benchmark's own docs call it mild; a native class toggle.\n * Teardown is honest: remove-row and clear DISPOSE (`remove(true)`), so each\n * row's subscription drains with its element — the memory line stays flat. */\nwindow.__K_INSTANCE_BOOT__ = function (root) {\n\tconst adjectives = ['pretty', 'large', 'big', 'small', 'tall', 'short', 'long', 'handsome', 'plain', 'quaint', 'clean', 'elegant', 'easy', 'angry', 'crazy', 'helpful', 'mushy', 'odd', 'unsightly', 'adorable', 'important', 'inexpensive', 'cheap', 'expensive', 'fancy'];\n\tconst colours = ['red', 'yellow', 'blue', 'green', 'pink', 'brown', 'purple', 'brown', 'white', 'black', 'orange'];\n\tconst nouns = ['table', 'chair', 'house', 'bbq', 'desk', 'car', 'pony', 'cookie', 'sandwich', 'burger', 'pizza', 'mouse', 'keyboard'];\n\tconst R = n => Math.round(Math.random() * 1000) % n;\n\tconst label = () => adjectives[R(adjectives.length)] + ' ' + colours[R(colours.length)] + ' ' + nouns[R(nouns.length)];\n\tlet ID = 1, TICK = 0, selected = null;\n\n\tclass KRow extends TR {              // \u003ctr data-is=\"KRow\"> — web-compat mint; acronym tags pascalite to UPPERCASE (tr → TR, per DICTIONS)\n\t\tstatic $mark = 0;                  // the broadcast bus — a class-level signal shared by every row\n\n\t\tconstructor(text) {\n\t\t\tsuper();                         // no ctor args reach the mint — strings would parse as DSL placement\n\t\t\tconst td1 = document.createElement('td'); td1.className = 'col-md-1'; td1.textContent = ID++;\n\t\t\tconst td2 = document.createElement('td'); td2.className = 'col-md-4';\n\t\t\tconst a = document.createElement('a'); a.className = 'lbl'; a.textContent = text;\n\t\t\ttd2.appendChild(a);\n\t\t\tconst td3 = document.createElement('td'); td3.className = 'col-md-1';\n\t\t\ttd3.innerHTML = '\u003ca class=\"remove\">\u003cspan class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\">\u003c/span>\u003c/a>';\n\t\t\tconst td4 = document.createElement('td'); td4.className = 'col-md-6';\n\t\t\tthis.append(td1, td2, td3, td4);\n\t\t\tthis._lbl = a;\n\t\t}\n\n\t\t['@mount']() {                     // one subscription per row, armed on entry; dispose drains it\n\t\t\tthis.on('@change', '$mark', () => {\n\t\t\t\tif (this.rowIndex % 10 === 0) this._lbl.textContent += ' !!!';\n\t\t\t});\n\t\t}\n\t}\n\n\tconst tbody = root.querySelector('#k2-tbody');\n\tconst build = n => { const f = document.createDocumentFragment(); for (let i = 0; i \u003c n; i++) f.appendChild(new KRow(label())); return f; };\n\tconst OPS = {\n\t\t'k2-run':      () => { OPS['k2-clear'](); tbody.appendChild(build(1000)); },\n\t\t'k2-runlots':  () => { OPS['k2-clear'](); tbody.appendChild(build(10000)); },\n\t\t'k2-add':      () => { tbody.appendChild(build(1000)); },\n\t\t'k2-update':   () => { KRow.$mark = ++TICK; },  // THE reactive op — one write; the rows answer\n\t\t'k2-clear':    () => { let r; while ((r = tbody.firstElementChild)) r.remove(true); selected = null; },\n\t\t'k2-swaprows': () => {\n\t\t\tconst rows = tbody.children;\n\t\t\tif (rows.length > 998) {\n\t\t\t\tconst a = rows[1], b = rows[998], an = a.nextElementSibling;\n\t\t\t\ttbody.insertBefore(a, b);\n\t\t\t\ttbody.insertBefore(b, an);\n\t\t\t}\n\t\t}\n\t};\n\troot.addEventListener('click', e => {\n\t\tconst btn = e.target.closest('button');\n\t\tif (btn && OPS[btn.id]) return OPS[btn.id]();\n\t\tconst row = e.target.closest('tr');\n\t\tif (!row || !tbody.contains(row)) return;\n\t\tif (e.target.closest('a.remove')) return row.remove(true);  // targeted dispose\n\t\tif (selected) selected.classList.remove('danger');\n\t\t(selected = row).classList.add('danger');\n\t});\n};\n";
+</script>
+</body>
+</html>

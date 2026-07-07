@@ -1,0 +1,3162 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Instance 0.87.z — API Documentation</title>
+  <style>
+    :root {
+      --bg: #0e0f12; --panel: #14161b; --ink: #cdd6e0; --dim: #7b8794; --line: #23262d;
+      --accent: #e0c068; --accent2: #8ab4f8; --good: #4caf72; --warn: #d0a060; --bad: #d0607a;
+      --code-bg: #101318; --sig: #b8c8a0;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--ink);
+          font: 15px/1.65 ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif; }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px;
+          padding: .1em .35em; font-size: .88em; color: #dfe6ee; }
+    pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px;
+          padding: 14px 16px; overflow-x: auto; font-size: 13px; line-height: 1.55; }
+    pre code { background: none; border: 0; padding: 0; }
+
+    #side { position: fixed; top: 0; left: 0; bottom: 0; width: 268px; overflow-y: auto;
+            background: var(--panel); border-right: 1px solid var(--line); padding: 22px 18px 60px; }
+    #side h1 { font-size: 17px; margin: 0 0 2px; color: #fff; letter-spacing: .02em; }
+    #side .v { color: var(--accent); font-size: 11px; font-family: ui-monospace, monospace; }
+    #side nav { margin-top: 18px; font-size: 13px; }
+    #side .cat { color: var(--dim); text-transform: uppercase; font-size: 10px;
+                letter-spacing: .12em; margin: 16px 0 6px; }
+    #side nav a { display: block; color: var(--ink); padding: 2.5px 8px; border-radius: 5px; }
+    #side nav a:hover { background: #1b1e25; text-decoration: none; }
+    #side nav a.api { font-family: ui-monospace, monospace; font-size: 12px; color: var(--sig); }
+    #side nav a.cat-link { color: var(--dim); text-transform: uppercase; font-size: 10px;
+                letter-spacing: .12em; margin: 16px 0 6px; padding: 2.5px 8px; font-weight: inherit; }
+    #side nav a.cat-link:hover { color: var(--ink); background: #1b1e25; }
+
+    main { margin-left: 268px; padding: 40px 56px 120px; max-width: 62em; }
+    h2 { font-size: 24px; margin: 60px 0 8px; color: #fff; border-bottom: 1px solid var(--line);
+        padding-bottom: 10px; }
+    h2:first-of-type { margin-top: 8px; }
+    h3 { font-size: 15px; margin: 40px 0 4px; color: var(--sig);
+        font-family: ui-monospace, monospace; font-weight: 600; }
+    h3 .ret { color: var(--dim); font-weight: 400; }
+    h4 { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--dim);
+        margin: 20px 0 6px; }
+    p { margin: 10px 0; }
+    .since { display: inline-block; font: 10px ui-monospace, monospace; color: var(--accent);
+            border: 1px solid #3a3320; background: #1c1910; border-radius: 4px;
+            padding: 1px 7px; margin-left: 10px; vertical-align: 2px; }
+    .lede { color: #aeb9c6; font-size: 16px; }
+    table.params { border-collapse: collapse; margin: 10px 0; font-size: 13.5px; width: 100%; }
+    table.params th, table.params td { border: 1px solid var(--line); padding: 7px 12px;
+                                      text-align: left; vertical-align: top; }
+    table.params th { color: var(--dim); font-size: 10px; text-transform: uppercase;
+                      letter-spacing: .1em; }
+    table.params td:first-child { font-family: ui-monospace, monospace; color: var(--sig);
+                                  white-space: nowrap; }
+    table.params td:nth-child(2) { color: var(--accent2); font-family: ui-monospace, monospace;
+                                  font-size: 12px; white-space: nowrap; }
+    .note, .warn { border-left: 3px solid var(--accent2); background: #12161d;
+                  padding: 10px 16px; margin: 14px 0; border-radius: 0 8px 8px 0; font-size: 14px; }
+    .warn { border-left-color: var(--warn); background: #171310; }
+    .warn b:first-child, .note b:first-child { color: var(--warn); }
+    .note b:first-child { color: var(--accent2); }
+    .doctrine { border: 1px solid var(--line); border-radius: 10px; padding: 4px 22px 14px;
+                margin: 18px 0; background: var(--panel); }
+    .doctrine h4 { color: var(--accent); margin-top: 16px; }
+    .kbd { color: var(--accent); }
+    hr.sec { border: 0; border-top: 1px dashed var(--line); margin: 34px 0; }
+    .idx { columns: 2; font-size: 13px; }
+    .idx div { break-inside: avoid; padding: 2px 0; font-family: ui-monospace, monospace; }
+    .idx .d { color: var(--dim); font-family: ui-sans-serif, system-ui, sans-serif; }
+    footer { margin-top: 80px; color: var(--dim); font-size: 12px; border-top: 1px solid var(--line);
+            padding-top: 18px; }
+    /* PicoPrettify token colors — the docs highlight their own code through Compiler.prettify */
+    pre .sk  { color: #c792ea; }              /* keyword */
+    pre .scl { color: var(--accent); }        /* class name */
+    pre .sf  { color: var(--accent2); }       /* call / function */
+    pre .si  { color: #7fd1b9; }              /* sigil / reactive ($, @, ::) */
+    pre .sl  { color: #f78c6c; }              /* lifecycle @key */
+    pre .sn  { color: #f78c6c; }              /* number */
+    pre .ss  { color: #c3e88d; }              /* string */
+    pre .spu { color: #89ddff; }              /* punctuation / operator */
+    pre .prettified { display: block; }
+    /* base identifier tone — plain identifiers (variables, property names) are intentionally
+      unclassed by the tokenizer; give them a soft off-white so classed tokens stand out and
+      nothing reads as harsh pure-white */
+    pre code { color: #aab6c4; }
+    pre code.prettified { color: #aab6c4; }
+    .prerelease { margin: 0 0 26px; padding: 11px 15px; border: 1px solid #6b5518;
+                  background: rgba(180,140,40,.08); border-radius: 8px; color: #d9c48a;
+                  font-size: 13px; line-height: 1.55; }
+    .prerelease b { color: #f0d99a; }
+  </style>
+  </head>
+  <body>
+
+  <div id="side">
+    <h1>Instance</h1>
+    <div class="v">0.87.z &nbsp;·&nbsp; API Documentation</div>
+    <nav>
+      <!-- 🔽  new: FAQ category + sub-items -->
+      <div class="cat">FAQ</div>
+      <a class="api" href="#faq-what">What is Instance?</a>
+      <a class="api" href="#faq-floor">Isn't it complicated?</a>
+      <a class="api" href="#faq-build">Do I need a build step?</a>
+      <a class="api" href="#faq-ce">Does it use Web Components / Custom Elements?</a>
+      <a class="api" href="#faq-jq">How does it relate to jQuery?</a>
+      <a class="api" href="#faq-more">Deeper cuts</a>
+      <a class="api" href="#faq-author">Who built Instance?</a>
+      <a class="api" href="#faq-onefile">One file, no pipeline</a>
+      <a class="api" href="#faq-element">The element is the instance</a>
+      <a class="api" href="#faq-registry">Live‑DOM registry</a>
+      <a class="api" href="#faq-events">Events are the pulse face of signals</a>
+      <a class="api" href="#faq-house">House wins</a>
+      <a class="api" href="#faq-structural">Structural honesty</a>
+
+      <!-- 🔽  new: Funding category + sub-item -->
+      <div class="cat">Funding</div>
+      <a class="api" href="#funding-model">Funding model</a>
+
+      <!-- 🔽  new: Legal category + sub-items -->
+      <div class="cat">Legal</div>
+      <a class="api" href="#legal-defs">Definitions</a>
+      <a class="api" href="#legal-nonenterprise">Non‑Enterprise grant</a>
+      <a class="api" href="#legal-enterprise">Enterprise terms</a>
+      <a class="api" href="#legal-enforcement">Private enforcement</a>
+      <a class="api" href="#legal-noconflict">No conflict</a>
+
+      <!-- 🔽  new: Tooling & Environment category + sub-items -->
+      <div class="cat">Tooling &amp; Environment</div>
+      <a class="api" href="#boot">Boot – &lt;script&gt; attributes</a>
+      <a class="api" href="#typeset">The typeset naming policy</a>
+      <a class="api" href="#authoring">Authoring paths – .is / type="instance"</a>
+
+      <div class="cat">Construction</div>
+      <a class="api" href="#new">new Div( )</a>
+      <a class="api" href="#placement">the DSL — new Div('@…')</a>
+      <a class="api" href="#awaitel">await new Div( )</a>
+      <a class="api" href="#subclass">class X extends Div</a>
+      <a class="api" href="#owntag">class X extends Instance</a>
+      <a class="api" href="#extend">Instance.extend( K )</a>
+      <div class="cat">Identity</div>
+      <a class="api" href="#instanceof">instanceof</a>
+      <a class="api" href="#pertag">per-tag prototypes</a>
+      <a class="api" href="#thischain">.this</a>
+      <a class="api" href="#engine">Instance.powerup( )</a>
+      <div class="cat">Well-Known Symbols</div>
+      <a href="#wks">the protocol surface</a>
+      <a class="api" href="#wks-iterator">@@iterator</a>
+      <a class="api" href="#wks-hasinstance">@@hasInstance</a>
+      <a class="api" href="#wks-toprimitive">@@toPrimitive</a>
+      <a class="api" href="#wks-tostringtag">@@toStringTag</a>
+      <a class="api" href="#wks-string">@@match · search …</a>
+      <a class="api" href="#wks-concat">@@isConcatSpreadable</a>
+      <a class="api" href="#wks-species">@@species</a>
+      <a class="api" href="#wks-dispose">@@dispose (stub)</a>
+      <a class="api" href="#wks-brands">Symbol.for( ) brands</a>
+      <div class="cat">Reactivity</div>
+      <a class="api" href="#fields">$fields</a>
+      <a class="api" href="#effects">effects — name$( )</a>
+      <a class="api" href="#consensus">consensus &amp; Δ</a>
+      <a class="api" href="#statics">static $broadcast</a>
+      <a class="api" href="#onchange">.on( '@change', … )</a>
+      <a class="api" href="#subscribeentry">.subscribe( Class, … )</a>
+      <a class="api" href="#watchentry">.watch( source, fn )</a>
+      <a class="api" href="#belt">.effect / .once / .batch …</a>
+      <a href="#kernel">The Chimera kernel</a>
+      <a class="api" href="#sigils">the sigil grammar</a>
+      <a class="api" href="#triad">.$ — the triad</a>
+      <a class="api" href="#psi">.ψ — the functor</a>
+      <a class="api" href="#signal">Signal.*</a>
+      <a class="api" href="#rawsignal">new Signal( … )</a>
+      <a class="api" href="#signalstatics">Signal.* methods</a>
+      <a href="#apm">APM — deep memoization</a>
+      <a href="#throughput">kernel throughput</a>
+      <div class="cat">DOM Events</div>
+      <a class="api" href="#events">the event classes</a>
+      <a class="api" href="#newevent">new MouseDown( init )</a>
+      <a class="api" href="#factory">MouseDown( init )</a>
+      <a class="api" href="#onclass">.on( MouseDown, fn )</a>
+      <a class="api" href="#deriving">deriving — map / combine / …</a>
+      <a class="api" href="#pump">pump semantics</a>
+      <a class="api" href="#evcombine">combining events</a>
+      <div class="cat">Collections</div>
+      <a class="api" href="#setentry">.set / .add / .get / .has</a>
+      <a href="#formstate">form state</a>
+      <a class="api" href="#bindentry">.bind( )</a>
+      <a class="api" href="#callbindentry">.callbind( )</a>
+      <a class="api" href="#all">Class.all( )</a>
+      <a class="api" href="#where">Class.where( fn )</a>
+      <a class="api" href="#numeric">Class[ n ]</a>
+      <a class="api" href="#treechain">el.div[0].span[1]</a>
+      <div class="cat">Lifecycle</div>
+      <a class="api" href="#appendTo">.appendTo( target )</a>
+      <a class="api" href="#registry">the live-DOM registry</a>
+      <a class="api" href="#hooks">@mount / @removal …</a>
+      <a class="api" href="#remove">.remove( true )</a>
+      <a class="api" href="#emit">.emit( type, detail )</a>
+      <div class="cat">Teardown</div>
+      <a class="api" href="#teardown">[Instance.TEARDOWN]( )</a>
+      <a class="api" href="#using">using / Symbol.dispose</a>
+      <a class="api" href="#nuclear">Instance.teardown( true )</a>
+      <div class="cat">Interfaces</div>
+      <a class="api" href="#worker">.worker</a>
+      <a class="api" href="#socket">.socket</a>
+      <a class="api" href="#listen">.listen</a>
+      <div class="cat">Semantic &amp; Apps</div>
+      <a href="#semantic">semantic elements</a>
+      <a href="#router">routing</a>
+      <a href="#templateapp">template apps</a>
+      <div class="cat">Interop</div>
+      <a class="api" href="#jquery">jQuery merge</a>
+      <a class="api" href="#ivc">IVC — the broker</a>
+      <div class="cat">Appendix</div>
+      <a href="#surface">Additional surface</a>
+      <a href="#classheads">.is — class heads</a>
+      <a href="#picoprettify">PicoPrettify</a>
+      <a href="#tooling">the test suite</a>
+      <a href="#construction">Construction</a>
+    </nav>
+  </div>
+
+  <main>
+  <div class="prerelease">
+    <b>Pre-1.0.</b> The API is metastable, but not locked in. Names and shapes are expected to
+    change before the 1.00.0 release &mdash; pin a version if you depend on exact behavior.
+    The 365 days time limit is 7/7/26, so what it is, is. Perfection is not expected at this time. 'Good enough' is.
+  </div>
+
+  <h2 id="faq">FAQ</h2>
+
+  <h3 id="faq-what">What is Instance?</h3>
+  <p>Instance is a <b>browser UEFI</b> &mdash; a firmware layer that boots beneath your app and
+  resolves the messy abstractions of traditional frontend development: the build-tool ceremony, the
+  split between the class, the DOM node, and reactive state. In layman's terms, a <b>fusion
+  runtime</b>. It is built for the <b>backend systems engineer</b> &mdash; someone fluent in predictable
+  tools who has watched rendering a box on a screen turn into a five-hundred-package ritual, and
+  wants none of it.</p>
+  <p>Ironically, such aversion is not merely aesthetic or cultural—it's fundamentally correct. The <b>Shai-Hulud</b> worm campaigns (2025–2026) 
+    have proven that build tools and dependency managers are not just overhead—they are a massive cybersecurity loophole.
+    Attackers threaded the needle by poisoning the npm ecosystem itself,
+    compromising over 700 packages through a self-replicating worm that stole credentials, 
+    republished malicious packages, and spread across maintainers and repositories. 
+    Each npm install became a potential entry point. Each transitive dependency became a blind trust.
+    The key takeaway: Build tools are only as 'safe' as your dependency chain is.
+  </p>
+  <p>The core architectural solution: making build tools optional with <b>Direct Element Architecture</b>. 
+    The element <i>is</i> the framework (instance). <code>new Div()</code> returns a
+  real <code>HTMLDivElement</code>, minted through the browser platform itself, that is also an instance of your
+  class. No dependencies, no proxy wrapper, no virtual node, no handle (i.e Component.el), no W3C Custom Elements, no build step. Nothing sits
+  between you and the element.
+</p>
+  <pre><code>let $div = new Div('@#target', 'Hello world!'); // NEW DIV AT TARGET, SET TEXT 'Hello world!'
+console.log($div); // &lt;div&gt;</code></pre>
+
+  <h3 id="faq-floor">Is it complicated?</h3>
+  <p><b>Low skill floor, high skill ceiling.</b> The floor is the line above. The ceiling is everything else in
+  this reference &mdash; a reactive kernel, a live-DOM registry, an event system, engine mode, the
+  well-known-symbol protocol. Instance has been called dense, and the depth is real. But the depth
+  is <i>optional</i>: you reach for it when a problem needs it, and never before. Most webpages never
+  need to enter the 'deep end'.</p>
+
+  <h3 id="faq-build">Do I need a build step?</h3>
+  <p>No. Instance ships as one classic <code>&lt;script&gt;</code> &mdash; no bundler, no dependency
+  graph, no node server to render a <code>div</code>. Tooling exists for people who want it (a
+  <code>&lt;script type="instance"&gt;</code> / <code>.is</code> dialect, a Vite plugin) and is
+  covered under <a href="#toolenv">Tooling &amp; Environment</a>, but it is never required.</p>
+
+  <h3 id="faq-ce">Does it use Web Components / Custom Elements?</h3>
+  <p>No. Instance reaches the "class instance <i>is</i> the element" result <i>without</i> the W3C
+  Custom Elements registry &mdash; the mechanism it was widely assumed to require. 
+  The requirement for custom element hyphenation (aesthetics) as well as 
+  Safari's lack of [is] support (vendor fragmentation) on programmatic extensible native elements 
+  made bypassing Custom Elements mandatory. See
+  <a href="#identity">Identity</a> for how.</p>
+
+  <h3 id="faq-jq">How does it relate to jQuery?</h3>
+  <p>Instance is the spiritual successor to jQuery, written for the problems of 2026. It even merges
+  <code>jQuery.fn</code> where present &mdash; but where the two disagree on a name, Instance keeps
+  its meaning. See <a href="#interop">Interop</a>.</p>
+
+  <p class="note">More questions &mdash; why a classic script, where the virtual DOM went, SSR, TypeScript &mdash; are answered under <a href="#faq-more">FAQ &mdash; deeper cuts</a>.</p>
+
+  <h3 id="faq-author">Who built Instance and why? (Moderate Trauma Dump Warning)</h2>
+  <p>Instance was built by a single neurodivergent developer who wanted a <code>new Scrollbar()</code>
+    that WAS a scrollbar element, to just work, without requiring frontend developers to have to understand the
+  complex boilerplate antipatterns of Framework, Inc.™, or the byzantine minefield of TC39 class semantics.
+    They saw the 'industry standard' as textbook over-engineering.
+    So they leveraged the power of AI and gave themselves 365 days to see if they were right.
+    The answer was yes.
+  </p>
+  <p>1 year was the target; all other constraints were accidental &mdash; No capital ($200 total in paid AI credits), no
+  'team', no job. Quotes from the author's family: 'worthless', "where is the money", 'get a real job'.
+  Chimera, the balanced ternary solid state machine that powers Instance reactivity, was written while its
+  author was unhoused.</p>
+  <p>Instance was built under and despite extremely adverse circumstances (many are omitted for brevity) 
+    because the author had effectively no choice in the matter.
+     Donations are appreciated (see Funding)
+  </p>
+
+  <h3 id = 'faq-dependencies'>Dependencies: 0</h3>
+
+<div class="doctrine">
+  <h3 id="faq-onefile">One file, no pipeline</h3>
+  <p>Instance ships as a single classic <code>&lt;script&gt;</code>. There is no (external) compiler you must
+  run, no bundler, no package graph. The script boots off its own tag attributes
+  (<code>document.currentScript</code>) and is ready synchronously; <code>InstanceReady</code>
+  resolves for code that wants a promise anyway. Tooling (a Vite plugin) 
+  exists for people who want it — it is never required.</p>
+
+  <h3 id="faq-element">The element is the instance</h3>
+  <p>Class syntax is the API. A class describes an element; construction mints the element.
+  Methods are element methods. Fields prefixed <code>$</code>, <code>$$</code> are reactive state stored
+  <i>beside</i> the element (weakly, keyed on it), never <i>on</i> it — the DOM node stays clean.</p>
+
+  <h3 id="faq-registry">Live-DOM registry</h3>
+  <p>A class knows its living instances — <code>Row.all()</code>, <code>Row[0]</code> — but the
+  registry tracks the <b>document</b>, not your allocations. Detach an element and it leaves the
+  registry (unqueryable, though the element itself stays alive in your hands); reattach it and it
+  returns, remembering its slot. Dispose it and it is forgotten forever. Nothing is pinned:
+  disposal reclaims ~98% in profiling, flat across create/destroy cycles.</p>
+
+  <h3 id="faq-events">Events are the pulse face of signals</h3>
+  <p>One propagation kernel carries both faces. <i>Behaviors</i> (<code>$fields</code>) have a
+  value at rest, equality-dedup, and replay-on-subscribe. <i>Pulses</i> (DOM events) have none of
+  those: every occurrence lands, late subscribers hear nothing old, and handlers run atomically —
+  re-entrant fires queue and deliver in order. Same kernel, two faces, each with the semantics
+  its face requires.</p>
+
+  <h3 id="faq-house">House wins</h3>
+  <p>When Instance and a foreign library disagree about a name, Instance keeps its meaning.
+  The jQuery merge grafts every <code>jQuery.fn</code> verb it can — but <code>on</code>,
+  <code>remove</code>, <code>find</code> and friends stay Instance's. Interop is a guest,
+  not a landlord.</p>
+
+  <h3 id="faq-structural">Structural honesty</h3>
+  <p>Where Instance diverges from the platform it says so, and where it can close the gap it
+  measures the price first. <code>instanceof Instance</code> is true because the mint is the
+  brand. In <a href="#engine">engine mode</a> even <code>Object.getPrototypeOf(el)</code>
+  answers natively — for a measured ~1.16× tax on hot reads that you opt into, never pay by
+  default.</p>
+</div>
+
+  <h2 id="funding">Funding</h2>
+<h3 id="funding-model">Funding model</h3>
+<p>Instance is not currently funded; commercial licensing (see Legal) is the expected long-term revenue model. 
+  There will be a valid business entity for legal purposes, in that case, if and when proper funding arrives.
+</p>
+<h3 id = 'Crypto'>Crypto</h3>
+
+  SOL: <code>9ADZPH2XeCxDqxbaMADZ8gxyxokMAaCG3tBZ9TUcYjQ5</code><br>
+  BTC: <code>bc1qs49ppuhlgw69nyg3wz4v5plesntkl75ks6p4fj</code><br>
+  ETH: <code>0x9031583d3f053414b9e9f21262de3aed7882a793</code><br>
+  DOGE: <code>DJuSu5Fjb9SWRvA8KAN9AgBn7394ULn39v</code><br><br>
+  Crypto is the preferred method of payment until Instance becomes an 'Enterprise'. Transactions are atomic. No chargebacks.
+  
+  <div class = 'note'>Solana sends in seconds for fractions of a cent in gas fees.</div>
+
+<h3 id = 'patreon'>What about Patreon?</h3>
+<p>Undecided. The author will not risk burnout to re-teach what the documentation already explains—or will, in time. 
+  Writing is the labor; explanation is the output. The docs are the interface.</p>
+<h3 id = 'GitHub sponsors'>Github Sponsors?</h3>
+<p>GitHub is its own monolith. 
+  The author is open to GitHub Sponsors, but has limited bandwidth to navigate "enterprise" tooling at this time. 
+  If the platform integrates cleanly, it may be enabled. If it requires ceremony, it will wait.
+</p>
+
+<h2 id = 'socials'>Socials</h2>
+<h3 id = 'discord'>Discord</h3>
+<p>
+  To contact the dev directly, and potentially help with development, join the Instance Discord:
+  <br><br>
+  <code>https://discord.gg/z7WcA54HR</code>
+
+</p>
+
+  <h2 id="legal">Legal</h2>
+  <p class="lede">Instance is licensed under the <b>GNU Affero General Public License, version 3.0 or
+  later (AGPL-3.0-or-later)</b>, with the additional terms set out below pursuant to Section 7 of
+  that license. It is a dual-licensing &ldquo;Pushkarev shield&rdquo; &mdash; small users are free;
+  enterprises pay &mdash; so the project need not depend on inconsistent goodwill or charity.</p>
+  <div class="doctrine">
+  <h3 id="legal-defs">1. Definitions</h3>
+  <p><b>1.1 &ldquo;Enterprise&rdquo;</b> means any entity, whether for-profit, non-profit, or in between, that meets one or more of the following at
+  the time of use or distribution: (a) has raised more than the market equivalent of USD&nbsp;$500,000 in aggregate venture
+  capital or equivalent investment; (b) employs fifteen (15) or more persons; or (c) has annual
+  gross revenue exceeding the market equivalent of USD&nbsp;$1,000,000. 
+  <p><b>1.2 &ldquo;Non-Enterprise User&rdquo;</b> means any individual, or any entity that is not
+  classified as an Enterprise. A Non-Enterprise User that is acquired in whole or in part by any Enterprise 
+   or Enterprises of which whose combined full or joint ownership shares exceed 50% of either
+  (a) voting rights (b) market valuation, or (c) both, is considered an Enterprise.
+  </p>
+ 
+
+  <h3 id="legal-nonenterprise">2. Non-Enterprise grant</h3>
+  <p>A Non-Enterprise User, while they qualify as such, may use, modify, profit from, and self-host
+  Instance for their own purposes as though under a permissive MIT license, while maintaining
+  the License 'type' as AGPL-3.0-or-later.
+  For filesize brevity, valid names for this Custom License are as follows: <code>AGPL-3.0-or-later (Satoshi)</code>,
+  <code>Satoshi-1.0</code>. This accommodation is personal to the Non-Enterprise User and does not grant
+  the right to outsource, outsource modifications to (sublicensing), or perform development on behalf of, any
+  Enterprise.</p>
+
+  <h3 id="legal-enterprise">3. Enterprise terms</h3>
+  <p>Once a user qualifies as an Enterprise, including buyouts, the full copyleft obligations of the AGPL-3.0-or-later
+  apply without accommodation, including the obligation to release the complete corresponding source
+  of any modified version and of any work made available to users over a network.</p>
+
+  <h3 id="legal-enforcement">4. Private enforcement</h3>
+  <p>Any Enterprise that breaches the terms of this license &mdash; including, without limitation, by
+  failing to release modifications, by operating Instance as a network service without disclosing
+  corresponding source, or by any other breach of the AGPL-3.0-or-later &mdash; may be subject to a
+  class action lawsuit, up to and including one half (50%) of its total market valuation, by any
+  individual or entity that uses or distributes Instance, whether or not that party is the Instance copyright
+  holder. The prevailing party in any such action shall be entitled to recover reasonable attorneys&rsquo;
+  fees and costs.</p>
+
+  <h3 id="legal-noconflict">5. No conflict</h3>
+  <p>These additional terms are intended to operate alongside the AGPL-3.0-or-later and not to
+  conflict with it. To the extent any additional term is held unenforceable, it shall be severed and
+  the remainder of this license shall continue in full force.</p>
+</div>
+
+  <h2 id="toolenv">Tooling &amp; Environment</h2>
+  <p class="lede">Instance needs nothing but a script tag &mdash; but it meets you where you work.
+  This section covers booting the runtime, the naming policy for the tag vocabulary, and the
+  optional authoring paths (<code>&lt;script type="instance"&gt;</code>, the <code>.is</code>
+  dialect, the Vite plugin) that projects are expected to reach for as they grow.</p>
+
+  <h3 id="boot">&lt;script src="./Instance-0.87.z.js" ⚡ autoclass&gt; <span class="since">boot</span></h3>
+  <p>Drop the file in with a classic script tag. Boot options are <b>attributes on the tag
+  itself</b> — Instance reads <code>document.currentScript</code>:</p>
+  <pre><code>&lt;!-- minimal --&gt;
+  &lt;script src="./Instance-0.87.z.js"&gt;&lt;/script&gt;
+
+  &lt;!-- engine mode + autoclass groups --&gt;
+  &lt;script src="./Instance-0.87.z.js" ⚡ autoclass="core, baseline"&gt;&lt;/script&gt;</code></pre>
+  <table class="params">
+    <tr><th>Attribute</th><th>Type</th><th>Meaning</th></tr>
+    <tr><td>⚡</td><td>flag</td><td>Boot straight into <a href="#engine">engine mode</a> —
+        elements parent to their native prototypes; the metaclass hides behind them.</td></tr>
+    <tr><td>autoclass</td><td>string</td><td>Comma-separated vocabulary groups of element classes
+        to mint as globals at boot.</td></tr>
+    <tr><td>typeset</td><td>string</td><td>the naming policy for the tag vocabulary (below) —
+        <code>pascalite</code> by default.</td></tr>
+  </table>
+  <h4 id="typeset">The typeset attribute — naming policy</h4>
+  <p>Boot mints a class per tag; <code>typeset</code> chooses how tags become class names. Values
+  compose comma-separated; the vocabulary is
+  <code>initial · jquery · pascal · pascalite · uppercase · none</code>:</p>
+  <table class="params">
+    <tr><th>typeset</th><th></th><th>Names produced</th></tr>
+    <tr><td>pascalite</td><td></td><td><b>default</b> — Pascal case with the house acronym table:
+        <code>div → Div</code>, <code>section → Section</code>, but <code>tr → TR</code>,
+        <code>thead → THead</code> (acronyms upper-cased)</td></tr>
+    <tr><td>pascal</td><td></td><td>plain Pascal, no acronym special-casing
+        (<code>tr → Tr</code>)</td></tr>
+    <tr><td>uppercase</td><td></td><td>the tag, upper-cased (<code>DIV</code>,
+        <code>SPAN</code>)</td></tr>
+    <tr><td>initial</td><td></td><td>the platform's own constructor names
+        (<code>HTMLDivElement</code> …)</td></tr>
+    <tr><td>jquery</td><td></td><td>the jQuery-style factory register</td></tr>
+    <tr><td>none</td><td></td><td>mint no global vocabulary — reach classes through
+        <code>Instance.define</code> / the IVC broker</td></tr>
+  </table>
+  <pre><code>&lt;script src="./Instance-0.87.z.js" typeset="pascalite"&gt;&lt;/script&gt;   &lt;!-- Div, TR, THead --&gt;
+  &lt;script src="./Instance-0.87.z.js" typeset="uppercase"&gt;&lt;/script&gt;    &lt;!-- DIV, SPAN --&gt;</code></pre>
+  <div class="note"><b>Attribute sigils.</b> Boot attributes may be written with an <code>@</code>
+  sigil form (<code>@pascalite</code>, <code>@uppercase</code>) as shorthand for
+  <code>typeset="…"</code>; the whitelist is the same vocabulary, deduped and normalized.</div>
+  <p>After the script executes, the tag vocabulary is global (<code>Div</code>, <code>Span</code>,
+  <code>Section</code>, <code>THead</code>, …), the <a href="#events">event vocabulary</a> is
+  global (<code>Click</code>, <code>MouseDown</code>, <code>KeyUp</code>, …), and
+  <code>window.Instance</code> is the framework class. <code>InstanceReady</code> is a promise
+  resolving when boot completes — module code and late loaders can await it.</p>
+  <pre><code>await InstanceReady;
+  document.body.appendChild(new Div());</code></pre>
+  <div class="note"><b>Module code?</b> Retrieve Instance without the named global through the
+  <a href="#ivc">IVC broker</a>: <code>const Instance = globalThis[Symbol.for('Instance')]();</code>
+  The <a href="#tooling">Vite plugin</a> wraps this as <code>import Instance, { ready } from
+  'virtual:instance'</code>.</div>
+
+  <h3 id="authoring">Authoring paths &mdash; <code>&lt;script type="instance"&gt;</code>, <code>.is</code>, Vite</h3>
+  <p>Plain scripts are the floor; for 'real' projects the AOT compiler earns its place. Instance
+  recognizes <b>Instance-typed scripts</b> and <b>.is files</b> and compiles them at boot &mdash; the
+  reactive sigils, lifecycle blocks, and the <code>.is</code> dialect become available without a
+  separate build step. These are the expected way to write anything beyond a snippet.</p>
+  <pre><code>&lt;!-- compiled inline: sigils, @mount, effect() all work --&gt;
+  &lt;script type="instance"&gt;
+    class Counter extends Div {
+      $count = 0
+      render$() { this.textContent = `count: ${this.$count}` }
+    }
+  &lt;/script&gt;
+
+  &lt;!-- or an external .is file, compiled on load --&gt;
+  &lt;script src="/app.is"&gt;&lt;/script&gt;</code></pre>
+  <table class="params">
+    <tr><th>Recognized as Instance source</th><th></th></tr>
+    <tr><td><code>&lt;script type="instance"&gt;</code></td><td>also <code>text/instance</code>,
+        <code>application/instance</code>, <code>text/is</code></td></tr>
+    <tr><td>a <code>src</code> ending in <code>.is</code></td><td>the file is fetched and compiled
+        before it runs</td></tr>
+  </table>
+  <p>For projects that live inside a bundler, the <a href="#tooling">Vite plugin</a> compiles
+  <code>.is</code> modules and exposes <code>import Instance, { ready } from 'virtual:instance'</code>
+  so module code never touches the global. The compiler, the typed scripts, and the plugin are all
+  <i>opt-in</i> &mdash; the same app runs from a single plain <code>&lt;script&gt;</code> with none of
+  them.</p>
+  <div class="note"><b>The <code>.is</code> dialect</b> adds the reactive sigils
+  (<code>$field</code>, <code>method$</code>), lifecycle blocks (<code>@mount</code>,
+  <code>effect()</code>), and the class-head markers &mdash; documented under
+  <a href="#classheads">.is &mdash; class heads</a>. In un-compiled plain JS, the same behavior is
+  reachable at runtime; the dialect is sugar, never a requirement.</div>
+
+  <h2 id="construction">Construction</h2>
+
+  <h3 id="new">new Div( [init] ) <span class="ret">⇒ HTMLDivElement</span></h3>
+  <p><b>Description:</b> Mint a real element of the class's tag. The returned value is the DOM node
+  itself — attach it, style it, query it like any element, because it is one.</p>
+  <pre><code>const box = new Div();
+  box.className = 'card';
+  document.body.appendChild(box);
+
+  box instanceof Div;             // true
+  box instanceof HTMLDivElement;  // true
+  box.tagName;                    // "DIV"</code></pre>
+  <p>Every HTML tag has a Pascalite-named class: <code>Div</code>, <code>Span</code>,
+  <code>Table</code>, <code>Section</code>, <code>Article</code> — and the acronym tags resolve
+  the way the house table says, not the way naive casing would: <code>tr → TR</code>,
+  <code>thead → THead</code>, <code>tbody → TBody</code>, <code>td → TD</code>.</p>
+
+  <h3 id="placement">new Div( '@expression' ) <span class="ret">⇒ Element (placed) — the DSL</span></h3>
+  <p><b>Description:</b> The first string argument is a <b>positional expression</b> in a small
+  natural-language DSL: sigil, optional verb, optional ordinal phrase, container. Construction and
+  placement become one move.</p>
+  <h4>Sigils</h4>
+  <table class="params">
+    <tr><th>Sigil</th><th></th><th>Meaning</th></tr>
+    <tr><td>@</td><td></td><td>singular — the expression names one place</td></tr>
+    <tr><td>@@</td><td></td><td>plural — the container phrase matches <i>all</i>; a single
+        constructed element takes the <b>first</b> match</td></tr>
+    <tr><td>%Name / @%Name</td><td></td><td><b>reserved</b> — the instance selector (select by
+        Instance class). Parses today; resolution throws its own honest error:
+        <code>[DSL] Instance selector (%) resolution is not yet implemented</code></td></tr>
+  </table>
+  <h4>Verbs</h4>
+  <p>Six placement verbs, each taking a selector (with optional connector sugar —
+  <code>to</code> / <code>within</code> / <code>of</code> — between verb and selector):</p>
+  <table class="params">
+    <tr><th>Verb</th><th></th><th>Placement</th></tr>
+    <tr><td>@selector</td><td></td><td>last child of the target</td></tr>
+    <tr><td>@append [to] selector</td><td></td><td>last child of the target</td></tr>
+    <tr><td>@prepend selector</td><td></td><td>first child of the target</td></tr>
+    <tr><td>@before selector</td><td></td><td>previous sibling of the target</td></tr>
+    <tr><td>@after selector</td><td></td><td>next sibling of the target</td></tr>
+    <tr><td>@replace selector</td><td></td><td>replaces the target</td></tr>
+    <tr><td>@wrap selector</td><td></td><td><b>wraps</b> the target — the new element takes the
+        target's position and adopts it as a child</td></tr>
+  </table>
+  <pre><code>new Div('@append main');
+  new Aside('@prepend to #layout');
+  new Div('@wrap #logo');           // logo now lives inside the new div, in place</code></pre>
+  <h4>Verbless: the ordinal slot</h4>
+  <p>With no verb, the expression <i>is</i> the placement — <b>the new element takes the named
+  slot</b>. The grammar: <code>[the] [every] &lt;ordinal&gt; [from last] [depth] [filter] of
+  &lt;container&gt;</code>. Ordinals run <code>first … tenth</code> plus <code>last</code>;
+  one-word <code>firstchild</code>/<code>lastchild</code> normalize.</p>
+  <pre><code>new Div('@third child of #wrap');   // becomes the 3rd child — measured: index 2
+  new Div('@last child of #wrap');    // appends
+  new Div('@the first child of nav'); // 'the' is optional garnish</code></pre>
+  <h4>Depth words</h4>
+  <p><code>child</code>, <code>grandchild</code>, <code>great-grandchild</code>,
+  <code>great-great-…</code> — each <code>great-</code> descends one more generation. The slot is
+  taken at that depth under the container:</p>
+  <pre><code>new Div('@first grandchild of #main');  // first child of #main's first child</code></pre>
+  <h4>Filters</h4>
+  <p>A selector between the ordinal phrase and <code>of</code> scopes the counting to matching
+  children only:</p>
+  <pre><code>new Div('@third .kid of #wrap');    // the slot of the third child MATCHING .kid —
+                                      // non-matching siblings don't count</code></pre>
+  <h4>Ancestor arrows</h4>
+  <p>Inside a container phrase, arrows constrain the match by ancestry:
+  <code>sel &lt; ancestor</code> (immediate parent), <code>sel &lt;&lt; ancestor</code>
+  (any depth). The route arrows <code>&lt;=</code> / <code>&lt;&lt;=</code> parse and are
+  reserved for the routing layer.</p>
+  <pre><code>new Div('@.kid &lt; #wrap');   // append into the .kid whose PARENT is #wrap</code></pre>
+  <h4>Grammar the parser also accepts</h4>
+  <p><code>every</code>/<code>each</code> mark plurality (<code>@each .row</code>); <code>every
+  &lt;ordinal&gt;</code> is ordinal repetition grammar (<code>@every third child of …</code> —
+  with a single <code>@</code> element, the first such slot is taken). <code>from last</code>
+  counts the ordinal from the tail (<code>@second from last child of …</code>).</p>
+  <div class="warn"><b>Selectors only, loud errors.</b> Targets are selector strings — an element
+  reference throws a <code>[DSL]</code> error naming the rule, as does an unknown ordinal, a
+  dangling <code>of</code>, or an empty phrase. The parser's errors are the grammar's
+  documentation; trust them.</div>
+  <div class="note"><b>Content rides along.</b> <span class="since">0.87.z</span> A plain string
+  beside a DSL expression becomes the element's text: <code>new Div('@append main', 'hello
+  world')</code> constructs, places, <i>and fills</i>. Order-agnostic. Without a route, a plain
+  string keeps its long-standing meaning — the element's <code>name</code>.</div>
+
+  <h3 id="awaitel">await new Div( ) <span class="ret">⇒ Element (settled)</span></h3>
+  <p><b>Description:</b> Elements are <b>awaitable</b>. Construction with pending asynchronous
+  work (async members settling, queued sequenced work) exposes a virtual <code>then</code>;
+  awaiting resolves to <b>the element itself</b> once its settle chain drains. An element with
+  nothing pending awaits straight through — <code>await new Div()</code> is always safe and always
+  hands back the element.</p>
+  <pre><code>const el = await new Div();          // no pending work — immediate, el is the div
+
+  class Loader extends Div {
+    async $data() { return fetch('/api').then(r =&gt; r.json()); }  // async member
+  }
+  const l = await new Loader();        // resolves when $data settles
+  </code></pre>
+
+  <h3 id="subclass">class Card extends Div <span class="ret">— your components</span></h3>
+  <p><b>Description:</b> Subclass a tag class and construction mints that tag carrying your
+  methods, fields, and reactive state. This is the component model; there is no other ceremony.</p>
+  <pre><code>class Card extends Div {
+    $title = 'untitled';          // reactive field — see Reactivity
+    flip() { this.classList.toggle('flipped'); return this; }
+  }
+
+  const c = new Card().appendTo(document.body);
+  c.flip().flip();
+  c instanceof Card;              // true
+  c instanceof Div;               // true — the whole chain answers</code></pre>
+
+  <h3 id="owntag">class Scrollbar extends Instance <span class="ret">— your own tag</span></h3>
+  <p><b>Description:</b> Extending <code>Instance</code> directly mints a <b>custom tag</b> named
+  after the class — <code>&lt;scrollbar&gt;</code> — with a synthesized per-tag interface
+  (<code>HTMLScrollbarElement</code>) so identity stays native-shaped even for tags the platform
+  never heard of.</p>
+  <pre><code>class Scrollbar extends Instance {
+    $pos = 0;
+  }
+  const sb = new Scrollbar().appendTo(document.body);
+  sb.tagName;                       // "SCROLLBAR"
+  sb instanceof HTMLScrollbarElement; // true — the interface was synthesized for you</code></pre>
+
+  <h3 id="extend">Instance.extend( K ) <span class="ret">⇒ K</span> <span class="since">0.87.x</span></h3>
+  <p><b>Description:</b> The version-controller hook for class registration. Today it is the
+  identity function — its purpose is the calling convention: assigning the result back means your
+  code keeps working when future versions route classes through the
+  <a href="#ivc">IVC registry</a>.</p>
+  <pre><code>class CatDiv extends Div { /* … */ }
+  CatDiv = Instance.extend(CatDiv);   // let/var — no rewrite needed later</code></pre>
+
+  <h2 id="identity">Identity</h2>
+
+  <h3 id="instanceof">el instanceof Instance <span class="ret">⇒ boolean</span> <span class="since">0.87.v</span></h3>
+  <p><b>Description:</b> <code>instanceof</code> answers truthfully at every level —
+  tag class, ancestors, native interfaces, and <code>Instance</code> itself. The
+  <code>Instance</code> brand is <b>the mint</b>: only elements created through Instance answer
+  true, via <code>Symbol.hasInstance</code>.</p>
+  <pre><code>class FancyDiv extends Div {}
+  const f = new FancyDiv();
+
+  f instanceof FancyDiv;         // true
+  f instanceof Div;              // true
+  f instanceof HTMLDivElement;   // true
+  f instanceof Instance;         // true — minted
+
+  new Span() instanceof Div;     // false — tag-specificity survives
+  document.createElement('div')
+          instanceof Instance;   // false — never minted</code></pre>
+
+  <h3 id="pertag">Per-tag prototypes <span class="ret">— HTMLSectionElement &amp; friends</span> <span class="since">0.87.w</span></h3>
+  <p><b>Description:</b> <i>Shared cross-element prototypes: never — the tag is isolate.</i>
+  Where the platform gave a tag its own interface (<code>div → HTMLDivElement</code>) Instance
+  reuses it untouched. Where the platform was lazy — <code>section</code> parked on bare
+  <code>HTMLElement</code>, <code>thead/tbody/tfoot</code> sharing one
+  <code>HTMLTableSectionElement</code>, <code>h1–h6</code> sharing <code>HTMLHeadingElement</code>
+  — Instance synthesizes the interface that should have existed:</p>
+  <pre><code>HTMLSectionElement;                    // synthesized, exposed, real
+  Object.getPrototypeOf(HTMLSectionElement.prototype)
+    === HTMLElement.prototype;           // true — the native chain continues
+
+  const th = new THead();
+  th instanceof HTMLTHeadElement;        // true — its OWN interface
+  th instanceof HTMLTableSectionElement; // true — the shared native still answers</code></pre>
+  <p>Synthesized interfaces are correctly named, carry <code>Symbol.toStringTag</code>, chain their
+  statics like platform interfaces do, and are exposed on the realm only if the name is free.</p>
+
+  <h3 id="thischain">.this <span class="ret">⇒ the level above</span> <span class="since">0.87.v</span></h3>
+  <p><b>Description:</b> A uniform ladder up the architecture, readable at every level: an element's
+  <code>.this</code> is its class; a class's <code>.this</code> is its parent class;
+  <code>Instance.this</code> is the global object.</p>
+  <pre><code>class Row extends Div {}
+  const r = new Row();
+
+  r.this === Row;          // element → class
+  Row.this === Div;        // class → parent
+  Instance.this === window // root → global</code></pre>
+
+  <h3 id="engine">Instance.powerup( ) / Instance.powerdown( ) <span class="ret">⇒ undefined</span> <span class="since">0.87.w</span></h3>
+  <p><b>Description:</b> Toggle <b>engine mode</b>. The architecture stays the same — the metaclass
+  changes <i>slot</i>. Off (default): <code>el → Meta → tagProto → …</code> — the metaclass is
+  visible as the element's prototype. On: <code>el → tagProto → Meta → …</code> — the element
+  parents <b>directly to its native prototype</b>, and the metaclass hides one link down.</p>
+  <pre><code>Instance.powerup();
+
+  const d = new Div();
+  Object.getPrototypeOf(d) === HTMLDivElement.prototype;  // true — structurally native
+  HTMLDivElement.prototype.constructor === Div;           // the tag's ctor identity
+  d.$x = 41; d.$x++;                                      // reactivity intact — routed
+                                                          // through the hidden metaclass
+  Instance.powerdown();                                   // fully restores — protos, ctors,
+                                                          // minting shape, reactivity</code></pre>
+  <p>Boot directly into it with the <code class="kbd">⚡</code> script attribute. The splice is
+  <b>per-tag</b> — powering a table-header class can never leak into <code>tbody</code>, because
+  every tag has its own prototype link (see above).</p>
+  <div class="warn"><b>The price, measured.</b> Engine mode inserts one link into hot native
+  prototype chains: ~<b>1.16×</b> on warm DOM property reads in Chrome (a per-element proxy
+  design measures 1.78×; the create/update paths benchmarks actually race are untouched). It also
+  assumes <b>page ownership</b> — every element of a powered tag on the page, including ones you
+  didn't create, inherits through the spliced chain. Engine mode is for apps that own their
+  document; it is never on by default.</div>
+
+
+  <h2 id="wks">Well-Known Symbols</h2>
+  <p class="lede">Instance implements a slice of JavaScript's <b>well-known symbol</b> protocol
+  directly on elements and element classes &mdash; the same hooks (<code>Symbol.iterator</code>,
+  <code>Symbol.hasInstance</code>, &hellip;) that make native objects feel native. They are spliced
+  onto the framework through one relay, so every element and every tag-class answers the protocols
+  below. A few are intentionally left as <b>stubs</b> (present, but empty) &mdash; those are marked.</p>
+  <div class="note"><b>Two receivers.</b> Most of these dispatch on <code>typeof this</code>: an
+  <b>element</b> (<code>object</code>) answers about itself; a <b>class</b> (<code>function</code>)
+  answers about its live instance collection. That split is the recurring shape of the whole
+  protocol surface. 
+  </div>
+  <div class = "note">
+  <b>Well-known Symbols</b> are an extension of the Symbol protocol.
+  They are an abstract inbuilt JavaScript metaprogramming interface that enables the fine grained customization of, 
+  and custom overrides to, how any object or function assigned such Symbols
+  should interact with its environment under certain 'template' lexical conditions. They are scope-aware, 
+  highest-precedence behavioral interface overrides, which TC39 designed specifically 
+  to enable the ability for programmers to override the default behavior of object-ish variables
+  without breaking backwards compatibility with the existing web.
+  Instance just actually uses them.</div>
+
+  <h3 id="wks-iterator">Symbol.iterator <span class="ret">&mdash; iterate the collection</span></h3>
+  <p><b>Implemented.</b> Elements and, more usefully, <b>Collections</b> are iterable &mdash;
+  <code>Class.all()</code>, <code>Class.where(fn)</code>, and the results of the
+  <a href="#wks-string">string protocol</a> all yield their elements to <code>for&hellip;of</code>
+  and spread.</p>
+  <pre><code>for (const card of Card.all()) card.classList.add('seen');
+  const els = [...Card.all()];          // an array of every live Card
+  const hits = [...'apple'.match(Card)]; // spread a match Collection</code></pre>
+  <div class="warn">Spreading the <b>bare class</b> (<code>[...Card]</code>) is not yet supported &mdash;
+  go through <code>Card.all()</code>, which returns the iterable Collection.</div>
+
+  <h3 id="wks-hasinstance">Symbol.hasInstance <span class="ret">&mdash; the brand behind <code>instanceof</code></span></h3>
+  <p><b>Implemented.</b> <code>el instanceof Instance</code> is true because the mint is the brand
+  (not a prototype-chain link). Tag classes keep ordinary <code>instanceof</code> so
+  <code>x instanceof Div</code> stays tag-specific. See <a href="#instanceof">Identity</a> for the
+  full story.</p>
+  <pre><code>box instanceof Div;       // true (tag-specific)
+  box instanceof Instance;  // true (the brand)</code></pre>
+
+  <h3 id="wks-toprimitive">Symbol.toPrimitive <span class="ret">&mdash; coercion, dispatched by receiver</span></h3>
+  <p><b>Implemented.</b> Coercion is meaningful and receiver-split. On a <b>class</b>, numeric
+  coercion yields the collection size; string coercion is deliberately rejected (a class is not a
+  string, and silently stringifying one hides bugs). On an <b>element</b>, coercion resolves through
+  the element's own value semantics.</p>
+  <pre><code>Card.length;   // a number — the live instance count (numeric coercion works)
+  +Card;         // the count, via @@toPrimitive('number')
+  '' + Card;     // THROWS — string coercion of a class is intentionally disallowed</code></pre>
+
+  <h3 id="wks-tostringtag">Symbol.toStringTag <span class="ret">&mdash; the <code>[object Tag]</code> name</span></h3>
+  <p><b>Implemented.</b> <code>Object.prototype.toString</code> reflects the element's class name,
+  and a class stringifies its tag with a <code>Class</code> suffix.</p>
+  <pre><code>Object.prototype.toString.call(card);  // "[object Card]"</code></pre>
+
+  <h3 id="wks-string">Symbol.match / matchAll / replace / search / split <span class="ret">&mdash; the string protocol</span></h3>
+  <p><b>Implemented (intentionally divergent).</b> The five regex well-knowns are reinterpreted as
+  <b>collection operations</b>: <code>search</code> = predicate, <code>match</code> = filter,
+  <code>matchAll</code> = walker, <code>replace</code> = mutator, <code>split</code> = partitioner.
+  This is a deliberate divergence from <code>RegExp</code> semantics &mdash; the receiver is the
+  pattern, the query is the haystack, and a class answers with its living instances. All five verbs
+  are pure except <code>replace</code>, which mutates matched text in the live DOM.</p>
+  <pre><code>'apple'.search(Card);   // registry index of the first matching instance
+  'apple'.match(Card);    // a Collection of matching instances
+  'old'.replace(Card, 'new'); // mutates matching instances' text; returns the Collection</code></pre>
+
+  <h3 id="wks-concat">Symbol.isConcatSpreadable <span class="ret">&mdash; flatten in <code>concat</code></span></h3>
+  <p><b>Implemented.</b> Elements report as concat-spreadable, so array operations flatten Instance
+  collections the way you'd expect.</p>
+
+  <h3 id="wks-species">Symbol.species <span class="ret">&mdash; derived-object constructor</span></h3>
+  <p><b>Implemented (pinned).</b> <code>Instance</code> pins <code>@@species</code> non-configurable;
+  element classes keep their inherited species so derived objects construct correctly. You rarely
+  touch this directly &mdash; it's the plumbing that keeps subclassing well-behaved.</p>
+
+  <h3 id="wks-dispose">Symbol.dispose / Symbol.asyncDispose <span class="ret">&mdash; <code>using</code> / <code>await using</code></span></h3>
+  <p><b>Stub (known).</b> The slots exist so the explicit-resource-management protocol
+  (<code>using el = &hellip;</code> / <code>await using el = &hellip;</code>) can light up where the
+  platform supports it, but they are <b>not currently wired</b> to teardown. For disposal today, use
+  the <a href="#teardown">teardown protocol</a> (<code>el.dispose()</code> /
+  <code>Instance.teardown()</code>) or the <code>Symbol.for('Instance.teardown')</code> brand below.</p>
+  <pre><code>// intended (not yet active):
+  // using card = new Card();   // would auto-dispose at scope exit
+
+  // today:
+  card.dispose();               // explicit teardown — see the Teardown chapter</code></pre>
+
+  <h3 id="wks-brands">Symbol.for( ) brands <span class="ret">&mdash; the registered protocol keys</span></h3>
+  <p><b>Implemented.</b> Beyond the built-in well-knowns, Instance registers a family of
+  <b>global-registry symbols</b> (<code>Symbol.for(&hellip;)</code>) as protocol brands &mdash; stable
+  keys that cross realms and let other code recognize and hook Instance's contracts:</p>
+  <table class="params">
+    <tr><th>Symbol.for(&hellip;)</th><th></th><th></th></tr>
+    <tr><td>'Instance'</td><td></td><td>the framework brand / IVC broker key (see
+        <a href="#interop">Interop</a>)</td></tr>
+    <tr><td>'Instance.teardown'</td><td></td><td>the sync teardown protocol hook &mdash; call it on
+        an element to dispose it (typeof-dispatched, like the well-knowns)</td></tr>
+    <tr><td>'Instance.teardown.async'</td><td></td><td>the async teardown hook</td></tr>
+    <tr><td>'Instance.event.handle' · 'Instance.event.type'</td><td></td><td>the brands that mark
+        event handles and event types (see <a href="#events">DOM Events</a>)</td></tr>
+    <tr><td>'Instance.effects'</td><td></td><td>the per-element named-effect registry key</td></tr>
+    <tr><td>'Instance.async' · 'Instance.mixed'</td><td></td><td>the class-head discipline markers
+        (see <a href="#classheads">class heads</a>)</td></tr>
+    <tr><td>'Instance.!!' · 'Instance.??'</td><td></td><td>internal coercion/guard brands</td></tr>
+    <tr><td>'Instance.dispose.shim' · 'Instance.asyncDispose.shim'</td><td></td><td>fallback keys
+        used where the platform lacks native <code>Symbol.dispose</code></td></tr>
+  </table>
+  <div class="note"><b>Why <code>Symbol.for</code>?</b> Registry symbols are shared by key across
+  every module and realm, so a brand minted in one bundle is recognized by another &mdash; the
+  mechanism the cross-instance-version broker relies on.</div>
+
+  <h2 id="reactivity">Reactivity</h2>
+
+  <h3 id="fields">this.$field <span class="ret">— reactive state</span></h3>
+  <p><b>Description:</b> Any property prefixed <code>$</code> is a reactive field. Reads and writes
+  route through the metaclass into a signal store held <i>beside</i> the element (weakly keyed on
+  it) — the DOM node itself stays clean. Fields work on any minted element, with or without a class
+  body, with or without compilation:</p>
+  <pre><code>const d = new Div().appendTo(document.body);
+  d.$count = 0;          // creates the reactive field
+  d.$count;              // 0 — a tracked read inside any effect
+  d.$count += 1;         // notifies subscribers</code></pre>
+  <table class="params">
+    <tr><th>Tier</th><th>Prefix</th><th>Semantics</th></tr>
+    <tr><td>shallow</td><td>$</td><td>The value is one signal. Object values notify per-<i>child</i>:
+        subscribers track the properties they actually read.</td></tr>
+    <tr><td>deep</td><td>$$</td><td>The whole subtree is reactive — nested mutations
+        (<code>this.$$tree.a.b = 1</code>) notify through the structure.</td></tr>
+  </table>
+  <p>Writes are <b>epoch-deduped</b>: assigning the value a field already holds does not re-fire
+  its subscribers. A changed value fires exactly once.</p>
+
+  <h3 id="effects">name$( ) { … } <span class="ret">— effects (compiled classes)</span></h3>
+  <p><b>Description:</b> In compiled classes (<code>.is</code> sources, <code>data-is</code>,
+  autoclass groups), a method whose name <b>ends</b> in <code>$</code> is an <b>effect</b>: it runs
+  once on mount to arm, tracking every <code>$field</code> it reads, and re-runs when its
+  dependencies change.</p>
+  <pre><code>class Counter extends Div {
+    $n = 0
+    show$() { this.textContent = 'n=' + this.$n }   // armed at mount; re-runs on writes
+  }
+  const c = new Counter().appendTo(document.body);
+  c.textContent;   // "n=0"
+  c.$n = 5;
+  c.textContent;   // "n=5"</code></pre>
+  <p>Two effects may read one field (both re-run per write); one effect may read two fields — but
+  read the next entry before you rely on that.</p>
+  <div class="note"><b>Plain-JS classes:</b> the <code>$</code>-suffix scan is a compiler feature.
+  In un-compiled classes, arm effects at runtime with <a href="#belt"><code>.effect(fn)</code></a> —
+  identical tracking, explicit arming.</div>
+
+  <h4 id="classheads">Class head markers — <code>async</code> / <code>mixed</code> / <code>iterable</code></h4>
+  <p>In <code>.is</code> sources the compiler recognizes <b>head markers</b> before
+  <code>class</code> that set the reactive discipline of the whole component:</p>
+  <table class="params">
+    <tr><th>Marker</th><th></th><th>Meaning</th></tr>
+    <tr><td>sync class</td><td></td><td>the default — synchronous effects</td></tr>
+    <tr><td>async class</td><td></td><td>effects may await; the settle chain
+        (<a href="#awaitel">awaitable construction</a>) accounts for them</td></tr>
+    <tr><td>mixed class</td><td></td><td>both sync and async members coexist under one policy</td></tr>
+    <tr><td>iterable class</td><td></td><td>the component exposes an iteration protocol over its
+        reactive collection state</td></tr>
+  </table>
+  <pre><code>async class Feed extends Div {
+    async load$() { this.$items = await fetch('/feed').then(r =&gt; r.json()) }
+  }
+
+  iterable class Grid extends Div {
+    $cells = []
+    *[Symbol.iterator]() { yield* this.$cells }
+  }</code></pre>
+
+  <h4 id="lifecyclebody">Lifecycle in the class body — <code>@mount</code>, <code>effect()</code></h4>
+  <p>Compiled sources write lifecycle and effects as first-class body syntax — an
+  <code>@mount</code> block, an <code>effect()</code> block — which the compiler lowers to the
+  method forms:</p>
+  <pre><code>class Card extends Div {
+    $count = 0
+
+    @mount {
+      console.log('card entered the document')
+    }
+
+    effect() {
+      this.textContent = `count: ${this.$count}`   // tracked; re-runs on change
+    }
+  }</code></pre>
+  <p>The lifecycle names the compiler highlights and lowers include <code>mount</code>,
+  <code>unmount</code>, <code>insertion</code>, <code>removal</code>, <code>rendered</code>,
+  <code>transition</code>, <code>routeenter</code>, <code>routeleave</code>, <code>append</code>,
+  <code>value</code>, and <code>stamp</code>.</p>
+
+  <h3 id="consensus">Consensus &amp; Δ <span class="ret">— multi-dependency doctrine</span></h3>
+  <p><b>Description:</b> When one effect reads <b>several</b> plain <code>$fields</code>, it does
+  not re-run on <i>any</i> write — it re-runs when <b>every dependency has moved</b>. This is the
+  <b>consensus barrier</b>, and it is a feature: effects over multiple sources see a consistent
+  frame, never a half-updated one.</p>
+  <pre><code>class Pair extends Div {
+    $a = 1
+    $b = 2
+    sum$() { this.textContent = String(this.$a + this.$b) }
+  }
+  const p = new Pair().appendTo(document.body);   // "3"
+  p.$a = 10;      // barrier holds — still "3"
+  p.$b = 20;      // both moved — ONE re-run, sees both: "30"</code></pre>
+  <p>When you want <i>any-source-fires</i> (union) semantics, that is what the <b>Δ</b> combinator
+  exists for — union is requested, never accidental. Derived computeds over several sources honor
+  the same barrier through the chain.</p>
+
+  <h3 id="statics">static $field <span class="ret">— class-level broadcast</span></h3>
+  <p><b>Description:</b> A <code>$</code>-field declared <code>static</code> is one signal shared
+  by the class: write it on the class, and every instance-side subscription hears it.</p>
+  <pre><code>class Ticker extends Div {
+    static $now = 0;
+  }
+  const t = new Ticker().appendTo(document.body);
+  t.on('@change', '$now', v =&gt; t.textContent = String(v));
+  Ticker.$now = Date.now();     // every subscribed instance updates</code></pre>
+
+  <h3 id="onchange">.on( '@change', source, callback ) <span class="ret">⇒ subscription</span></h3>
+  <p><b>Description:</b> Subscribe to a class-static signal from an element. Arming is
+  <b>swallowed</b> — the callback fires on subsequent changes, not on subscribe.</p>
+  <table class="params">
+    <tr><th>Argument</th><th>Type</th><th></th></tr>
+    <tr><td>'@change'</td><td>string</td><td>the subscription channel</td></tr>
+    <tr><td>source</td><td>string | getter</td><td>a static field name (<code>'$now'</code>) or a
+        getter function returning the tracked read</td></tr>
+    <tr><td>callback</td><td>function</td><td>receives the new value</td></tr>
+  </table>
+
+  <h3 id="subscribeentry">.subscribe( ParentClass, source, cb ) <span class="ret">⇒ subscription</span> <span class="since">0.87.z</span></h3>
+  <p><b>Description:</b> The <code>'@change'</code> semantics with the class explicit — subscribe
+  this element to a class-static signal named directly. Arming is silent; the callback receives
+  <code>(value, el)</code>.</p>
+  <pre><code>class Feed extends Div { static $tick = 0; }
+  const f = new Feed().appendTo('#app');
+  f.subscribe(Feed, '$tick', v =&gt; f.textContent = String(v));
+  Feed.$tick = 9;                        // f shows "9"</code></pre>
+  <p>The one-argument form is a different tool that keeps its meaning: <code>subscribe(cb)</code> /
+  <code>unsubscribe(cb)</code> register plain subscribers on the element's local pub/sub, and
+  <b><code>.notify(…args)</code></b> calls them all with the arguments — a tiny broadcast
+  surface, no signals involved.</p>
+
+  <h3 id="watchentry">.watch( source, fn ) <span class="ret">⇒ disposer</span></h3>
+  <p><b>Description:</b> Observe a signal source and react to <b>value changes</b> only. The
+  source is a getter over the triad (<code>$ =&gt; …</code>) or a signal handle
+  (anything with <code>.get()</code> — <code>el.$.count</code> qualifies). The callback runs
+  <b>untracked</b> as <code>fn(newValue, previous, $)</code> — and if it returns a plain object,
+  the object is <b>seeded through ψ</b>: returned keys become live fields.</p>
+  <pre><code>const off = el.watch($ =&gt; $.count, (now, was) =&gt; {
+    if (now &gt; was) return { trend: 'up' };   // auto-seeds el.$trend
+  });</code></pre>
+
+  <h3 id="belt">.effect( fn ) · .once( type, fn ) · .batch( fn ) · .untrack( fn )</h3>
+  <p><b>Description:</b> The runtime reactive belt, present on every element.</p>
+  <table class="params">
+    <tr><th>Method</th><th>Returns</th><th></th></tr>
+    <tr><td>.effect(fn)</td><td>handle</td><td>Arm an effect now: runs once, tracks the
+        <code>$fields</code> it read, re-runs on their writes. The plain-JS twin of
+        <code>name$()</code>.</td></tr>
+    <tr><td>.once(type, fn)</td><td>—</td><td>A DOM listener that fires exactly once and
+        unbinds itself.</td></tr>
+    <tr><td>.batch(fn)</td><td>—</td><td>Run several writes as one frame.</td></tr>
+    <tr><td>.untrack(fn)</td><td>value</td><td>Read reactive state <i>without</i> subscribing —
+        inside an effect, untracked reads never become dependencies.</td></tr>
+  </table>
+  <pre><code>const el = new Div().appendTo(document.body);
+  el.$n = 1;
+  el.effect(() =&gt; console.log('n is', el.$n));  // logs "n is 1", tracks $n
+  el.$n = 2;                                     // logs "n is 2"</code></pre>
+
+  <h2 id="kernel">The Chimera kernel</h2>
+  <p class="lede">Chimera V17 is the signal engine everything above rides — a <b>trit-kernel</b>
+  over a preallocated typed-array arena. Nodes (states, computeds, effects) are pointers into
+  parallel lanes; dependency edges live in flat arrays; propagation is a walk over integers. That
+  is why per-signal cost stays flat at scale and why full teardown is "drop the slab" — the whole
+  graph is one allocation.</p>
+  <p>The kernel is <b>discrete-first</b>: its primitives are a valueless <i>notify</i> and a
+  valueless <i>subscribe</i>; "current value + equality-dedup" is the store layer on top. That
+  factoring is what lets one kernel carry both faces — <b>behaviors</b> (<code>$fields</code>:
+  value at rest, dedup, replay) and <b>pulses</b> (<a href="#events">DOM events</a>: none of
+  those) — each with the semantics its face requires.</p>
+
+  <h3 id="sigils">The sigil grammar <span class="ret">— position × family × depth</span></h3>
+  <p><b>Description:</b> One compact grammar generates the whole reactive vocabulary. Verbatim
+  from the kernel's own charter: <i>"Prefix=computed, suffix=effect; Δ=union(OR),
+  $=consensus(AND); depth: @=atomic (reference-update), $=shallow, $$=deep;
+  get&nbsp;X()=volatile, this.X(fn)=active."</i></p>
+  <table class="params">
+    <tr><th>Axis</th><th>Marks</th><th>Meaning</th></tr>
+    <tr><td>position</td><td>prefix vs suffix</td><td><code>$total</code> (prefix) is a
+        <b>computed</b>; <code>show$()</code> (suffix) is an <b>effect</b></td></tr>
+    <tr><td>family</td><td>$ vs Δ</td><td><code>$</code> = <b>consensus</b> (AND — re-fires when
+        every dependency moved); <code>Δ</code> = <b>union</b> (OR — re-fires on any).
+        <code>watchΔ()</code> is a union effect; <code>sum$()</code> a consensus one.</td></tr>
+    <tr><td>depth</td><td>1 char · 2+ chars · @</td><td>one sigil = <b>shallow</b>
+        (<code>$x</code>); doubled = <b>deep</b> (<code>$$tree</code> — nested mutations notify
+        through the structure); <code>@</code> = <b>atomic</b> — reference-update semantics</td></tr>
+    <tr><td>temperature</td><td>get vs call</td><td><code>get X()</code> = <b>volatile</b>
+        computed (recomputes per read); <code>this.X(fn)</code> = <b>active</b> registration
+        (arms now)</td></tr>
+  </table>
+  <pre><code>class Gauge extends Div {
+    $a = 1
+    $b = 2
+    get $sum() { return this.$a + this.$b }     // prefix computed, consensus family
+    show$()  { this.textContent = this.$sum }    // suffix effect
+    logΔ()   { console.log(this.$a, this.$b) }   // union effect — fires on EITHER write
+  }</code></pre>
+
+  <h3 id="active">.$( fn ) · .Δ( fn ) <span class="ret">⇒ handle — active registrars</span></h3>
+  <p><b>Description:</b> The runtime spelling of the same axes: arm an effect <i>now</i>, family
+  chosen by the verb. Measured against two writes to two tracked fields:
+  the <code>Δ</code> effect ran on <b>each</b> (union); the <code>$</code> effect ran <b>once
+  both had moved</b> (consensus).</p>
+  <pre><code>el.Δ(() =&gt; { void el.$a; void el.$b; refresh(); });   // any-change
+  el.$(() =&gt; { void el.$a; void el.$b; commit(); });    // all-changed</code></pre>
+
+  <h3 id="triad">.$ — the triad <span class="ret">tracked · untracked · handle</span></h3>
+  <p><b>Description:</b> The <code>$</code> accessor is three tools in one, chosen by how you
+  touch it:</p>
+  <table class="params">
+    <tr><th>Touch</th><th></th><th>You get</th></tr>
+    <tr><td>el.$count</td><td></td><td>a <b>tracked</b> read — becomes a dependency inside effects</td></tr>
+    <tr><td>el.$('count')</td><td></td><td>an <b>untracked</b> read — peek without subscribing</td></tr>
+    <tr><td>el.$.count</td><td></td><td>the <b>Signal handle</b> itself — the kernel node, for
+        composing (<code>.get()</code> and friends)</td></tr>
+  </table>
+  <p>The accessor is identity-stable (<code>el.$ === el.$</code>), as are its siblings —
+  <code>$$</code> (deep), <code>@</code> (atomic), <code>ø</code>, and <code>ψ</code>.</p>
+
+  <h3 id="psi">.ψ( … ) <span class="ret">⇒ chainable functor</span></h3>
+  <p><b>Description:</b> The seeding functor — one chain that writes, arms, and unwraps.
+  Each <code>(key, value)</code> call seeds a field and returns the functor; a function call arms
+  an effect; an empty call unwraps back to the element.</p>
+  <pre><code>const el2 = el.ψ('$count', 0)('$label', 'ready')(() =&gt; {
+    void el.$count;            // armed over what it reads
+  })();                         // ← unwrap: el2 === el</code></pre>
+
+  <h3 id="signal">Signal.State · Signal.Computed · Signal.Effect · Signal.Store</h3>
+  <p><b>Description:</b> The kernel surface, exposed at <code>Instance.Chimera.Signal</code> —
+  the same arena everything above rides.</p>
+  <pre><code>const { Signal } = Instance.Chimera;
+
+  const st = new Signal.Store();      // a bare store — element-store semantics
+  st.write('$k', 1);
+  st.read('$k');                       // 1 — tracked when read inside an effect
+
+  new Signal.Effect(() =&gt; {           // arms immediately, tracks its reads
+    console.log(st.read('$k'));
+  });
+  st.write('$k', 2);                   // effect re-runs</code></pre>
+  <div class="note"><b>Two store modes.</b> <code>new Store()</code> (bare) behaves like element
+  stores — <code>read</code>/<code>write</code> are the reactive surface. <code>new Store({ seed })</code>
+  ingests the seed as inert initial data; property-style access on the seed object is not the
+  reactive path. When in doubt: <code>read</code>/<code>write</code>.</div>
+
+  <h3 id="rawsignal">new Signal( scope, value, key, options ) <span class="ret">⇒ Signal</span></h3>
+  <p><b>Description:</b> The kernel node, constructed directly. Overloaded by arity and by a
+  <b>descriptor-object</b> form; a bare <code>new Signal(value)</code> is the common case, and
+  <code>new Signal(null)</code> is a valid empty node — useful as a manual trigger.</p>
+  <pre><code>let frameTrigger = new Signal(null);        // an empty node — a hand-driven pulse
+  frameTrigger.set(performance.now());        // write; subscribers run
+
+  const s = new Signal(
+    this,                 // scope — the owning element/context (weakly held)
+    () =&gt; a + b,          // value — a function makes it a computed; a plain value, a state
+    null,                 // key — an optional name within the scope's store
+    { capture: 'nested' } // options
+  );</code></pre>
+  <table class="params">
+    <tr><th>Position</th><th>Type</th><th></th></tr>
+    <tr><td>scope</td><td>element / context</td><td>the owner; state is held <b>weakly</b> keyed
+        on it (omit for a free-standing signal)</td></tr>
+    <tr><td>value</td><td>any / function</td><td>a function ⇒ <b>computed</b> (recomputes on
+        dependency change); a plain value ⇒ <b>state</b></td></tr>
+    <tr><td>key</td><td>string?</td><td>a name within the scope's store — lets several handles
+        address one cell</td></tr>
+    <tr><td>options</td><td>object</td><td>the descriptor (below)</td></tr>
+  </table>
+  <h4>The descriptor-object form</h4>
+  <pre><code>new Signal({
+    scope: this,
+    key: null,
+    get: () =&gt; computeIt(),      // 'value:' as a getter
+    // set: v =&gt; { … },          // makes it writable-accessor
+    // accessor: true,
+    options: {
+      capture:   'nested',        // how deep object writes are tracked
+      threshold: 'disabled',      // change-gating
+      affect:    'union',         // union (OR) vs consensus (AND) dependency semantics
+      effect:    'push',          // delivery discipline
+      return:    'stale',         // read-during-recompute policy
+      // trit: #                  // the raw trit encoding, for hand-tuning
+    }
+  });</code></pre>
+  <div class="note"><b>Options are the sigil grammar, spelled out.</b> <code>affect: 'union'</code>
+  is the <code>Δ</code> face; consensus is the <code>$</code> face; <code>capture</code> is the
+  depth axis (<code>nested</code> ≈ <code>$$</code>). The sigils are the ergonomic surface; this
+  descriptor is the same knobs with names, for when you're building infrastructure rather than
+  components.</div>
+
+  <h3 id="signalstatics">Signal.* <span class="ret">— the kernel methods</span></h3>
+  <p><b>Description:</b> Beside the four node classes, <code>Signal</code> (i.e.
+  <code>Instance.Chimera.Signal</code>) carries a lowercase static API — the arena's control
+  surface. Most application code never touches these; they're the machinery the ergonomic sigils
+  sit on, exposed for infrastructure work.</p>
+  <table class="params">
+    <tr><th>Method</th><th>Signature</th><th></th></tr>
+    <tr><td>Signal.batch(fn)</td><td>(fn) ⇒ result</td><td>run several writes as <b>one frame</b> —
+        subscribers see the batch's end state, notified once</td></tr>
+    <tr><td>Signal.untrack(fn)</td><td>(fn) ⇒ result</td><td>run <code>fn</code> <b>outside</b>
+        dependency tracking; reads inside don't subscribe the active effect. Returns
+        <code>fn</code>'s value</td></tr>
+    <tr><td>Signal.reactive(obj)</td><td>(obj) ⇒ proxy</td><td>wrap a plain object as a deep-reactive
+        proxy — the <a href="#apm">APM</a> surface behind <code>$$</code></td></tr>
+    <tr><td>Signal.memo(fn)</td><td>(fn) ⇒ fn</td><td>a memoized computed — the returned function
+        recomputes only when its tracked dependencies change</td></tr>
+    <tr><td>Signal.get()</td><td>() ⇒ Signal</td><td>the currently-executing tracking context (the
+        active effect/computed node), or the root substrate</td></tr>
+    <tr><td>Signal.deref(ref)</td><td>(ref) ⇒ handle</td><td>resolve a weak signal reference back
+        to its live handle (used with the finalization machinery)</td></tr>
+    <tr><td>Signal.subscribe(ptr, fn)</td><td>(a, b) ⇒ boolean</td><td>low-level edge wiring —
+        subscribe a callback to a node; returns whether the edge was added</td></tr>
+    <tr><td>Signal.unsubscribe(ptr, fn)</td><td>(a, b)</td><td>remove such an edge</td></tr>
+    <tr><td>Signal.find(a, b)</td><td>(a, b)</td><td>locate a node/cell within a scope's store</td></tr>
+    <tr><td>Signal.layer(a, b)</td><td>(a, b)</td><td>open a nested arena layer — the substrate
+        stratification the <code>Substrate('L5')</code>-style levels name</td></tr>
+    <tr><td>Signal.init(size?)</td><td>(size='L2')</td><td>initialize/allocate the arena at a size
+        tier; the kernel bootstraps lazily, so this is for pre-sizing</td></tr>
+    <tr><td>Signal.teardown()</td><td>()</td><td>tear down the arena — release the slab; the next
+        signal use re-bootstraps cleanly</td></tr>
+    <tr><td>Signal.wipe()</td><td>()</td><td>clear arena contents without full teardown — a reset
+        that keeps the allocation</td></tr>
+  </table>
+  <pre><code>const { Signal } = Instance.Chimera;
+
+  Signal.batch(() =&gt; { a.$x = 1; a.$y = 2; });     // one notification, not two
+  const v = Signal.untrack(() =&gt; a.$x);            // peek, no subscription
+  const tree = Signal.reactive({ nested: { deep: 1 } });</code></pre>
+  <div class="note"><b>Substrate levels.</b> <code>Instance.Chimera.Substrate</code> and the
+  <code>'L2'</code>…<code>'L5'</code> size tiers select how much arena is preallocated — larger
+  levels for scenes with more live nodes. <code>Signal.init</code> / <code>Signal.layer</code> are
+  how that stratification is driven from code.</div>
+
+  <h2 id="apm">Autonomous Parameterized Memoization</h2>
+  <p class="lede">Deep reactivity (<code>$$</code>) is backed by <b>APM</b> — a deep-proxy cache
+  that makes nested tracking both correct and cheap. Reading through a deep signal returns a proxy
+  that tracks the exact path you touched; the proxies are <b>memoized per object</b> (a weak cache,
+  with FIFO eviction under a size cap) so re-reads don't re-wrap, and a
+  <code>FinalizationRegistry</code> disposes derived handles when their targets are collected.</p>
+  <pre><code>el.$$tree = { user: { name: 'Ada', roles: ['admin'] } };
+
+  el.effect(() =&gt; {
+    render(el.$$tree.user.name);   // tracks ONLY …user.name —
+  });                              // a write to …roles won't re-run this
+  el.$$tree.user.name = 'Lin';     // re-runs; the path matched</code></pre>
+  <p>"Autonomous" because you don't manage it — no memo keys, no invalidation calls. "Parameterized"
+  because the cache is keyed on the object identities you actually traverse. The effect is that
+  deep object state behaves like fine-grained signals without you declaring a signal per field.</p>
+  <div class="note"><b>Union vs consensus, deep.</b> A deep proxy can track in union mode (any
+  nested change fires) or consensus mode (the barrier holds until every touched path moved),
+  matching the <code>Δ</code>/<code>$</code> families at depth.</div>
+
+  <h2 id="throughput">Kernel throughput</h2>
+  <p class="lede">The arena design targets <b>real-time-grade</b> signal work. In the author's
+  profiling the kernel sustains on the order of <b>60,000 signal updates per frame at 60fps</b> —
+  the budget that keeps complex reactive scenes (thousands of live nodes, per-frame animation
+  driving state) inside a single frame without dropping below refresh. Numbers are
+  machine-relative; the point is the order of magnitude — signal propagation is not the
+  bottleneck.</p>
+  <pre><code>// a hand-driven per-frame trigger, the pattern the budget is measured against:
+  let frameTrigger = new Signal(undefined);
+  for (let i = 0; i &lt; 60000; i++) {
+      new Signal(() =&gt; {
+          frameTrigger.get();
+          // ... code logic
+      });
+  }
+  // tens of thousands of effects can depend on frameTrigger and still land within 16ms</code></pre>
+  <div id="bh-loader" class="bh-loader">
+    <input id="bh-path" class="bh-input" type="text" spellcheck="false"
+          placeholder="./Instance-0.87.z.js" value="./Instance-0.87.z.js">
+    <button id="bh-run" class="bh-run">Run</button>
+  </div>
+  <div id="bh-sim" class="bh-sim">
+    <div id="bh-idle" class="bh-idle">Enter the path to the Instance build and press <b>Run</b> to launch 60,000 reactive particles.</div>
+    <canvas id="bh-view"></canvas>
+  <div id="bh-stats">
+    <div class="bh-title">Single-Threaded Reactivity</div>
+    <div class="bh-sub">Each particle is a closure-bound effect. Move your cursor over the field to collect them past the horizon.</div>
+    <div class="bh-row">Slots active <span class="bh-val" id="bh-count">0</span></div>
+    <div class="bh-row">Substrate density <span class="bh-val" id="bh-densDisp" style="color:#38bdf8">0.00%</span></div>
+    <div class="bh-row bh-hr">Logic time <span class="bh-val" id="bh-logic">0.00ms</span></div>
+    <div class="bh-row bh-fps">FPS <span class="bh-val" id="bh-fps">0</span></div>
+    <label class="bh-ctl">Particles <span class="bh-val" id="bh-pCountLabel">60000</span>
+      <input type="range" id="bh-pSlider" min="1000" max="200000" step="1000" value="60000"></label>
+    <label class="bh-ctl">Collapse threshold <span class="bh-val" id="bh-threshLabel">20%</span>
+      <input type="range" id="bh-tSlider" min="5" max="100" step="1" value="20"></label>
+    <div class="bh-horizon">Horizon load <span class="bh-val" id="bh-horizonCount" style="color:#22d3ee">0</span>
+      <span style="color:#64748b">/ <span id="bh-threshTarget">12000</span></span></div>
+    <div class="bh-btnrow"><button id="bh-pauseBtn">Pause</button><button id="bh-restartBtn">Restart</button></div>
+    <span id="bh-unwrapTrigger" style="display:none"></span>
+    <span id="bh-resetBtn" style="display:none"></span>
+    <span id="bh-densBtn" style="display:none"></span>
+    <span id="bh-explainBtn" style="display:none"></span>
+    <div id="bh-cacheOverlay" style="display:none"><span id="bh-closeOverlayBtn"></span></div>
+  </div>
+  </div>
+  <style>
+    .bh-sim { position: relative; width: 100%; height: 560px;
+              margin: 18px 0 6px; border: 1px solid var(--line); border-radius: 10px;
+              overflow: hidden; background: #020617; }
+    .bh-sim canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 1; }
+    #bh-stats { position: absolute; top: 10px; left: 10px; z-index: 10; width: 190px;
+                background: rgba(15,23,42,.92); border: 1px solid #1f2a37; border-radius: 8px;
+                padding: 10px 12px; font: 11px/1.5 ui-monospace, monospace; color: #94a3b8;
+                backdrop-filter: blur(3px); }
+    #bh-stats .bh-title { color: #6ee7b7; font-weight: 700; font-size: 11px; margin-bottom: 3px; }
+    #bh-stats .bh-sub { color: #64748b; font-size: 10px; line-height: 1.45; margin-bottom: 8px; }
+    #bh-stats .bh-row { display: flex; justify-content: space-between; gap: 8px; margin: 2px 0; }
+    #bh-stats .bh-val { color: #f1f5f9; font-weight: 700; }
+    #bh-stats .bh-hr { margin-top: 8px; padding-top: 8px; border-top: 1px solid #1f2a37; }
+    #bh-stats .bh-fps { font-size: 13px; }
+    #bh-stats .bh-ctl { display: flex; flex-direction: column; gap: 3px; margin-top: 8px;
+                        font-size: 10px; color: #94a3b8; }
+    #bh-stats .bh-ctl input[type=range] { width: 100%; accent-color: #10b981; cursor: pointer; height: 3px; }
+    #bh-stats .bh-horizon { margin-top: 8px; padding: 5px 7px; border-radius: 4px;
+                            background: rgba(2,6,23,.6); border: 1px solid #1f2a37; font-size: 10px;
+                            display: flex; justify-content: space-between; }
+    #bh-stats button#bh-pauseBtn { margin-top: 8px; width: 100%; background: #f59e0b; color: #020617;
+                                  border: 0; padding: 5px; height: 30px; border-radius: 4px; font: 700 10px ui-monospace,monospace;
+                                  text-transform: uppercase; cursor: pointer; }
+    #bh-stats button#bh-pauseBtn:hover { background: #fbbf24; }
+    #bh-stats .bh-btnrow { display: flex; gap: 6px; margin-top: 8px; }
+    #bh-stats .bh-btnrow button { flex: 1; margin-top: 0; }
+    #bh-stats button#bh-restartBtn { background: #0ea5e9; color: #041014; border: 0; padding: 5px;
+                                    border-radius: 4px; font: 700 10px ui-monospace,monospace;
+                                    margin: 5px; margin-top: 8px; height: 30px;
+                                    text-transform: uppercase; cursor: pointer; }
+    #bh-stats button#bh-restartBtn:hover { background: #38bdf8; }
+    .bh-loader { display: flex; gap: 8px; margin: 18px 0 0; }
+    .bh-input { flex: 1; background: #0b0e13; color: #cdd6e0; border: 1px solid var(--line);
+                border-radius: 8px; padding: 9px 12px; font: 12px ui-monospace, monospace;
+                outline: none; transition: border-color .15s; }
+    .bh-input:focus { border-color: #3a4658; }
+    .bh-input::placeholder { color: #5b6570; }
+    .bh-run { background: #10b981; color: #041014; border: 0; border-radius: 8px;
+              padding: 0 18px; font: 700 12px ui-monospace, monospace; text-transform: uppercase;
+              letter-spacing: .04em; cursor: pointer; transition: background .15s, transform .1s; }
+    .bh-run:hover { background: #34d399; }
+    .bh-run:active { transform: scale(.96); }
+    .bh-run[disabled] { background: #1f2a37; color: #5b6570; cursor: default; transform: none; }
+    .bh-sim { margin-top: 10px; }
+    .bh-idle { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center;
+              justify-content: center; text-align: center; padding: 32px;
+              color: #64748b; font: 12px/1.6 ui-monospace, monospace; }
+    .bh-sim.bh-running .bh-idle { display: none; }
+  </style>
+  <script>
+  (function () {
+    function start() {
+      var ROOT = document.getElementById('bh-sim');
+      if (!ROOT) return;
+      var Instance = window.Instance;
+      if (!Instance || !Instance.Chimera) { setTimeout(start, 60); return; }
+      ROOT.__chimera = Instance.Chimera;
+      var canvas = ROOT.querySelector('#bh-view');
+      // size the backing store to the square's rendered size (retina-aware but capped)
+      try {
+        
+        
+        const Chimera = ROOT.__chimera; const { Signal, Substrate } = Chimera;
+        
+        // const { Instance } = this[Symbol.for('Instance')]();
+        
+        // ─── 1. RENDERING SETUP ──────────────────────────────────────────
+        const canvas = ROOT.querySelector('#bh-view');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        const width = canvas.width = canvas.clientWidth || 900; const height = canvas.height = canvas.clientHeight || 560;
+        const img = ctx.createImageData(width, height);
+        const data = new Uint32Array(img.data.buffer);
+        
+        const offscreen = document.createElement('canvas');
+        offscreen.width = width; offscreen.height = height;
+        const offCtx = offscreen.getContext('2d');
+        
+        const RAINBOW = new Uint32Array(360);
+        for (let i = 0; i < 360; i++) {
+            const r = Math.sin(0.0174 * i + 0) * 127 + 128;
+            const g = Math.sin(0.0174 * i + 2) * 127 + 128;
+            const b = Math.sin(0.0174 * i + 4) * 127 + 128;
+            RAINBOW[i] = (0xFF << 24) | (b << 16) | (g << 8) | r;
+        }
+        
+        let mx = -1000, my = -1000;
+        canvas.addEventListener('mousemove', (e) => { const r = canvas.getBoundingClientRect(); mx = (e.clientX - r.left) * (width / r.width); my = (e.clientY - r.top) * (height / r.height); });
+        canvas.addEventListener('mouseleave', () => { mx = -1000; my = -1000; });
+        
+        
+        // ─── 2. SIMULATION STATE ──────────────────────────────────────────
+        let eng = null;
+        let frameTrigger = null;
+        let isPaused = false;
+        const TRIGGER_THRESHOLD = 15000;
+        const TIME_TO_COLLAPSE = 216;
+        const RADIUS = 12000;
+        let blackHoles = [];
+        let densityTimer = 0;
+        let currentNearCount = 0;
+        
+        async function buildSimulation(count, unwrapped) {
+            
+            eng = new Substrate('L5');
+        
+            frameTrigger = new Signal(undefined);
+        
+            blackHoles = [];
+            densityTimer = 0;
+            currentNearCount = 0; 
+        
+            for (let i = 0; i < count; i++) {
+                let x = Math.random() * width, y = Math.random() * height;
+                let vx = (Math.random() - 0.5) * 2, vy = (Math.random() - 0.5) * 2;
+                let hue = Math.random() * 360;
+                let isTrapped = false;
+        
+                new Signal(() => {
+        
+                    frameTrigger.get();
+                    
+                    for (let j = 0; j < blackHoles.length; j++) {
+                        const bh = blackHoles[j];
+                        let bdx = bh.x - x, bdy = bh.y - y;
+                        let bDistSq = bdx * bdx + bdy * bdy;
+                        if (bDistSq < 1500) isTrapped = true;
+                        if (isTrapped) {
+                            vx = bdy * 0.15; vy = -bdx * 0.15;
+                            x += (bh.x - x) * 0.05; y += (bh.y - y) * 0.05;
+                            hue += 10; break;
+                        } else {
+                            let bhForce = 8000 / (bDistSq + 200);
+                            vx += bdx * bhForce * 0.05; 
+                            vy += bdy * bhForce * 0.05;
+                        }
+                    }
+        
+                    if (!isTrapped) {
+                        let mdx = mx - x, mdy = my - y;
+                        let mDistSq = mdx * mdx + mdy * mdy;
+                        if (mDistSq < RADIUS) {
+                            currentNearCount++; 
+                            let force = (RADIUS - mDistSq) / RADIUS;
+                            vx += mdx * force * 0.007; vy += mdy * force * 0.007;
+                            vx *= 0.96; vy *= 0.96;
+                        }
+                        vx *= 0.999; vy *= 0.999;
+                        x += vx; y += vy;
+                        
+                        hue += 0.3; 
+                        if (hue >= 360) hue -= 360; 
+        
+                        if (x < 0 || x > width) vx *= -0.5;
+                        if (y < 0 || y > height) vy *= -0.5;
+                    } else { x += vx; y += vy; }
+        
+                    let px = x | 0; let py = y | 0;
+                    if (px >= 0 && px < width && py >= 0 && py < height) {
+                        data[py * width + px] = isTrapped ? 0xFFFFFFFF : RAINBOW[hue | 0];
+                    }
+                });
+            }
+            
+            updateStatsDisplay();
+        }
+        
+        function updateStatsDisplay() {
+            // 1. Update the Slots count
+            ROOT.querySelector('#bh-count').textContent = eng.activeNodes.toLocaleString(); 
+            
+            // 2. Calculate and update the Density percentage live
+            const d = (eng.density * 100).toFixed(2);
+            const densDisp = ROOT.querySelector('#bh-densDisp');
+            densDisp.textContent = d + '%';
+            
+            // 3. Turn it red if the arena is about to OOM (over 80%)
+            densDisp.style.color = eng.density > 0.8 ? '#ef4444' : '#38bdf8';
+        }
+        
+        // ─── 3. UI EVENT LISTENERS ────────────────────────────────────────
+        const slider = ROOT.querySelector('#bh-pSlider');
+        const countLabel = ROOT.querySelector('#bh-pCountLabel');
+        const resetBtn = ROOT.querySelector('#bh-resetBtn');
+        const densBtn = ROOT.querySelector('#bh-densBtn');
+        const densDisp = ROOT.querySelector('#bh-densDisp');
+        
+        const cacheOverlay = ROOT.querySelector('#bh-cacheOverlay');
+        const explainBtn = ROOT.querySelector('#bh-explainBtn');
+        const closeOverlayBtn = ROOT.querySelector('#bh-closeOverlayBtn');
+        
+        const restartBtn = ROOT.querySelector('#bh-restartBtn');
+        if (restartBtn) restartBtn.addEventListener('click', () => {
+            // rebuild the arena at the slider's current particle count — a clean restart
+            if (isPaused) { isPaused = false; try { eng && eng.resume && eng.resume(); } catch (e) {} if (pauseBtn) pauseBtn.textContent = 'Pause'; }
+            buildSimulation(parseInt(slider.value), ROOT.querySelector('#bh-unwrapTrigger').checked);
+        });
+        explainBtn.addEventListener('click', () => { cacheOverlay.style.display = 'flex'; });
+        closeOverlayBtn.addEventListener('click', () => { cacheOverlay.style.display = 'none'; });
+        cacheOverlay.addEventListener('click', (e) => { if (e.target === cacheOverlay) cacheOverlay.style.display = 'none'; });
+        
+        
+        let thresholdPercent = 30;
+        let thresholdTarget = 18000;
+        
+        const tSlider = ROOT.querySelector('#bh-tSlider');
+        const threshLabel = ROOT.querySelector('#bh-threshLabel');
+        const horizonCountDisp = ROOT.querySelector('#bh-horizonCount');
+        const threshTargetDisp = ROOT.querySelector('#bh-threshTarget');
+        
+        tSlider.addEventListener('input', (e) => {
+            thresholdPercent = e.target.value;
+            threshLabel.textContent = thresholdPercent + '%';
+            updateThresholdTarget();
+        });
+        
+        function updateThresholdTarget() {
+            const currentParticles = parseInt(ROOT.querySelector('#bh-pSlider').value);
+            thresholdTarget = Math.floor(currentParticles * (thresholdPercent / 100));
+            threshTargetDisp.textContent = thresholdTarget;
+        }
+        
+        resetBtn.addEventListener('click', () => {
+            buildSimulation(parseInt(slider.value), ROOT.querySelector('#bh-unwrapTrigger').checked);
+            updateThresholdTarget();
+        });
+        
+        updateThresholdTarget();
+        
+        // --- WIRE PAUSE/RESUME LOGIC ---
+        const pauseBtn = ROOT.querySelector('#bh-pauseBtn');
+        
+        
+        pauseBtn.addEventListener('click', () => {
+            if (!eng) return; // Ensure substrate is initialized
+        
+            isPaused = !isPaused;
+          // nvidiagtx2080!!$
+            if (isPaused) {
+                eng.pause(); // Trit-level freeze via Substrate.pause()
+                pauseBtn.textContent = 'Resume';
+                pauseBtn.style.background = '#10b981'; // Green for "Go"
+                console.log('[Simulator] Simulation Suspended.');
+            } else {
+                eng.resume(); // Re-enters flushQueue() loop
+                pauseBtn.textContent = 'Pause';
+                pauseBtn.style.background = '#f59e0b'; // Amber for "Pause"
+                console.log('[Simulator] Simulation Resumed.');
+            }
+        });
+        
+        // OPTIONAL: Wire the Spacebar as a shortcut
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault(); // Prevent scrolling
+                pauseBtn.click();
+            }
+        });
+        
+        slider.addEventListener('input', (e) => { countLabel.textContent = e.target.value; });
+        
+        densBtn.addEventListener('click', () => {
+            const d = (eng.density * 100).toFixed(2);
+            densDisp.textContent = d + '%';
+            densDisp.style.color = eng.density > 0.8 ? '#ef4444' : '#38bdf8';
+        });
+        
+        // ─── 4. MAIN LOOP ───────────────────────────────────────────────────
+        const logicDisplay = ROOT.querySelector('#bh-logic');
+        const fpsDisplay = ROOT.querySelector('#bh-fps');
+        let lastTime = performance.now();
+        let frames = 0;
+        
+        // 🔥 NEW: Rolling average buffer for pure logic time
+        const history = new Float32Array(60); 
+        let historyIdx = 0;
+        
+        function loop() {
+            // 🛑 TIME FREEZE GATE
+            // If the engine is paused, we skip the clear/render cycle entirely.
+            // This maintains the last rendered frame on the screen.
+            if (isPaused) {
+                requestAnimationFrame(loop);
+                return;
+            }
+        
+            const frameStart = performance.now();
+            
+            // 1. Clear backbuffer & reset sensors
+            // The 0.2 alpha creates the "trailing" effect.
+            ctx.fillStyle = 'rgba(2, 6, 23, 0.2)'; 
+            ctx.fillRect(0, 0, width, height);
+            data.fill(0); 
+            currentNearCount = 0; // Reset before the engine ticks
+            
+            // ==========================================
+            // 🔥 ISOLATED KERNEL BENCHMARK 🔥
+            // ==========================================
+            const kernelStart = performance.now();
+            
+            // Tick all particles. frameTrigger is a Signal.State.
+            frameTrigger.set(frameStart); 
+            
+            const kernelEnd = performance.now();
+            // ==========================================
+        
+            // 2. Render Particles (Blit raw pixel data to canvas)
+            offCtx.putImageData(img, 0, 0);
+            ctx.drawImage(offscreen, 0, 0);
+        
+            // 3. Draw the Black Holes & Halos
+            for (let i = 0; i < blackHoles.length; i++) {
+                const bh = blackHoles[i];
+                bh.age++; 
+                
+                let scale = 1;
+                if (bh.age < 30) {
+                    const p = bh.age / 30; 
+                    const easeIn = Math.pow(p, 3);
+                    const shrinkRadius = Math.max(1, 150 * (1 - easeIn)); 
+                    ctx.beginPath();
+                    ctx.arc(bh.x, bh.y, shrinkRadius, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ffffff'; 
+                    ctx.fill();
+                    scale = 0; 
+                } 
+                else if (bh.age < 60) {
+                    const p = (bh.age - 30) / 30; 
+                    const shockwaveRadius = p * Math.max(width, height); 
+                    const opacity = 1 - Math.pow(p, 2); 
+                    ctx.beginPath();
+                    ctx.arc(bh.x, bh.y, shockwaveRadius, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(161, 4, 255, ${opacity * 0.8})`; 
+                    ctx.lineWidth = 15 * (1 - p); 
+                    ctx.stroke();
+                    scale = 0; 
+                }
+                else if (bh.age < 120) {
+                    const p = (bh.age - 60) / 60; 
+                    scale = 1 - Math.pow(1 - p, 4); 
+                }
+        
+                if (scale > 0) {
+                    ctx.save();
+                    ctx.translate(bh.x, bh.y);
+                    ctx.scale(scale, scale);
+                    const lensGrad = ctx.createRadialGradient(0, 0, 35, 0, 0, 100);
+                    lensGrad.addColorStop(0, 'rgba(255, 255, 255, 1)');      
+                    lensGrad.addColorStop(0.1, 'rgba(161, 4, 255, 0.9)');    
+                    lensGrad.addColorStop(0.5, 'rgba(251, 146, 60, 0.4)');   
+                    lensGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 100, 0, Math.PI * 2);
+                    ctx.fillStyle = lensGrad;
+                    ctx.fill();
+                    ctx.rotate((bh.age - 60) * 0.015); 
+                    const diskGrad = ctx.createRadialGradient(0, 0, 35, 0, 0, 120);
+                    diskGrad.addColorStop(0, 'rgba(161, 4, 255, 0)');        
+                    diskGrad.addColorStop(0.3, 'rgba(255, 255, 255, 0.9)');  
+                    diskGrad.addColorStop(0.6, 'rgba(251, 146, 60, 0.6)');   
+                    diskGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');            
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, 120, 25, 0, 0, Math.PI * 2); 
+                    ctx.fillStyle = diskGrad;
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 38, 0, Math.PI * 2);
+                    ctx.fillStyle = '#000000';
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+            
+            // 4. Update Event Horizon Logic
+            horizonCountDisp.textContent = currentNearCount;
+            if (currentNearCount > thresholdTarget) {
+                horizonCountDisp.style.color = '#ef4444';
+                densityTimer++;
+                if (densityTimer > TIME_TO_COLLAPSE) {
+                    blackHoles.push({ x: mx, y: my, age: 0 }); 
+                    densityTimer = 0;
+                    currentNearCount = 0; 
+                }
+            } else { 
+                horizonCountDisp.style.color = 'cyan';
+                densityTimer *= 0.90; 
+            }
+        
+            // 5. Draw Visual Collapse Ring
+            if (densityTimer > 1) {
+                const progress = densityTimer / TIME_TO_COLLAPSE;
+                const baseRadius = Math.sqrt(RADIUS); 
+                const drawRadius = Math.max(5, baseRadius * (1 - progress)); 
+                ctx.beginPath();
+                ctx.arc(mx, my, drawRadius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${0.4 + progress * 0.6})`;
+                ctx.lineWidth = 2 + (progress * 4);
+                ctx.stroke();
+            }
+        
+            // 6. Performance Metrics
+            frames++;
+            history[historyIdx] = kernelEnd - kernelStart;
+            historyIdx = (historyIdx + 1) % 60; 
+            
+            if (frameStart > lastTime + 1000) {
+                fpsDisplay.textContent = frames;
+                let sum = 0;
+                for(let i = 0; i < 60; i++) sum += history[i];
+                const avgLogicTime = sum / 60;
+                logicDisplay.textContent = avgLogicTime.toFixed(2) + 'ms';
+                logicDisplay.style.color = avgLogicTime > 8.0 ? '#ef4444' : (avgLogicTime > 5.0 ? '#f59e0b' : '#f8fafc');
+                updateStatsDisplay();
+                frames = 0;
+                lastTime = frameStart;
+            }
+            
+            requestAnimationFrame(loop);
+        }
+        // Initial Boot
+        
+        async function igniteSimulator() {
+            // Wait for the engine and particles to be fully allocated
+            let c = await buildSimulation(60000, true);
+            loop();
+        }
+        
+        igniteSimulator();
+        
+        
+      } catch (e) {
+        var note = document.createElement('div');
+        note.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ef4444;font:12px ui-monospace,monospace;text-align:center;padding:20px;z-index:20';
+        note.textContent = 'Simulator failed to start: ' + (e && e.message || e);
+        ROOT.appendChild(note);
+      }
+    }
+    // Run-button driven: load the build from the path the reader enters, then boot once.
+    var input = document.getElementById('bh-path');
+    var runBtn = document.getElementById('bh-run');
+    var idle = document.getElementById('bh-idle');
+    var ROOT0 = document.getElementById('bh-sim');
+    var launched = false;
+
+    function setIdle(msg, color) {
+      if (!idle) return;
+      idle.innerHTML = msg;
+      idle.style.color = color || '#64748b';
+    }
+    function boot() {
+      if (ROOT0) ROOT0.classList.add('bh-running');
+      var R = window.InstanceReady;
+      if (R && R.then) R.then(start); else start();
+    }
+    function run() {
+      if (launched) return;
+      var path = (input && input.value.trim()) || './Instance-0.87.z.js';
+      runBtn.disabled = true;
+      var prevLabel = runBtn.textContent;
+      runBtn.textContent = 'Loading';
+      // already loaded? just boot.
+      if (window.Instance && window.Instance.Chimera) { launched = true; boot(); return; }
+      var b = document.createElement('script');
+      b.src = path;
+      b.setAttribute('typeset', 'none');   // don't mint tag globals into the docs page
+      b.onload = function () { launched = true; boot(); };
+      b.onerror = function () {
+        runBtn.disabled = false;
+        runBtn.textContent = prevLabel;
+        setIdle('Could not load <code style=\'color:#e0c068\'>' + (path.replace(/</g,'&lt;')) + '</code>.<br>Check the path — it must point to the Instance build, reachable from this page.', '#d0607a');
+      };
+      document.head.appendChild(b);
+    }
+    if (runBtn) runBtn.addEventListener('click', run);
+    if (input) input.addEventListener('keydown', function (e) { if (e.key === 'Enter') run(); });
+  })();
+  </script>
+
+  <div class="note"><b>Why it holds.</b> Nodes are pointers into typed-array lanes, edges are flat
+  arrays, propagation is an integer walk, and dedup/consensus cut work before it happens. There is
+  no per-node object graph to chase — which is what buys the headroom.</div>
+
+  <h2 id="events">DOM Events</h2>
+  <p class="lede">Events are the <b>pulse face</b> of signals: same kernel, discrete semantics.
+  Every DOM event type is a first-class global class — <code>Click</code>, <code>MouseDown</code>,
+  <code>KeyUp</code>, <code>FocusIn</code>, <code>Wheel</code>, <code>PopState</code> … — that
+  constructs <i>real native events</i> and subscribes through one shared listener per target.
+  <span class="since">0.87.z</span></p>
+
+  <h3 id="eventnames">The vocabulary &amp; naming</h3>
+  <p>Names are Pascal renderings of the platform types, with compound boundaries resolved:
+  <code>dblclick → DblClick</code>, <code>contextmenu → ContextMenu</code>,
+  <code>popstate → PopState</code>, <code>beforeunload → BeforeUnload</code>,
+  <code>visibilitychange → VisibilityChange</code>. Prefix families compose —
+  <code>MouseDown</code>, <code>PointerCancel</code>, <code>TouchStart</code>,
+  <code>AnimationIteration</code> — and only families that grant a bare form have one:
+  <code>Focus</code> and <code>Drag</code> exist; <code>Key</code>, <code>Mouse</code>,
+  <code>Pointer</code> deliberately do not.</p>
+  <div class="note"><b>Collision rule.</b> If a name is already taken — by an element class or any
+  global — the event class takes an <code>Event</code> postfix: <code>input → InputEvent</code>,
+  <code>select → SelectEvent</code>, <code>reset → ResetEvent</code>, and
+  <code>storage → StorageEvent</code> (the native <code>Storage</code> API trips it automatically).
+  Every event class is <i>always</i> reachable at <code>Instance.Events.*</code>, whatever the
+  globals decided.</div>
+
+  <h3 id="newevent">new MouseDown( [init] ) <span class="ret">⇒ MouseEvent (spent)</span></h3>
+  <p><b>Description:</b> <b>Creation is occurrence.</b> Construction mints a real native event
+  (<code>MouseEvent</code>, <code>KeyboardEvent</code>, … per type) and <b>dispatches it
+  immediately</b>. Because DOM dispatch is synchronous, the returned event has already completed
+  its journey — the outcome is readable on it.</p>
+  <table class="params">
+    <tr><th>init key</th><th>Type</th><th></th></tr>
+    <tr><td>target</td><td>Element | EventTarget</td><td>where to fire. Default:
+        <code>document</code> — except window-native types
+        (<code>storage · hashchange · popstate · beforeunload · unload · resize · load</code>),
+        which default to <code>window</code>.</td></tr>
+    <tr><td><i>…rest</i></td><td>per interface</td><td>forwarded to the native constructor
+        (<code>clientX</code>, <code>key</code>, <code>deltaY</code>, …).
+        <code>bubbles/cancelable/composed</code> default <b>true</b>.</td></tr>
+  </table>
+  <pre><code>const btn = new Button().appendTo(document.body);
+
+  const ev = new MouseDown({ target: btn, clientX: 7 });
+  ev instanceof MouseEvent;   // true — a real one
+  ev.clientX;                 // 7
+  ev.defaultPrevented;        // readable: some handler may have cancelled it
+
+  // bubbling is on by default — ancestors hear descendants:
+  new Click({ target: btn }); // a Click subscription on document.body fires too</code></pre>
+
+  <h3 id="factory">MouseDown( [init] ) <span class="ret">⇒ MouseEvent (inert)</span></h3>
+  <p><b>Description:</b> The bare call — no <code>new</code> — is the <b>factory</b>: it mints the
+  same native event but does <i>not</i> fire it. Inspect it, hold it, dispatch it yourself.</p>
+  <pre><code>const ev = MouseDown({ clientX: 3 });   // nothing happened yet
+  ev.defaultPrevented;                     // false — unfired
+  btn.dispatchEvent(ev);                   // now it happens — and converges into
+                                          // the same subscriptions as everything else</code></pre>
+
+  <h3 id="deriving">Deriving events <span class="ret">— handles: config · map · combine · sleep · chain</span> <span class="since">0.87.z</span></h3>
+  <p><b>Description:</b> <b>0.87's crown jewel.</b> The bare call returns more than an inert
+  event — it returns a <b>handle</b>: still a real native event (dispatchable,
+  <code>instanceof</code>-true), now also a subscribable, derivable <i>event signal</i>. Its init
+  doubles as a <b>subscription config</b>, and four combinator verbs derive new handles.
+  Derivations are target-agnostic recipes — they bind to a target at
+  <code>el.on(handle, cb)</code> (or <code>handle.on(el, cb)</code>). The charter, verbatim:</p>
+  <pre><code>// Events are Signals
+  const click = MouseDown(/* ... */); // 
+  const doubleClick = DblClick(/* ... */); // without 'new' is object config
+
+  // You can read them like Signals
+  el.on(click, () =&gt; { ... });
+
+  // You can derive from them like Signals
+  const clickCount = click.map((e, i) =&gt; i + 1);
+  const isDouble = click.combine(doubleClick, (c, d) =&gt; c &amp;&amp; d);
+
+  // You can compose them like Signals
+  const hold = click.sleep(500);
+  const gesture = click.chain(hold, (c, h) =&gt; c &amp;&amp; h);</code></pre>
+  <table class="params">
+    <tr><th>Verb</th><th>Derives</th><th>Delivers</th></tr>
+    <tr><td>MouseDown({ button: 2 })</td><td>a <b>configured</b> leaf</td><td>only events whose
+        own keys equal the init's (an equality filter; <code>target/bubbles/cancelable/composed</code>
+        are construction-only)</td></tr>
+    <tr><td>.map(fn)</td><td>a transform</td><td><code>fn(event, i)</code> — with the occurrence
+        index</td></tr>
+    <tr><td>.combine(other, fn)</td><td>latest-pair</td><td><code>fn(lastA, lastB)</code> on
+        <b>either</b> side firing — <code>undefined</code> stands in until a side has fired, so
+        <code>(c, d) =&gt; c &amp;&amp; d</code> reads falsy until both</td></tr>
+    <tr><td>.sleep(ms)</td><td>a delay</td><td>each occurrence, re-delivered after
+        <code>ms</code></td></tr>
+    <tr><td>.chain(other, fn)</td><td>a sequence</td><td><code>fn(a, b)</code> when this fires and
+        <i>then</i> the other fires; the pair consumes and re-arms</td></tr>
+  </table>
+  <p>The verbs also live on the classes — <code>KeyDown.map(fn)</code> derives from the
+  unconfigured type. Handle subscriptions on elements register with the teardown spine like
+  everything else; disposal drains them.</p>
+  <div class="note"><b>Derived handles have no dispatch face.</b> A <code>map</code>/<code>combine</code>/
+  <code>sleep</code>/<code>chain</code> result is a recipe, not an event — construct occurrences
+  through the classes. And a pending <code>sleep</code> echo is cancelled by its disposer, not by
+  time travel: dispose before the timeout and it never lands.</div>
+
+  <h3 id="passthrough">new InputEvent( 'input', init ) <span class="ret">⇒ native, inert</span></h3>
+  <p><b>Description:</b> A <b>string first argument</b> is the platform's own constructor
+  signature. Instance passes it straight through — foreign code that constructs events the native
+  way keeps working, byte-for-byte, and gets a plain unfired native event back.</p>
+  <pre><code>const e = new Instance.Events.InputEvent('input', { data: 'x' });
+  e instanceof InputEvent;   // true — built over the real interface
+  e.data;                    // "x"    (and nothing was dispatched)</code></pre>
+
+  <h3 id="onclass">.on( EventClass, handler ) <span class="ret">⇒ disposer</span></h3>
+  <h3 style="margin-top:6px">EventClass.on( target, handler ) <span class="ret">⇒ disposer</span></h3>
+  <p><b>Description:</b> Subscribe by <b>class</b> — the class <i>is</i> the event's name. Both
+  forms are the same operation with the receiver flipped. The handler receives
+  <code>(event, target)</code>. The return value is a disposer function; calling it
+  unsubscribes.</p>
+  <pre><code>const off = btn.on(MouseDown, (ev, el) =&gt; {
+    console.log('down at', ev.clientX);
+  });
+
+  MouseDown.on(document.body, ev =&gt; { /* delegated-ish: bubbles arrive here */ });
+
+  off();   // done listening</code></pre>
+  <p>The classic string form also works — <code>btn.on('click', fn)</code> — subscribing the same
+  machinery by type name.</p>
+  <div class="note"><b>Lifecycle is automatic on elements.</b> Subscriptions made on elements
+  register with the element's teardown: <a href="#remove"><code>.remove(true)</code></a> or any
+  disposal drains them. Subscriptions targeting <code>window</code> or <code>document</code> have
+  no element to die with — dispose those explicitly via the returned disposer.</div>
+
+  <h3 id="pump">Pump semantics <span class="ret">— what your handlers can rely on</span></h3>
+  <p><b>Description:</b> Per <code>(target, type)</code> there is exactly <b>one</b> native
+  listener — the pump — feeding a kernel pulse. Ten subscriptions on one button's clicks cost one
+  <code>addEventListener</code>; the last disposer removes it.</p>
+  <table class="params">
+    <tr><th>Guarantee</th><th></th><th>Meaning</th></tr>
+    <tr><td>no replay</td><td></td><td>A new subscriber never hears past events. Arming is silent.</td></tr>
+    <tr><td>no dedup</td><td></td><td>Two identical clicks are two deliveries. Occurrences are not
+        values; equality never swallows one.</td></tr>
+    <tr><td>atomic handlers</td><td></td><td>A handler that fires another event — even its own type,
+        even on its own target — does not re-enter mid-handler. Nested fires <b>queue</b> and
+        deliver <b>in order</b> after the current handler returns.</td></tr>
+    <tr><td>isolation</td><td></td><td>A throwing handler cannot kill the drain: errors re-throw
+        asynchronously; delivery continues.</td></tr>
+    <tr><td>cascade guard</td><td></td><td>Runaway self-firing loops throw
+        <code>cascade overflow</code> at 1024 nested fires — the house analogue of the stack
+        overflow the raw DOM would give you.</td></tr>
+  </table>
+  <pre><code>// atomic ordering, through real DOM dispatch:
+  let depth = 0;
+  btn.on(Wheel, () =&gt; {
+    console.log('handler', depth);
+    if (depth++ &lt; 2) new Wheel({ target: btn });   // fired MID-handler…
+  });
+  new Wheel({ target: btn });
+  // logs: handler 0 · handler 1 · handler 2   — queued, ordered, atomic</code></pre>
+
+  <h3 id="combinators">Events × signals <span class="ret">— the two delivery planes</span></h3>
+  <p><b>Description:</b> Every pulse is also a <b>kernel signal node</b> — effects and computeds
+  can subscribe to an event like any signal, and the everyday combinator is the chain:
+  <i>event handler writes <code>$state</code>; effects react to <code>$state</code></i>.</p>
+  <pre><code>const c = new Div().appendTo(document.body);
+  c.$count = 0;
+  c.effect(() =&gt; c.textContent = 'n=' + c.$count);   // the behavior face
+
+  c.on(Click, () =&gt; c.$count += 1);                  // the pulse feeds it
+  new Click({ target: c }); new Click({ target: c });
+  c.textContent;                                      // "n=2" — every occurrence counted</code></pre>
+  <p>Handlers themselves are deliberately delivered <b>outside</b> the tracking graph: a handler
+  that reads <code>$state</code> does not become a dependency of its own event (which, under the
+  consensus barrier, would make it skip every other click). Handlers fire on <i>every</i> pulse,
+  whatever they read; the signal face stays fully combinable for effects that want it.</p>
+
+  <h3 id="evcombine">Combining events</h3>
+  <p><b>Description:</b> Composition is spelled with the tools already on the table:</p>
+  <table class="params">
+    <tr><th>Pattern</th><th></th><th>Spelling</th></tr>
+    <tr><td>union (any of)</td><td></td><td>subscribe the classes to one handler —
+        <code>[Click, KeyDown].map(E =&gt; el.on(E, act))</code>; each returns its own disposer</td></tr>
+    <tr><td>state-gated</td><td></td><td>event writes <code>$state</code>; the
+        <b>condition tier</b> fires on the combination:
+        <code>el.on({ mode: 'edit', armed: true }, go)</code> — an equality consensus</td></tr>
+    <tr><td>event → signal graph</td><td></td><td>the handler writes <code>$fields</code>; effects,
+        computeds, <code>Δ</code>/<code>$</code> registrars, and <code>'@change'</code>
+        subscriptions (which accept <code>'$name'</code>, <code>'Δname'</code>, or a getter)
+        compose downstream with full kernel algebra</td></tr>
+    <tr><td>once / after</td><td></td><td><code>once(type, fn)</code> single-fire;
+        the string tier's <b>afterFn</b> slot runs a companion per delivery</td></tr>
+  </table>
+  <pre><code>// gate: only while editing AND armed —
+  el.on(Click,   () =&gt; el.$clicks++);
+  el.on(KeyDown, () =&gt; el.$keys++);
+  el.on({ mode: 'edit' }, () =&gt; commit(el));   // fires when $mode becomes 'edit'
+  el.Δ(() =&gt; { void el.$clicks; void el.$keys; refresh(); }); // union over both streams' counts</code></pre>
+
+  <h2 id="writethrough">The writethrough — set · add · get · has</h2>
+  <p class="lede">One unified surface for "put this there / what's there": sigil-aware, DOM-aware,
+  and — the showpiece — <b>reactively templated</b>.</p>
+
+  <h3 id="setentry">.set( … ) <span class="ret">⇒ Element</span></h3>
+  <p><b>Description:</b> The write verb, dispatched on the key's first character — plus a tagged
+  template form whose object interpolations mint live <code>$fields</code>:</p>
+  <table class="params">
+    <tr><th>Call</th><th></th><th>Writes</th></tr>
+    <tr><td>set`n = ${{ count: 0 }}`</td><td></td><td><b>reactive template</b>: each object
+        interpolation mints a <code>$field</code> (seeded with the value) and ONE live effect keeps
+        <code>textContent</code> current — write <code>el.$count</code> later and the text
+        follows</td></tr>
+    <tr><td>set('plain words')</td><td></td><td><code>textContent</code> (single unprefixed
+        argument)</td></tr>
+    <tr><td>set('.lit', on?)</td><td></td><td>class toggle</td></tr>
+    <tr><td>set('$k', v)</td><td></td><td>reactive field (also <code>Δ</code>/<code>ø</code>
+        keys)</td></tr>
+    <tr><td>set('@click', fn)</td><td></td><td><b>on-sugar</b> — <code>@</code>-keys register
+        listeners/lifecycle, they do not write attributes</td></tr>
+    <tr><td>set('title', v)</td><td></td><td>the property if the element has one, else the
+        <b>attribute</b> (<code>true</code> → bare attribute)</td></tr>
+    <tr><td>set({ a, b, … })</td><td></td><td>object batch — each entry re-dispatched</td></tr>
+  </table>
+  <pre><code>const el = new Div().appendTo('#app');
+  el.set`score: ${{ score: 0 }}`;    // "score: 0", $score minted + live
+  el.$score = 7;                             // text is now "score: 7"
+
+  el.set('.active', true)
+    .set('data-row', 3)                      // attribute path
+    .set('@click', () =&gt; el.$score++);       // listener path — all one chain</code></pre>
+
+  <h3>.add( … ) <span class="ret">⇒ Element</span></h3>
+  <p><b>Description:</b> The append verb — nodes, node-returning functions, and its own tagged
+  template that appends a <b>live text node</b> (same reactive rules as <code>set</code>, without
+  replacing existing content).</p>
+  <pre><code>el.add(new Span())
+    .add(() =&gt; new Img())
+    .add`— items: ${{ items: 0 }}`;   // a live-updating text node, appended</code></pre>
+
+  <h3>.get( key, opts? ) <span class="ret">⇒ value | Promise</span></h3>
+  <p><b>Description:</b> The read verb — and yes, URLs fetch:</p>
+  <table class="params">
+    <tr><th>Call</th><th></th><th>Reads</th></tr>
+    <tr><td>get('https://…')</td><td></td><td>an HTTP <b>GET</b> — the network face of the same
+        verb (opts forwarded)</td></tr>
+    <tr><td>get('$k')</td><td></td><td>the reactive field (all sigil families)</td></tr>
+    <tr><td>get('.lit')</td><td></td><td>class presence (boolean)</td></tr>
+    <tr><td>get('title')</td><td></td><td>the property if present, else the attribute</td></tr>
+  </table>
+
+  <h3>.has( target ) <span class="ret">⇒ boolean</span></h3>
+  <p><b>Description:</b> Membership across every axis — including containment:</p>
+  <pre><code>parent.has(childEl);      // Node ⇒ contains()
+  el.has('$count');         // store holds the field
+  el.has('.active');        // class present
+  el.has('data-row');       // property-or-attribute present</code></pre>
+
+  <h3 id="bindentry">.bind( … ) <span class="ret">⇒ Element</span></h3>
+  <p><b>Description:</b> The declarative binding layer — three overloads on the unified write
+  path:</p>
+  <table class="params">
+    <tr><th>Form</th><th></th><th>Meaning</th></tr>
+    <tr><td>bind('click', '$count', fn)</td><td></td><td>on the event, run
+        <code>fn($, el, e)</code>; a non-<code>undefined</code> return is written to the key</td></tr>
+    <tr><td>bind('$label', fn)</td><td></td><td>sugar for the object form below</td></tr>
+    <tr><td>bind({ key: fn, … })</td><td></td><td><b>one live effect</b> keeping every key in sync
+        (rides <a href="#psi">ψ</a>) — recompute-on-dependency, forever</td></tr>
+  </table>
+  <pre><code>badge.bind({ label: () =&gt; `n:${badge.$count}` });   // stays live
+  badge.$count = 7;                                    // badge.$label === 'n:7'</code></pre>
+
+  <h3 id="callbindentry">.callbind( ) <span class="ret">⇒ frozen scoped API</span></h3>
+  <p><b>Description:</b> The destructure-safe surface — 0.73's crown jewel. Returns a
+  <b>frozen</b> object of the element's verbs, pre-bound: <b>mutators chain</b> (return the
+  element), <b>readers pass values</b>. Destructure freely; nothing loses <code>this</code>.</p>
+  <pre><code>const { set, on, effect, peek, get, has, el } = card.callbind();
+
+  set('.open', true);            // chains — returns card
+  on('click', toggle);
+  effect(() =&gt; render(el));
+  const n = peek('count');       // untracked read — a value, not a chain</code></pre>
+  <p>The frozen scope carries the accessors too (<code>$ · $$ · @ · ø · ψ</code>) and the wider
+  verb set (<code>emit · once · bind · find · batch · untrack · clone · inspect</code> …) under
+  the same chain/pass split.</p>
+
+  <h2 id="formstate">Form state</h2>
+  <p class="lede">A <code>&lt;form&gt;</code> (and its fields) carries a reactive
+  <b>namespace</b> at <code>el.form</code> — validity, dirty-tracking, values, and submit/reset
+  lifecycle, all live, all without wiring listeners by hand. The namespace is lazy: it initializes
+  on first access and caches per element.</p>
+  <table class="params">
+    <tr><th>On el.form</th><th></th><th></th></tr>
+    <tr><td>values</td><td></td><td>the current field values, live</td></tr>
+    <tr><td>valid</td><td></td><td>reactive validity of the form</td></tr>
+    <tr><td>loading</td><td></td><td>true while an async submit is in flight</td></tr>
+    <tr><td>reset()</td><td></td><td>restore fields to their initial values</td></tr>
+  </table>
+  <p>The form fires lifecycle events you subscribe like any other: <code>@submit</code> (with
+  <code>{ values, valid, form, reset }</code>) and <code>@reset</code> (with <code>{ form }</code>).
+  State classes are reflected onto the element as it changes, and the initial snapshot is
+  recaptured after each reset so "dirty" stays meaningful.</p>
+  <pre><code>class SignupForm extends Instance {
+    ['@submit'](e) {
+      if (!e.valid) return;
+      send(e.values).then(e.reset);
+    }
+  }
+  </code></pre>
+  <div class="note"><b>Namespaces, generally.</b> <code>form</code> is one of a family of typed
+  <b>element namespaces</b> reached at <code>el.&lt;name&gt;</code> — an <code>&lt;input&gt;</code>
+  exposes <code>el.input</code>, and so on. Each is lazily built, cached per element, and drained
+  at disposal like the callable interfaces. Availability follows element type and boot upgrade.</div>
+
+  <h2 id="collections">Collections &amp; Traversal</h2>
+
+  <h3 id="all">Class.all( ) <span class="ret">⇒ Collection</span></h3>
+  <p><b>Description:</b> Every <b>living</b> instance of the class — living meaning <i>in the
+  document</i>. The registry follows the live DOM (see
+  <a href="#registry">the live-DOM registry</a>): detached elements are not in it; disposed
+  elements never return to it.</p>
+  <pre><code>class Row extends Div {}
+  new Row().appendTo(table);
+  new Row().appendTo(table);
+
+  Row.all().length;    // 2
+  Row.all()[0];        // the first living Row — a real element</code></pre>
+
+  <h3 id="where">Class.where( predicate ) <span class="ret">⇒ Collection</span></h3>
+  <p><b>Description:</b> The living instances that satisfy a <b>predicate function</b>. The
+  argument is a function receiving each element — selector strings are not accepted (passing one
+  throws, by design: the registry filters on <i>your</i> terms, the DOM already has
+  <code>querySelectorAll</code> for selectors).</p>
+  <pre><code>const flagged = Row.where(r =&gt; r.classList.contains('flagged'));
+  flagged.length;
+  flagged.first();</code></pre>
+
+  <h3 id="numeric">Class[ n ] <span class="ret">⇒ Element</span> · Collection[ n ]</h3>
+  <p><b>Description:</b> Numeric indexing works on the class itself — <code>Row[0]</code> is the
+  first living Row — and on Collections. Collection indexing is <b>forgiving</b>: an out-of-range
+  index answers with the first element rather than <code>undefined</code>, so chained one-liners
+  never explode on a shorter-than-expected set.</p>
+  <pre><code>Row[0];             // first living instance, straight off the class
+  Row.all()[99];      // out of range ⇒ the first element (never undefined)
+  Row.all().first();  // the explicit spelling</code></pre>
+  <table class="params">
+    <tr><th>Member</th><th>Returns</th><th></th></tr>
+    <tr><td>collection[n]</td><td>Element</td><td>nth element; out-of-range falls back to the first</td></tr>
+    <tr><td>collection.length</td><td>number</td><td>live count</td></tr>
+    <tr><td>collection.first()</td><td>Element</td><td>the first element</td></tr>
+    <tr><td>collection.where(fn)</td><td>Collection</td><td>filtered again, same rules</td></tr>
+  </table>
+
+  <h3 id="find">.find( selector ) <span class="ret">⇒ Collection</span></h3>
+  <p><b>Description:</b> Query <i>inside</i> an element. Returns an Instance Collection —
+  <b>not</b> a jQuery set, even with the <a href="#jquery">jQuery merge</a> active: house wins on
+  this name, always.</p>
+  <pre><code>const kid = card.find('span').first();</code></pre>
+
+  <h3 id="treechain">el.div[0].span[1] <span class="ret">— the tree chain</span></h3>
+  <p><b>Description:</b> In <a href="#engine">engine mode</a> the traversal grammar reaches down
+  the live tree by tag: <code>host.div</code> is the child <code>&lt;div&gt;</code>s,
+  <code>host.div[0]</code> the first, <code>host.div[0].span[1]</code> the second
+  <code>&lt;span&gt;</code> under it — property access as structural query, mirroring the
+  <code>Class[n]</code> registry indexing but scoped to descendants.</p>
+  <pre><code>Instance.powerup();
+  host.section[0].p[2].textContent;   // 3rd &lt;p&gt; of the 1st &lt;section&gt;</code></pre>
+  <div class="warn"><b>Engine-mode surface.</b> The tag-chain accessors ride the same spliced
+  prototype chain as engine mode's native-<code>getPrototypeOf</code> — they resolve through the
+  tree proxy that engine mode installs. In default mode, use <code>find</code> /
+  <code>querySelector</code>.</div>
+
+  <h2 id="lifecycle">Lifecycle</h2>
+
+  <h3 id="appendTo">.appendTo( target ) <span class="ret">⇒ Element</span></h3>
+  <p><b>Description:</b> Insert the element into <code>target</code> and mount it —
+  <b>synchronously</b>. By the next line, the element is connected, registered, and its effects
+  are armed. Chainable.</p>
+  <table class="params">
+    <tr><th>Argument</th><th>Type</th><th></th></tr>
+    <tr><td>target</td><td>Element | selector string</td><td>the parent to append into</td></tr>
+  </table>
+  <pre><code>const card = new Card().appendTo('#deck');
+  card.isConnected;      // true — already
+  Card.all().length;     // includes it — already</code></pre>
+
+  <h3 id="registry">The live-DOM registry <span class="ret">— detach · reattach · dispose</span></h3>
+  <p><b>Description:</b> The registry answers one question — <i>what is alive in the document
+  right now</i> — and its three rules are absolute:</p>
+  <table class="params">
+    <tr><th>Act</th><th></th><th>Consequence</th></tr>
+    <tr><td>detach</td><td></td><td>The element leaves the registry: unqueryable via
+        <code>all()/where()/[n]</code>. The element itself is untouched — you hold it, it works,
+        its state persists.</td></tr>
+    <tr><td>reattach</td><td></td><td>It returns to the registry — <b>remembering its slot</b>.
+        A re-mounted third row is the third row again.</td></tr>
+    <tr><td>dispose</td><td></td><td>Forgotten forever. Slot released, subscriptions drained,
+        store reclaimed. Nothing pins the node; memory profiling shows ~98% reclaim, flat across
+        churn cycles.</td></tr>
+  </table>
+  <pre><code>const r = new Row().appendTo(table);
+  Row.all().length;        // n
+  r.remove();              // detach (no argument = just leave the DOM)
+  Row.all().length;        // n-1 — unqueryable while out
+  table.appendChild(r);    // reattach
+  Row.all().length;        // n — and r kept its slot</code></pre>
+
+  <h3 id="hooks">@insertion · @mount · @rendered · @removal · @unmount <span class="ret">— overridable hooks</span></h3>
+  <p><b>Description:</b> Lifecycle hooks are ordinary methods with <code>@</code>-names — define
+  them on your class and the runtime calls them at the boundary they name. The async trio
+  (<code>detachAsync</code> / <code>disposeAsync</code> / <code>unmountAsync</code>) <i>awaits</i>
+  your <code>@removal</code>/<code>@unmount</code> work — exit transitions get to finish before
+  reclaim.</p>
+  <pre><code>class Toast extends Div {
+    ['@mount']()   { this.classList.add('in'); }
+    ['@removal']() { this.classList.add('out');
+                    return new Promise(r =&gt; setTimeout(r, 200)); }  // awaited by the async path
+  }
+  const t = new Toast().appendTo(document.body);
+  await t.disposeAsync();   // plays the exit, then reclaims</code></pre>
+
+  <h3 id="remove">.remove( [dispose] ) <span class="ret">⇒ Element</span></h3>
+  <p><b>Description:</b> Bare <code>remove()</code> is a <b>detach</b> — the native meaning, plus
+  registry departure. <code>remove(true)</code> is a <b>disposal</b>: detach, drain
+  (event subscriptions, worker/socket/listen interfaces, effects), forget, reclaim.</p>
+  <pre><code>row.remove();        // just out of the document — alive in your hands
+  row.remove(true);    // gone: drained, forgotten, reclaimed</code></pre>
+
+  <h3 id="emit">.emit( type, detail ) <span class="ret">⇒ Element</span></h3>
+  <p><b>Description:</b> Dispatch a <code>CustomEvent</code> named <code>type</code> carrying
+  <code>detail</code>, from this element. Chainable.</p>
+  <pre><code>panel.addEventListener('save', e =&gt; console.log(e.detail.id));
+  panel.emit('save', { id: 42 });     // logs 42; returns panel</code></pre>
+
+  <h2 id="teardownch">Teardown</h2>
+  <p class="lede">Disposal is a first-class <b>protocol</b>, not a convention — symbol-keyed, one
+  body serving every face, from a single element up to the whole framework.
+  <span class="since">0.87.v</span></p>
+
+  <h3 id="teardown">el[ Instance.TEARDOWN ]( ) <span class="ret">⇒ Element</span> · el[ Instance.TEARDOWN_ASYNC ]( ) <span class="ret">⇒ Promise</span></h3>
+  <p><b>Description:</b> The element face. The sync form disposes now; the async form awaits the
+  element's <code>@removal</code>/<code>@unmount</code> transitions first. Both are exactly
+  <code>remove(true)</code> / <code>disposeAsync()</code> under protocol names — the point is that
+  <i>the same symbols work at every level</i>.</p>
+  <pre><code>const el = new Card().appendTo(document.body);
+  el[Instance.TEARDOWN]();          // disposed
+
+  const t = new Toast().appendTo(document.body);
+  await t[Instance.TEARDOWN_ASYNC]();   // exit transition honored, then disposed</code></pre>
+
+  <h3 id="classface">Class[ Instance.TEARDOWN ]( ) · Class.teardown( ) · Class.teardownAsync( )</h3>
+  <p><b>Description:</b> The class face: <b>self-destruct</b>. Disposes every living instance of
+  the class — and only that class; siblings and ancestors are untouched. Inherited by every
+  subclass.</p>
+  <pre><code>class A extends Div {}  class B extends A {}
+  new A().appendTo(host); new B().appendTo(host);
+
+  B.teardown();        // every B gone
+  A.all().length;      // 1 — the A survived
+  await A.teardownAsync();   // transitions honored per element</code></pre>
+
+  <h3 id="using">using el = new Div( ) <span class="ret">— Symbol.dispose / Symbol.asyncDispose</span></h3>
+  <p><b>Description:</b> The protocol aliases onto the platform's explicit-resource-management
+  well-knowns, so <code>using</code> blocks dispose Instance elements automatically wherever the
+  runtime ships them.</p>
+  <pre><code>{
+    using temp = new Div().appendTo(document.body);
+    // … work with temp …
+  }   // scope exit → temp[Symbol.dispose]() → disposed</code></pre>
+  <div class="note"><b>Realm note.</b> The aliases bind at load to whatever the realm provides.
+  Browsers with explicit resource management get the true well-knowns; environments without them
+  (some embedded/VM realms) get inert shim keys — the protocol symbols above work everywhere
+  regardless.</div>
+
+  <h3 id="nuclear">Instance.teardown( [unmint] ) <span class="ret">⇒ true</span></h3>
+  <p><b>Description:</b> The framework face. Disposes every managed element in the document,
+  tears down the signal arena (<code>Signal.teardown()</code> — the slab is released; the next
+  signal use re-bootstraps cleanly), and — with <code>unmint = true</code> — <b>deletes every
+  global the framework minted</b>: the tag vocabulary, the event vocabulary, synthesized
+  interfaces, <code>Instance</code> itself. The page returns to what it was.</p>
+  <pre><code>Instance.teardown();        // clean slate, framework still installed
+  Instance.teardown(true);    // the nuclear option:
+  typeof Div;                 // "undefined"
+  typeof MouseDown;           // "undefined"
+  typeof Instance;            // "undefined"</code></pre>
+  <div class="warn"><b>Own the page.</b> Full teardown assumes every managed element is yours to
+  destroy. One deliberate survivor: the <a href="#ivc">IVC broker</a> slot is non-configurable by
+  design (tamper-proofing cuts both ways) — it remains, answering with the torn-down class
+  object.</div>
+
+  <h2 id="interfaces">Interfaces</h2>
+  <p class="lede">Three callable proxy interfaces live on every element — <code>.worker</code>,
+  <code>.socket</code>, <code>.listen</code> — each a memoized, element-scoped machine: built on
+  first touch, cached per element, and <b>drained at disposal</b> (workers terminate, sockets
+  close, listeners unbind — with their element). Each interface is <i>callable</i>: the call is
+  its primary verb; its named methods hang off the same handle. <span class="since">0.87.v</span></p>
+
+  <h3 id="worker">.worker <span class="ret">⇒ callable interface</span></h3>
+  <p><b>Description:</b> An inline Web Worker per element. Calling the interface runs a function
+  <i>off the main thread</i>: the function is serialized into a generated worker (Blob URL), the
+  data posted, and the reply resolved as a chainable promise. The worker spawns lazily on first
+  run and is reused afterward.</p>
+  <table class="params">
+    <tr><th>Member</th><th>Returns</th><th></th></tr>
+    <tr><td>.worker(fn, data)</td><td>chainable Promise</td><td>run <code>fn(data)</code> in the
+        worker; resolves with the return value. Equivalent: <code>.worker.run(fn, data)</code>.</td></tr>
+    <tr><td>.worker.post(data)</td><td>Element</td><td>post a message to the live worker</td></tr>
+    <tr><td>.worker.on(event, cb)</td><td>Element</td><td><code>addEventListener</code> on the worker
+        (<code>'message'</code>, <code>'error'</code>)</td></tr>
+    <tr><td>.worker.off(event, cb)</td><td>Element</td><td>remove such a listener</td></tr>
+    <tr><td>.worker.remove()</td><td>Element</td><td>terminate the worker and revoke its Blob URL</td></tr>
+  </table>
+  <pre><code>const el = new Div().appendTo(document.body);
+
+  const primes = await el.worker(n =&gt; {
+    const out = [];
+    for (let i = 2; out.length &lt; n; i++)
+      if (out.every(p =&gt; i % p)) out.push(i);
+    return out;
+  }, 10);
+  // [2, 3, 5, 7, 11, 13, 17, 19, 23, 29] — computed off-thread
+
+  el.worker.remove();          // or just dispose the element — same effect</code></pre>
+  <div class="note"><b>Serialized, not closed-over.</b> The function travels by
+  <code>toString()</code> — it runs in the worker realm and can only see the <code>data</code> you
+  pass it, not your closures.</div>
+
+  <h3 id="socket">.socket <span class="ret">⇒ callable interface</span></h3>
+  <p><b>Description:</b> A WebSocket per element. Calling the interface connects; the handle chains
+  for the rest of the conversation.</p>
+  <table class="params">
+    <tr><th>Member</th><th>Returns</th><th></th></tr>
+    <tr><td>.socket(url, protocols?)</td><td>the interface</td><td>open the connection (chainable —
+        the callable proxy comes back for immediate <code>.on(…)</code>)</td></tr>
+    <tr><td>.socket.send(data)</td><td>Element</td><td>send — strings pass through, everything else
+        is <code>JSON.stringify</code>'d</td></tr>
+    <tr><td>.socket.on(event, cb)</td><td>Element</td><td><code>'open' · 'message' · 'close' ·
+        'error'</code></td></tr>
+    <tr><td>.socket.off(event, cb)</td><td>Element</td><td>remove a listener</td></tr>
+    <tr><td>.socket.close()</td><td>Element</td><td>close and clear the connection</td></tr>
+    <tr><td>.socket.remove()</td><td>Element</td><td>alias of <code>close()</code> — the drain verb</td></tr>
+  </table>
+  <pre><code>const feed = new Section().appendTo(document.body);
+
+  feed.socket('wss://example.test/live')
+      .on('message', e =&gt; feed.append(JSON.parse(e.data).text))
+      .on('close',   () =&gt; feed.classList.add('offline'));
+
+  feed.socket.send({ subscribe: 'headlines' });   // auto-JSON
+  feed.remove(true);                              // element disposal closes the socket</code></pre>
+
+  <h3 id="listen">.listen <span class="ret">⇒ callable interface</span></h3>
+  <p><b>Description:</b> Channelled <code>postMessage</code> — a tiny same-window (and
+  cross-window) message bus. Calling the interface subscribes a channel; <code>.post</code>
+  broadcasts one. One underlying <code>message</code> listener per element serves every channel,
+  attached on first subscribe, removed on drain.</p>
+  <table class="params">
+    <tr><th>Member</th><th>Returns</th><th></th></tr>
+    <tr><td>.listen(channel, cb)</td><td>the interface</td><td>subscribe: <code>cb(data, event)</code>
+        for messages on that channel</td></tr>
+    <tr><td>.listen.post(channel, data, target?)</td><td>Element</td><td>broadcast via
+        <code>window.postMessage</code> (<code>target</code> defaults <code>'*'</code>)</td></tr>
+    <tr><td>.listen.off(channel, cb)</td><td>Element</td><td>unsubscribe one callback</td></tr>
+    <tr><td>.listen.remove()</td><td>Element</td><td>unbind the message listener, clear all channels</td></tr>
+  </table>
+  <pre><code>const a = new Div().appendTo(document.body);
+  const b = new Div().appendTo(document.body);
+
+  a.listen('theme', mode =&gt; a.dataset.theme = mode);
+  b.listen.post('theme', 'dark');       // a hears it — decoupled, no references held
+
+  a.remove(true);                        // disposal drains: the listener is unbound</code></pre>
+
+  <h2 id="semantic">Semantic elements</h2>
+  <p class="lede">Beyond the HTML tags, Instance ships a <b>built-in vocabulary</b> of behavioral
+  elements — upgraded unconditionally at boot — that turn declarative markup into working
+  features: <code>router</code>, <code>route</code>, <code>outlet</code>, <code>portal</code>,
+  <code>email</code>, <code>tel</code>, <code>website</code>, <code>mailto</code>,
+  <code>logout</code>, <code>reset</code>, <code>intl</code>, plus <code>async</code>/
+  <code>sync</code>/<code>static</code> markers. They work as elements in your HTML; you rarely
+  construct them by hand.</p>
+  <table class="params">
+    <tr><th>Element</th><th></th><th>Behavior</th></tr>
+    <tr><td>&lt;router&gt;</td><td></td><td>the routing controller (below)</td></tr>
+    <tr><td>&lt;route path src&gt;</td><td></td><td>a route declaration — path pattern → source</td></tr>
+    <tr><td>&lt;outlet [name]&gt;</td><td></td><td>where matched route content renders</td></tr>
+    <tr><td>&lt;portal&gt;</td><td></td><td>renders its children elsewhere in the tree</td></tr>
+    <tr><td>&lt;reset&gt;</td><td></td><td>resets the enclosing form on activation</td></tr>
+    <tr><td>&lt;mailto&gt; · &lt;tel&gt; · &lt;email&gt; · &lt;website&gt;</td><td></td>
+        <td>typed contact/link elements</td></tr>
+  </table>
+
+  <h2 id="router">Routing</h2>
+  <p class="lede">Routing is declarative: a <code>&lt;router&gt;</code> element containing
+  <code>&lt;route&gt;</code>s, an <code>&lt;outlet&gt;</code> to render into. The controller
+  intercepts in-app link clicks, matches the path, and swaps outlet content — no configuration
+  code required. <span class="since">Router</span></p>
+  <pre><code>&lt;router base="/app" history="push"&gt;
+    &lt;route path="/"        src="/pages/home.html"&gt;&lt;/route&gt;
+    &lt;route path="/about"   src="/pages/about.html"&gt;&lt;/route&gt;
+    &lt;route path="/user/:id" src="/pages/user.html"&gt;&lt;/route&gt;
+  &lt;/router&gt;
+
+  &lt;outlet&gt;&lt;/outlet&gt;
+
+  &lt;nav&gt;
+    &lt;a href="/about"&gt;About&lt;/a&gt;   &lt;!-- intercepted; no full reload --&gt;
+  &lt;/nav&gt;</code></pre>
+  <h4>Attributes</h4>
+  <table class="params">
+    <tr><th>On</th><th>Attribute</th><th></th></tr>
+    <tr><td>&lt;router&gt;</td><td>base</td><td>path prefix stripped/added for all routes</td></tr>
+    <tr><td>&lt;router&gt;</td><td>history</td><td><code>push</code> (default) or
+        <code>replace</code></td></tr>
+    <tr><td>&lt;route&gt;</td><td>path</td><td>the pattern — supports <code>:param</code>
+        segments</td></tr>
+    <tr><td>&lt;route&gt;</td><td>src</td><td>the content source for the default outlet</td></tr>
+    <tr><td>&lt;route&gt;</td><td><i>name</i>="…"</td><td>any other attribute targets the
+        like-named <code>&lt;outlet name&gt;</code> — one route can feed several outlets</td></tr>
+  </table>
+  <h4>The programmatic face — Instance.router</h4>
+  <p>The Router class is reachable as <code>Instance.router</code>; its statics drive navigation
+  from code:</p>
+  <table class="params">
+    <tr><th>Static</th><th>Returns</th><th></th></tr>
+    <tr><td>Instance.router.navigate(path, opts?)</td><td>Router</td><td>go to a path
+        (<code>{ replace: true }</code> to avoid a history entry)</td></tr>
+    <tr><td>Instance.router.configure(opts)</td><td>Router</td><td>set <code>{ base, history }</code>
+        programmatically</td></tr>
+    <tr><td>Instance.router.push(path, replace?)</td><td>Router</td><td>the lower-level history
+        push</td></tr>
+    <tr><td>Instance.router.back()</td><td>Router</td><td><code>history.back()</code></td></tr>
+  </table>
+  <pre><code>Instance.router.navigate('/user/42');
+  Instance.router.configure({ base: '/app', history: 'replace' });</code></pre>
+  <h4>Named outlets</h4>
+  <pre><code>&lt;router&gt;
+    &lt;route path="/mail" src="/list.html" sidebar="/folders.html"&gt;&lt;/route&gt;
+  &lt;/router&gt;
+  &lt;outlet&gt;&lt;/outlet&gt;                &lt;!-- gets src --&gt;
+  &lt;outlet name="sidebar"&gt;&lt;/outlet&gt; &lt;!-- gets the sidebar attribute's source --&gt;</code></pre>
+  <p>The controller re-reads its routes through a <code>MutationObserver</code>, so routes added
+  or removed after mount re-register automatically; on detach it unregisters (never committing
+  into a gone tree) and restores on re-entry.</p>
+  <div class="note"><b>Route lifecycle hooks.</b> The compiler recognizes
+  <code>@routeenter</code> / <code>@routeleave</code> alongside the standard lifecycle names, for
+  components that need to react to becoming or leaving the active route.</div>
+
+  <h2 id="templateapp">Template apps</h2>
+  <p class="lede">The endgame container: a whole component — markup, scoped style, and behavior —
+  declared in one <code>&lt;template app&gt;</code> tag. Boot upgrades it into a registered class
+  whose every instance is a <code>div[app]</code> host with an <b>open shadow root</b>; styles and
+  markup are scoped by construction. <span class="since">initTemplateApp</span></p>
+  <pre><code>&lt;template app="TodoList"&gt;
+    &lt;style&gt;
+      :host { display: block; font: 14px system-ui; }
+      .done { text-decoration: line-through; }
+    &lt;/style&gt;
+
+    &lt;script&gt;
+      // runs ONCE as the class definition; `this` is the container class
+      this.$items = [];
+      this.add$ = function () { /* … */ };
+    &lt;/script&gt;
+
+    &lt;section&gt;
+      &lt;!-- the shadow markup, cloned into every instance --&gt;
+    &lt;/section&gt;
+  &lt;/template&gt;</code></pre>
+  <table class="params">
+    <tr><th>Part</th><th></th><th>Role</th></tr>
+    <tr><td>app="Name"</td><td></td><td>the class name (pascalized, registered) — instances are
+        <code>&lt;div app="Name"&gt;</code> hosts</td></tr>
+    <tr><td>&lt;script&gt;</td><td></td><td>runs <b>once</b> at definition; <code>this</code> is
+        the class — declare fields, effects, methods</td></tr>
+    <tr><td>&lt;style&gt;</td><td></td><td>adopted into the shadow root — <code>:host</code> and
+        scoped selectors, no leakage</td></tr>
+    <tr><td>&lt;section&gt; (any markup)</td><td></td><td>cloned into each instance's shadow</td></tr>
+  </table>
+  <p>Upgrade is automatic at boot (and re-sweeps are idempotent — a per-node guard makes overlap
+  with the boot ring free); a <code>&lt;template app&gt;</code> that appears before the classes
+  register simply retries once <code>InstanceReady</code> settles. The generated class is reachable
+  as <code>Instance.app</code>.</p>
+  <div class="note"><b>Shadow scoping is structural.</b> Because the host owns an open shadow root,
+  the app's styles can't escape and the page's styles can't bleed in — the isolation is the DOM's,
+  not a convention.</div>
+
+  <h2 id="interop">Interop</h2>
+
+  <h3 id="jquery">Instance.mergeJQuery( [jq] ) <span class="ret">⇒ Instance</span> <span class="since">0.87.x</span></h3>
+  <p><b>Description:</b> If jQuery is on the page at boot, this runs <b>automatically</b> — every
+  <code>jQuery.fn</code> verb Instance doesn't already answer is grafted onto every element.
+  Call it manually if jQuery loads late. Idempotent.</p>
+  <table class="params">
+    <tr><th>Rule</th><th></th><th>Meaning</th></tr>
+    <tr><td>house wins</td><td></td><td>names Instance or the native chain already answer —
+        <code>on · off · remove · find · first</code> … — are <b>never</b> overridden.
+        <code>el.find('span')</code> stays an Instance Collection.</td></tr>
+    <tr><td>chaining unwraps</td><td></td><td>a jQuery call returning the same single-element set
+        hands back <b>the element</b>, so Instance chains continue:
+        <code>el.css(…) === el</code>.</td></tr>
+    <tr><td>values pass through</td><td></td><td>multi-element sets and scalar getters
+        (<code>el.innerWidth() → number</code>) return exactly what jQuery returned.</td></tr>
+  </table>
+  <pre><code>// jQuery present at boot — nothing to call:
+  const el = new Div().appendTo(document.body);
+
+  el.addClass('card')          // jQuery verb, Instance chaining
+    .css('opacity', 0.5)       // …still the element coming back
+    .fadeOut(200);             // effects work — it's real jQuery underneath
+
+  el.find('span');             // Instance Collection — house wins</code></pre>
+
+  <h3 id="ivc">globalThis[ Symbol.for('Instance') ]( [version] ) <span class="ret">⇒ Instance</span> <span class="since">0.87.x</span></h3>
+  <p><b>Description:</b> The <b>IVC</b> — Instance Version Controller. A non-enumerable,
+  <b>non-configurable</b> getter on a well-known symbol, returning a broker function: call it for
+  the active Instance. No named global needed; multiple Instance versions can coexist (the first
+  copy loaded owns the slot; the version argument is reserved for registry routing).</p>
+  <pre><code>// module code, no globals assumed:
+  const Instance = globalThis[Symbol.for('Instance')]();
+
+  // future-proof, version-gated form (routing reserved):
+  const Instance = globalThis[Symbol.for('Instance')]('0.87');</code></pre>
+  <div class="note"><b>Tamper-proof by construction.</b> Non-configurable means nothing on the page
+  can replace the broker after load — including <code>Instance.teardown(true)</code>, which is why
+  the slot is the one deliberate survivor of the nuclear option.</div>
+
+  <h2 id="onref">.on( ) — unified reference</h2>
+  <p class="lede">The full signature is <code>on(typeOrConds, selOrFn, fn, a3, a4)</code> —
+  <b>five arguments, seven tiers</b>, dispatched on what you hand it. Every tier returns something
+  that ends the subscription.</p>
+
+  <h3>The seven tiers</h3>
+  <table class="params">
+    <tr><th>Tier</th><th>First argument</th><th>Fires</th></tr>
+    <tr><td>condition object</td><td><code>{ mode: 'edit', $ready: true }</code></td>
+        <td>when <b>every</b> condition holds (keys auto-<code>$</code>-prefixed; an equality
+        consensus over state)</td></tr>
+    <tr><td>event class</td><td><code>MouseDown</code></td>
+        <td>that DOM event, through the shared <a href="#pump">pump</a>; disposer returned</td></tr>
+    <tr><td>'@change'</td><td>the literal</td>
+        <td>a class-static signal changes — source is <code>'$name'</code>, <code>'Δname'</code>,
+        or a getter function; arming is silent</td></tr>
+    <tr><td>lifecycle / shadow</td><td><code>'@mount'</code> · <code>'::render'</code></td>
+        <td>the named lifecycle (<code>@</code>) or shadow (<code>::</code>) moment</td></tr>
+    <tr><td>meta observation</td><td><code>':click'</code> · <code>':::mount'</code></td>
+        <td>when a <b>listener is added</b> — <code>:</code> observes standard registrations,
+        <code>:::</code> observes lifecycle/shadow ones; cb receives
+        <code>(listener, type, e)</code></td></tr>
+    <tr><td>DOM string</td><td><code>'click'</code></td>
+        <td>the native event — with the full five-argument anatomy below</td></tr>
+    <tr><td>class-face sugar</td><td><i>(receiver flipped)</i></td>
+        <td><code>Click.on(target, fn)</code> ≡ tier 2</td></tr>
+  </table>
+
+  <h3>The five-argument anatomy (string tier)</h3>
+  <pre><code>el.on( type[#id | ##id],  selector?,  handler,  …extras )</code></pre>
+  <table class="params">
+    <tr><th>Slot</th><th>Type</th><th></th></tr>
+    <tr><td>type</td><td>string</td><td>the event name — optionally carrying an
+        <b>identity suffix</b> (below)</td></tr>
+    <tr><td>selector</td><td>string?</td><td><b>delegation</b>: the handler fires for events whose
+        target matches (via <code>closest</code>, contained in the element); inside it,
+        <code>this</code> and the second argument are the <i>matched descendant</i></td></tr>
+    <tr><td>handler</td><td>function</td><td><code>(event)</code> — or <code>(event, matched)</code>
+        when delegated</td></tr>
+    <tr><td>…extras</td><td>object · function</td><td><b>order-independent</b>: an object is native
+        listener options (<code>capture · once · passive · signal</code>); a function is the
+        <b>afterFn</b> — a companion invoked after each handler run</td></tr>
+  </table>
+  <pre><code>list.on('click', 'li', (e, li) =&gt; li.classList.toggle('sel'));   // delegation
+
+  el.on('scroll', onScroll, { passive: true });                     // options
+  el.on('click', onClick, { once: true }, logIt);                   // options + afterFn — either order</code></pre>
+
+  <h3 id="hotswap">#id and ##id — identity registration</h3>
+  <p><b>Description:</b> Suffix the type with <code>#id</code> to give the registration a name.
+  Re-registering the same name <b>replaces</b> the previous listener — the 0.73 hot-swap: wire-up
+  code can run twice without doubling handlers. <code>##id</code> is the <b>scoped</b> variant:
+  its identity is <code>(type, id)</code> together, and removal must name both.</p>
+  <pre><code>el.on('click#primary', doThing);
+  el.on('click#primary', doOtherThing);   // ← replaced doThing; still ONE listener
+
+  el.on('click##panel', h1);
+  el.off('click##panel');                  // scoped off — exact pair required
+  el.off('#primary');                      // unscoped off — the id, across any type</code></pre>
+
+  <h3>.off( ) grammar</h3>
+  <table class="params">
+    <tr><th>Call</th><th></th><th>Removes</th></tr>
+    <tr><td>off()</td><td></td><td>everything this element registered through on()</td></tr>
+    <tr><td>off('click')</td><td></td><td>all listeners of the type</td></tr>
+    <tr><td>off('#id')</td><td></td><td>the id'd (unscoped) registration, whatever its type</td></tr>
+    <tr><td>off('click##id')</td><td></td><td>the scoped registration — exact pair</td></tr>
+    <tr><td>off('@mount', cb?)</td><td></td><td>lifecycle: that callback, or the whole fan</td></tr>
+  </table>
+  <h2 id="symbols">The protocol symbols</h2>
+  <p>Instance's cross-cutting protocols are symbol-keyed — same key, every level,
+  <code>typeof this</code> deciding the face.</p>
+  <table class="params">
+    <tr><th>Handle</th><th>Registered as</th><th>On an element</th><th>On a class</th></tr>
+    <tr><td>Instance.TEARDOWN</td><td>Symbol.for('Instance.teardown')</td>
+        <td>dispose now</td><td>registry self-destruct</td></tr>
+    <tr><td>Instance.TEARDOWN_ASYNC</td><td>Symbol.for('Instance.teardown.async')</td>
+        <td>await transitions, then dispose</td><td>per-element async sweep</td></tr>
+    <tr><td>Symbol.dispose / Symbol.asyncDispose</td><td><i>platform well-knowns</i></td>
+        <td colspan="2">aliases of the two above — <code>using</code> / <code>await using</code>
+        work where the realm ships them</td></tr>
+    <tr><td>Symbol.for('Instance')</td><td><i>double-duty, by design</i></td>
+        <td colspan="2">on <code>globalThis</code>: the <a href="#ivc">IVC broker</a>; on element
+        chains: the compiler's per-level definition hook. Different holders — no collision.</td></tr>
+    <tr><td>Symbol.for('Instance.event.type')</td><td>event-class brand</td>
+        <td colspan="2">how <code>.on()</code> recognizes an event class; carries the DOM type
+        string</td></tr>
+  </table>
+
+  <h2 id="naming">Naming rules</h2>
+  <p>Every generated name follows a resolved table, never naive casing.</p>
+  <table class="params">
+    <tr><th>Rule</th><th>Examples</th></tr>
+    <tr><td>Tags pascalize per the house table; acronym tags go UPPERCASE</td>
+        <td>div → <code>Div</code> · section → <code>Section</code> · tr → <code>TR</code> ·
+            thead → <code>THead</code> · td → <code>TD</code></td></tr>
+    <tr><td>Tag classes colliding with platform globals take an <code>Element</code> suffix</td>
+        <td>audio → <code>AudioElement</code> (window.Audio is taken) — the tag still mints
+            <code>&lt;audio&gt;</code></td></tr>
+    <tr><td>Per-tag interfaces are <code>HTML</code> + name + <code>Element</code>; existing
+        dedicated natives are reused by exact name-match</td>
+        <td><code>HTMLDivElement</code> reused · <code>HTMLSectionElement</code>,
+            <code>HTMLTHeadElement</code>, <code>HTMLTRElement</code> synthesized</td></tr>
+    <tr><td>Event classes colliding with anything take an <code>Event</code> suffix</td>
+        <td>input → <code>InputEvent</code> · storage → <code>StorageEvent</code></td></tr>
+    <tr><td>Compound event types resolve by table, not algorithm</td>
+        <td>dblclick → <code>DblClick</code> · popstate → <code>PopState</code></td></tr>
+  </table>
+
+  <h2 id="faq-more">FAQ — deeper cuts</h2>
+  <h4>Why a classic script and not a module?</h4>
+  <p>Because the boot contract is the tag: attributes on <code>document.currentScript</code>
+  configure the framework, and modules don't have a <code>currentScript</code>. It also makes the
+  mental model honest — one file executes, the vocabulary exists. Module code interops through
+  <code>InstanceReady</code> and the <a href="#ivc">IVC broker</a>; the Vite plugin packages both.</p>
+  <h4>Where's the virtual DOM?</h4>
+  <p>There isn't one, on purpose. Instance's bet is that the platform's real nodes plus a signal
+  kernel beat a diffing layer: state changes run <i>your</i> effects, which touch exactly the
+  properties you wrote. The benchmark numbers in <a href="#tooling">Tooling</a> are that bet,
+  measured.</p>
+  <h4>Can it coexist with React / another framework on the page?</h4>
+  <p>In default mode, yes — Instance elements are real elements, foreign code sees nothing odd,
+  and Instance claims globals only where names are free. <a href="#engine">Engine mode</a> is the
+  exception: it assumes page ownership. The jQuery merge exists because that coexistence is a
+  feature, not an accident.</p>
+  <h4>Server-side rendering?</h4>
+  <p>Not a supported target at this version. Instance boots against a live document; headless
+  DOMs (jsdom) run it fine for testing, but there is no hydration story — honesty over
+  checkbox.</p>
+  <h4>TypeScript?</h4>
+  <p>No types ship at this version. The surface is deliberately platform-shaped — elements are
+  their DOM types — so ambient typings are tractable, and a <code>.its</code>(Instance TypeScript) is on the roadmap
+  rather than in the box.</p>
+
+  <h2 id="recipes">Recipes</h2>
+  <p class="lede">Complete, working patterns — each composed only of behaviors documented above.</p>
+
+  <h3>A counter component <span class="ret">— fields + effects + events</span></h3>
+  <pre><code>class Counter extends Div {
+    $n = 0
+    show$() { this.textContent = `count: ${this.$n}` }   // compiled effect
+  }
+
+  const c = new Counter().appendTo('#app');
+  c.on(Click, () =&gt; c.$n += 1);          // the pulse feeds the behavior
+
+  // plain-JS variant of the same thing — no compilation anywhere:
+  const c2 = new Div().appendTo('#app');
+  c2.$n = 0;
+  c2.effect(() =&gt; c2.textContent = `count: ${c2.$n}`);
+  c2.on(Click, () =&gt; c2.$n += 1);</code></pre>
+
+  <h3>A live table <span class="ret">— registry as the data layer</span></h3>
+  <pre><code>class Row extends TR {
+    constructor(name, score) {
+      super();
+      this.append(Object.assign(new TD(), { textContent: name }),
+                  Object.assign(new TD(), { textContent: score }));
+      this.$score = score;
+    }
+  }
+
+  const body = new TBody().appendTo(new Table().appendTo('#app'));
+  ['Ada', 'Lin', 'Grace'].forEach((n, i) =&gt; new Row(n, i * 10).appendTo(body));
+
+  Row.all().length;                    // 3 — the registry IS the query layer
+  Row.where(r =&gt; r.$score &gt; 5)         // the high scorers
+    .first().classList.add('lead');
+
+  Row[0].remove();                     // detached: unqueryable, not destroyed
+  Row.all().length;                    // 2
+  body.prepend(Row.this ? Row[0] : null); // (reattach any held reference; slot remembered)</code></pre>
+
+  <h3>A toast with an exit transition <span class="ret">— async lifecycle</span></h3>
+  <pre><code>class Toast extends Div {
+    constructor(msg) { super(); this.textContent = msg; this.className = 'toast'; }
+    ['@mount']()   { requestAnimationFrame(() =&gt; this.classList.add('in')); }
+    ['@removal']() {
+      this.classList.remove('in');
+      return new Promise(r =&gt; this.once('transitionend', r));  // awaited
+    }
+  }
+
+  const t = new Toast('Saved.').appendTo(document.body);
+  setTimeout(() =&gt; t.disposeAsync(), 2500);   // plays out, then reclaims — fully</code></pre>
+
+  <h3>Delegation via bubbling <span class="ret">— one subscription, many targets</span></h3>
+  <pre><code>const list = new Ul().appendTo('#app');
+  for (let i = 0; i &lt; 50; i++)
+    Object.assign(new Li(), { textContent: `item ${i}` }).appendTo(list);
+
+  // ONE pump on the ancestor — descendants' clicks bubble into it:
+  list.on(Click, ev =&gt; {
+    const li = ev.target.closest('li');
+    if (li) li.classList.toggle('selected');
+  });</code></pre>
+
+  <h3>Off-thread work, on-element ergonomics <span class="ret">— .worker</span></h3>
+  <pre><code>const chart = new Canvas().appendTo('#app');
+
+  const bins = await chart.worker((points) =&gt; {
+    const bins = new Array(64).fill(0);
+    for (const p of points) bins[Math.min(63, p | 0)]++;
+    return bins;
+  }, hugePointArray);
+
+  draw(chart, bins);
+  chart.remove(true);        // disposal terminates the worker with the element</code></pre>
+
+  <h3>A scoped widget <span class="ret">— using + the protocol</span></h3>
+  <pre><code>async function measure(node) {
+    using probe = new Div().appendTo(document.body);   // auto-disposed at scope exit
+    probe.style.cssText = 'position:absolute;visibility:hidden';
+    probe.append(node.cloneNode(true));
+    return probe.getBoundingClientRect();
+  }   // ← probe[Symbol.dispose]() ran here: detached, drained, forgotten</code></pre>
+
+  <h3>Broadcast state <span class="ret">— static $ + '@change'</span></h3>
+  <pre><code>class Theme extends Div { static $mode = 'light'; }
+
+  class Panel extends Div {
+    constructor() {
+      super();
+      this.on('@change', '$mode', m =&gt; this.dataset.theme = m);
+    }
+  }
+  new Panel().appendTo('#app');
+  new Panel().appendTo('#app');
+
+  Theme.$mode = 'dark';        // every Panel updates — one write, class-wide</code></pre>
+
+  <h2 id="appendixA">Appendix A — The event vocabulary</h2>
+  <p>Every class the boot mints, its DOM type, the native interface it constructs, and where a
+  target-less <code>new</code> fires. Dagger (†) marks names that took the <code>Event</code>
+  postfix on a standard page — collision detection is per-realm, so an unusual page may differ;
+  <code>Instance.Events.*</code> always holds every class under its resolved name.</p>
+
+  <table class="params">
+    <tr><th>Class</th><th>type</th><th>constructs</th><th>default target</th></tr>
+    <tr><td>Click</td><td>click</td><td>MouseEvent</td><td>document</td></tr>
+    <tr><td>DblClick</td><td>dblclick</td><td>MouseEvent</td><td>document</td></tr>
+    <tr><td>ContextMenu</td><td>contextmenu</td><td>MouseEvent</td><td>document</td></tr>
+    <tr><td>MouseDown / MouseUp / MouseMove</td><td>mousedown …</td><td>MouseEvent</td><td>document</td></tr>
+    <tr><td>MouseOver / MouseOut / MouseEnter / MouseLeave</td><td>mouseover …</td><td>MouseEvent</td><td>document</td></tr>
+    <tr><td>PointerDown / PointerUp / PointerMove</td><td>pointerdown …</td><td>PointerEvent</td><td>document</td></tr>
+    <tr><td>PointerOver / PointerOut / PointerEnter / PointerLeave / PointerCancel</td><td>pointerover …</td><td>PointerEvent</td><td>document</td></tr>
+    <tr><td>TouchStart / TouchEnd / TouchMove / TouchCancel</td><td>touchstart …</td><td>TouchEvent</td><td>document</td></tr>
+    <tr><td>KeyDown / KeyUp / KeyPress</td><td>keydown …</td><td>KeyboardEvent</td><td>document</td></tr>
+    <tr><td>Focus / FocusIn / FocusOut</td><td>focus / focusin / focusout</td><td>FocusEvent</td><td>document</td></tr>
+    <tr><td>Wheel</td><td>wheel</td><td>WheelEvent</td><td>document</td></tr>
+    <tr><td>Scroll</td><td>scroll</td><td>Event</td><td>document</td></tr>
+    <tr><td>InputEvent †</td><td>input</td><td>InputEvent</td><td>document</td></tr>
+    <tr><td>Change</td><td>change</td><td>Event</td><td>document</td></tr>
+    <tr><td>SelectEvent †</td><td>select</td><td>Event</td><td>document</td></tr>
+    <tr><td>Submit</td><td>submit</td><td>SubmitEvent</td><td>document</td></tr>
+    <tr><td>ResetEvent †</td><td>reset</td><td>Event</td><td>document</td></tr>
+    <tr><td>Copy / Cut / Paste</td><td>copy / cut / paste</td><td>Event</td><td>document</td></tr>
+    <tr><td>Drag / DragStart / DragEnd</td><td>drag …</td><td>DragEvent</td><td>document</td></tr>
+    <tr><td>DragEnter / DragLeave / DragOver / Drop</td><td>dragenter … / drop</td><td>DragEvent</td><td>document</td></tr>
+    <tr><td>TransitionStart / TransitionEnd / TransitionCancel</td><td>transitionstart …</td><td>TransitionEvent</td><td>document</td></tr>
+    <tr><td>AnimationStart / AnimationEnd / AnimationIteration</td><td>animationstart …</td><td>AnimationEvent</td><td>document</td></tr>
+    <tr><td>VisibilityChange</td><td>visibilitychange</td><td>Event</td><td>document</td></tr>
+    <tr><td>FullscreenChange / FullscreenError</td><td>fullscreenchange …</td><td>Event</td><td>document</td></tr>
+    <tr><td>Abort</td><td>abort</td><td>Event</td><td>document</td></tr>
+    <tr><td>Resize</td><td>resize</td><td>Event</td><td><b>window</b></td></tr>
+    <tr><td>Load / Unload</td><td>load / unload</td><td>Event</td><td><b>window</b></td></tr>
+    <tr><td>BeforeUnload</td><td>beforeunload</td><td>Event</td><td><b>window</b></td></tr>
+    <tr><td>StorageEvent †</td><td>storage</td><td>StorageEvent</td><td><b>window</b></td></tr>
+    <tr><td>HashChange</td><td>hashchange</td><td>HashChangeEvent</td><td><b>window</b></td></tr>
+    <tr><td>PopState</td><td>popstate</td><td>PopStateEvent</td><td><b>window</b></td></tr>
+  </table>
+  <div class="note"><b>Interface gaps.</b> The <i>constructs</i> column names the interface used
+  when the realm provides it; realms lacking one (older engines, some headless environments) fall
+  back to plain <code>Event</code> for construction — subscription is unaffected.</div>
+
+  <h2 id="appendixB">Appendix B — Errors &amp; guards</h2>
+  <p>Instance fails loudly and specifically. The guards you may meet:</p>
+  <table class="params">
+    <tr><th>Message / behavior</th><th>Raised by</th><th>Why</th></tr>
+    <tr><td>[DSL] placement errors</td><td>new Div('@verb …')</td><td>The placement target must be
+        a <b>selector string</b>. Element references are rejected rather than guessed at — the
+        error text says exactly that.</td></tr>
+    <tr><td>string "…" is not a function</td><td>Class.where(sel)</td><td><code>where</code> takes
+        a predicate function. Selector querying belongs to the DOM
+        (<code>querySelectorAll</code>) — the registry filters on your terms.</td></tr>
+    <tr><td>[Instance.Events] cascade overflow</td><td>event firing</td><td>More than 1024 nested
+        fires in one drain — a handler firing its own event unconditionally. The house analogue of
+        the stack overflow the raw DOM gives the same bug.</td></tr>
+    <tr><td>Illegal constructor</td><td>new HTMLSectionElement()</td><td>Synthesized per-tag
+        interfaces behave like platform interfaces: they type and brand, they do not construct.
+        Construct through the element class (<code>new Section()</code>).</td></tr>
+    <tr><td>handler errors re-thrown async</td><td>event delivery</td><td>A throwing event handler
+        cannot break delivery to its siblings; the error surfaces on the next tick instead of
+        killing the drain.</td></tr>
+  </table>
+
+  <h2 id="appendixC">Appendix C — Identity notes</h2>
+  <p>The honest edges, in one place.</p>
+  <table class="params">
+    <tr><th>Surface</th><th>Default mode</th><th>Engine mode</th></tr>
+    <tr><td>el instanceof Class / natives / Instance</td><td>true</td><td>true</td></tr>
+    <tr><td>Object.getPrototypeOf(el)</td><td>the metaclass (documented divergence — the reactive
+        interceptor must live in the prototype slot)</td><td><b>the native prototype</b> —
+        structurally indistinguishable</td></tr>
+    <tr><td>el.constructor</td><td>the class</td><td>the class (per-tag ctor identity)</td></tr>
+    <tr><td>Object.prototype.toString.call(el)</td><td colspan="2">the house brand — minted elements
+        carry their class identity; the <i>interface</i> tag lives on the prototype
+        (<code>HTMLSectionElement.prototype[Symbol.toStringTag]</code>).</td></tr>
+    <tr><td>gp(HTMLDivElement.prototype)</td><td>native</td><td>the hidden metaclass — the one
+        structural tell, one link above where anything looks.</td></tr>
+  </table>
+  <div class="warn"><b>Choosing engine mode.</b> Take it when the app owns its page: you gain
+  native <code>getPrototypeOf</code> and constructor identity for a measured ~1.16× on hot reads,
+  and the spliced chains are shared by every element of the tag — including elements other code
+  creates. Leave it off for embeds and mixed pages.</div>
+
+  <h2 id="surface">Appendix D — Additional surface</h2>
+  <p>Verbs present on every element beyond the entries above. Those marked ◇ are shipped and
+  suite-exercised but not yet given full reference treatment in this edition — signatures may be
+  firmed in a future revision; consult the interactive suite for live behavior.</p>
+  <div class="idx">
+    <div>detach() <span class="d">— remove() without arguments, spelled out</span></div>
+    <div>reattach() <span class="d">— re-enter the registry at the remembered slot</span></div>
+    <div>dispose() / disposeAsync() <span class="d">— the remove(true) pair, spelled out</span></div>
+    <div>unmount() / unmountAsync() <span class="d">— lifecycle exits ◇</span></div>
+    <div>subscribe(cb) / unsubscribe(cb) / notify(…) <span class="d">— the local pub/sub trio (see .subscribe entry)</span></div>
+    <div>%Name selectors <span class="d">— DSL instance addressing; parses, resolution reserved</span></div>
+    <div>&lt;= / &lt;&lt;= arrows <span class="d">— DSL route arrows; parse, routing layer reserved ◇</span></div>
+    <div>trigger() / notify() <span class="d">— kernel-level notify verbs ◇</span></div>
+    <div>bind() / callbind() <span class="d">— method binding helpers ◇</span></div>
+    <div>signal() / computed() / readonly() <span class="d">— node minting on the element's store ◇</span></div>
+    <div>resource() <span class="d">— async signal wrapper ◇</span></div>
+    <div>transition() / ::transition <span class="d">— transition helpers ◇</span></div>
+    <div>inherit() / clone() <span class="d">— structure helpers ◇</span></div>
+    <div>route() <span class="d">— routing hook ◇</span></div>
+    <div>post() / inspect() <span class="d">— messaging / debugging ◇</span></div>
+    <div>Instance.makeChainable(p) <span class="d">— promise that chains like an element</span></div>
+    <div>Instance.superup() / superdown() <span class="d">— ⚡⚡ tier; experimental, engine-gated</span></div>
+  </div>
+
+  <h2 id="appendixE">Appendix E — Boot reference</h2>
+  <table class="params">
+    <tr><th>Surface</th><th>Kind</th><th></th></tr>
+    <tr><td>&lt;script … ⚡&gt;</td><td>attribute</td><td>boot into engine mode
+        (<a href="#engine">powerup</a> at load)</td></tr>
+    <tr><td>&lt;script … autoclass="a, b"&gt;</td><td>attribute</td><td>vocabulary groups to mint</td></tr>
+    <tr><td>InstanceReady</td><td>Promise</td><td>resolves when boot completes</td></tr>
+    <tr><td>window.Instance</td><td>class</td><td>the framework root (configurable — replaceable
+        by tooling)</td></tr>
+    <tr><td>globalThis[Symbol.for('Instance')]</td><td>getter</td><td>the
+        <a href="#ivc">IVC broker</a> (non-configurable — first copy wins)</td></tr>
+    <tr><td>Instance.Events</td><td>namespace</td><td>every event class under its resolved name</td></tr>
+    <tr><td>Instance.Chimera.Signal</td><td>namespace</td><td>the kernel:
+        State · Computed · Effect · Store</td></tr>
+    <tr><td>Instance.teardown(true)</td><td>method</td><td>the nuclear option — unmints everything
+        the boot created</td></tr>
+  </table>
+
+  <h2 id="tooling">Tooling &amp; suite</h2>
+  <p><b>The interactive suite</b> — <code>Instance-0.87.z.suite.html</code> — is the living
+  specification: 166 entries (163 passing, 3 documented warnings, zero known-fails at this
+  version), each rendered as editable source you can re-run in place. Where these pages describe,
+  the suite <i>demonstrates</i>.</p>
+  <h3 id="picoprettify">PicoPrettify — <code>Instance.Compiler.prettify( code, opts )</code></h3>
+  <p><b>Description:</b> The syntax highlighter that ships <i>inside</i> the compiler — a tiny,
+  dependency-free tokenizer that returns HTML with classed <code>&lt;span&gt;</code>s. It is what
+  renders the editable source in the interactive suite, and <b>it is what colors every code block
+  on this page</b> — the docs highlight themselves by calling the shipped build, so what you read
+  here is exactly what the compiler emits.</p>
+  <table class="params">
+    <tr><th>Argument</th><th>Type</th><th></th></tr>
+    <tr><td>code</td><td>string</td><td>the source to highlight</td></tr>
+    <tr><td>opts.lang</td><td>'is' | 'js'</td><td>dialect hint — <code>is</code> understands the
+        reactive sigils and lifecycle names</td></tr>
+    <tr><td>opts.format</td><td>boolean</td><td>also re-indent/format, not just colorize</td></tr>
+  </table>
+  <p>Token classes: <code>sk</code> (keyword), <code>scl</code> (class name), <code>sf</code>
+  (call), <code>si</code> (sigil/reactive), <code>sl</code> (lifecycle <code>@key</code>),
+  <code>sn</code> (number), <code>ss</code> (string), <code>spu</code> (punctuation). Sigil context
+  is local — an <code>@</code> or <code>::</code> binds the identifier immediately after it.</p>
+  <pre><code>const html = Instance.Compiler.prettify('class Foo extends Div { $x = 1 }', { lang: 'is' });
+  // → '&lt;span class="sk"&gt;class&lt;/span&gt; &lt;span class="scl"&gt;Foo&lt;/span&gt; …'</code></pre>
+
+  <p><b>vite-plugin-instance</b> — for projects that live inside Vite: injects the boot tag with
+  your attributes (the <code>currentScript</code> contract intact), compiles <code>.is</code>
+  sources through the real Compiler, and serves <code>virtual:instance</code> — the IVC retrieval
+  as a module import. Three files, no build step, on npm.</p>
+  <p><b>Performance</b> — measured on the krausest benchmark shape in Chrome by the author:
+  create rows ~1.6× vanilla-js reference, partial update ~1.4–1.5× — ahead of the virtual-DOM
+  frameworks on the update row while every element stays a real, directly-mutable node. Signals
+  microbenchmarks (the V17 arena) lead their class. Engine mode's read tax is measured at ~1.16×
+  (see <a href="#engine">powerup</a>). Numbers are machine-relative; the benchmark harness ships
+  with the repository — run your own.</p>
+
+  <footer>
+    Instance 0.87.z · API Documentation · generated against the gated build
+    (playground 61/61 · 234 assertions · both prototype modes · suite 163 pass / 0 fail).
+    The element is the instance.
+  </footer>
+
+  </main>
+
+  <script>
+  /* sidebar: highlight the section in view; inject appendix links */
+  (function () { try {
+    var nav = document.querySelector('#side nav');
+    var extra = document.createElement('div');
+    extra.innerHTML = '<a href="#onref">.on( ) unified</a>'
+      + '<a href="#symbols">Protocol symbols</a>'
+      + '<a href="#naming">Naming rules</a>'
+      + '<a href="#recipes">Recipes</a>'
+      + '<a href="#appendixA">A · Event vocabulary</a>'
+      + '<a href="#appendixB">B · Errors &amp; guards</a>'
+      + '<a href="#appendixC">C · Identity notes</a>'
+      + '<a href="#appendixE">E · Boot reference</a>';
+    var anchor = nav.querySelector('a[href="#surface"]');
+    while (extra.firstChild) nav.insertBefore(extra.firstChild, anchor);
+    var links = [].slice.call(nav.querySelectorAll('a'));
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+    if (typeof IntersectionObserver === 'function') {
+      var obs = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          var a = map[e.target.id];
+          if (a) a.style.color = e.isIntersecting ? 'var(--accent)' : '';
+        });
+      }, { rootMargin: '-10% 0px -80% 0px' });
+      [].slice.call(document.querySelectorAll('main h2[id], main h3[id]')).forEach(function (h) { obs.observe(h); });
+    }
+  } catch (e) { /* nav enhancement is optional */ } })();
+
+  /* THE META-MOVE: the docs highlight their own code through the framework's OWN
+  * PicoPrettify — the exact lex+prettify inlined from the shipped Compiler build.
+  * Self-contained: no network, works from file://, provably the compiler's output. */
+  (function () {
+    var PicoPrettify;
+    try {
+      // === BEGIN inlined Instance.Compiler PicoPrettify (lex + prettify) ===
+  /* ── literal scanners — find each literal's END, keep it opaque ── */
+      function scanStr(s, i) {
+        const q = s[i];
+        i++;
+        while (i < s.length) {
+          const c = s[i];
+          if (c === '\\') {
+            i += 2;
+            continue;
+          }
+          if (c === q) return i + 1;
+          i++;
+        }
+        return i;
+      }
+      function scanTpl(s, i) {
+        i++;
+        while (i < s.length) {
+          const c = s[i];
+          if (c === '\\') {
+            i += 2;
+            continue;
+          }
+          if (c === '`') return i + 1;
+          if (c === '$' && s[i + 1] === '{') i = scanBraces(s, i + 2);
+          else i++;
+        }
+        return i;
+      }
+      function scanBraces(s, i) {
+        let d = 1;
+        while (i < s.length && d > 0) {
+          const c = s[i];
+          if (c === '\\') {
+            i += 2;
+            continue;
+          }
+          if (c === '{') {
+            d++;
+            i++;
+          } else if (c === '}') {
+            d--;
+            i++;
+          } else if (c === '`') i = scanTpl(s, i);
+          else if (c === '"' || c === "'") i = scanStr(s, i);
+          else if (c === '/' && s[i + 1] === '/') {
+            while (i < s.length && s[i] !== '\n') i++;
+          } else if (c === '/' && s[i + 1] === '*') {
+            i += 2;
+            while (i < s.length && !(s[i] === '*' && s[i + 1] === '/')) i++;
+            i += 2;
+          } else i++;
+        }
+        return i;
+      }
+      function scanRe(s, i) {
+        i++;
+        let cls = false;
+        while (i < s.length) {
+          const c = s[i];
+          if (c === '\\') {
+            i += 2;
+            continue;
+          }
+          if (c === '[') cls = true;
+          else if (c === ']') cls = false;
+          else if (c === '/' && !cls) {
+            i++;
+            while (i < s.length && /[a-z]/i.test(s[i])) i++;
+            return i;
+          }
+          i++;
+        }
+        return i;
+      }
+
+
+      const RE_PREV = new Set([
+        '=', '+', '-', '*', '/', '%', '(', '[', '{', '&', '|', '^', '~', '<', '>',
+        '!', '?', ':', ',', ';', '=>', '&&', '||', '??', '==', '===', '!=', '!==',
+        'return', 'typeof', 'case', 'do', 'delete', 'void', 'in', 'instanceof',
+        'new', 'yield', 'await', 'throw'
+      ]);
+
+      function lex(src) {
+        const T = [];
+        const n = src.length;
+        let i = 0;
+        let	prev = null;
+        const op2 = ['=>', '==', '!=', '<=', '>=', '&&', '||', '??', '+=', '-=', '*=', '/=', '**', '?.'];
+        const op3 = ['===', '!==', '**=', '...'];
+        while (i < n) {
+          const c = src[i],
+            s = i;
+          if (/\s/.test(c)) {
+            while (i < n && /\s/.test(src[i])) i++;
+            T.push({ t: 'ws', s, e: i, v: src.slice(s, i) });
+            continue;
+          }
+          if (c === '/' && src[i + 1] === '/') {
+            while (i < n && src[i] !== '\n') i++;
+            T.push({ t: 'cm', s, e: i, v: src.slice(s, i) });
+            continue;
+          }
+          if (c === '/' && src[i + 1] === '*') {
+            i += 2;
+            while (i < n && !(src[i] === '*' && src[i + 1] === '/')) i++;
+            i += 2;
+            T.push({ t: 'cm', s, e: i, v: src.slice(s, i) });
+            continue;
+          }
+          if (c === '"' || c === "'") {
+            i = scanStr(src, i);
+            T.push({ t: 'str', s, e: i, v: src.slice(s, i) });
+            prev = 'str';
+            continue;
+          }
+          if (c === '`') {
+            i = scanTpl(src, i);
+            T.push({ t: 'str', s, e: i, v: src.slice(s, i) });
+            prev = 'str';
+            continue;
+          }
+          if (c === '/') {
+            if (!prev || RE_PREV.has(prev)) {
+              i = scanRe(src, i);
+              T.push({ t: 're', s, e: i, v: src.slice(s, i) });
+              prev = 're';
+              continue;
+            }
+          }
+          if (/[A-Za-z_$#Δø]/.test(c)) {
+            i++;
+            while (i < n && /[\w$Δø]/.test(src[i])) i++;
+            const w = src.slice(s, i);
+            T.push({ t: 'id', s, e: i, v: w });
+            prev = w;
+            continue;
+          }
+          if (/[0-9]/.test(c)) {
+            i++;
+            while (i < n && /[\w.]/.test(src[i])) i++;
+            T.push({ t: 'num', s, e: i, v: src.slice(s, i) });
+            prev = 'num';
+            continue;
+          }
+          let p = c;
+          const a3 = src.slice(i, i + 3),
+            a2 = src.slice(i, i + 2);
+          if (op3.includes(a3)) p = a3;
+          else if (op2.includes(a2)) p = a2;
+          i += p.length;
+          T.push({ t: 'pu', s, e: i, v: p });
+          prev = p;
+          continue;
+        }
+        return T;
+      }
+  function prettify(rawCode, opts) {
+        const format = !!(opts && opts.format);
+        const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const KEYWORDS = new Set(('class extends const let get set true false null undefined static var function return new delete '
+          + 'if else for in of while do switch case break continue default try catch finally throw typeof instanceof '
+          + 'await async import export this super yield void').split(' '));
+        const LIFECYCLE = new Set(['mount', 'unmount', 'insertion', 'removal', 'rendered', 'transition', 'async', 'navigate', 'routeenter', 'routeleave', 'append', 'value', 'stamp']);
+        const raw = String(rawCode == null ? '' : rawCode);
+        const L = lex(raw);
+        // classification pass — token stream → {cls, val}; sigil context is LOCAL
+        // (an '@' or '::' binds the id that follows with no whitespace between)
+        const out = [];
+        const nextSolid = k => { for (let j = k + 1; j < L.length; j++) if (L[j].t !== 'ws') return L[j]; return null; };
+        for (let k = 0; k < L.length; k++) {
+          const tk = L[k];
+          if (tk.t === 'ws') { out.push({ cls: null, val: tk.v }); continue; }
+          if (tk.t === 'cm') { out.push({ cls: 'sc', val: tk.v, line: tk.v.slice(0, 2) === '//' }); continue; }
+          if (tk.t === 'str' || tk.t === 're') { out.push({ cls: 'ss', val: tk.v }); continue; }
+          if (tk.t === 'num') { out.push({ cls: 'sn', val: tk.v }); continue; }
+          if (tk.t === 'id') {
+            const v = tk.v;
+            if (KEYWORDS.has(v)) { out.push({ cls: 'sk', val: v }); continue; }
+            if (v[0] === '$' || v[0] === '\u0394' || v[0] === '\u00f8') { out.push({ cls: 'si', val: v }); continue; } // reactive tiers: $ $$ $$$ · Δ union · ø
+            const nx = L[k + 1]; // trailing-effect suffix: name@ (id immediately followed by '@')
+            if (nx && nx.t === 'pu' && nx.v === '@' && nx.s === tk.e) { out.push({ cls: 'si', val: v + '@' }); k++; continue; }
+            if (/^[A-Z]/.test(v)) { out.push({ cls: 'scl', val: v }); continue; }
+            const ns = nextSolid(k);
+            if (ns && ns.t === 'pu' && ns.v === '(') { out.push({ cls: 'sf', val: v }); continue; }
+            out.push({ cls: null, val: v }); continue;
+          }
+          // punctuation — sigil prefixes bind their trailing id: @name / @@ / ::name / %App / ψ
+          const v = tk.v;
+          if (v === '@') {
+            const nx = L[k + 1];
+            if (nx && nx.t === 'pu' && nx.v === '@' && nx.s === tk.e) { out.push({ cls: 'si', val: '@@' }); k++; continue; }
+            if (nx && nx.t === 'id' && nx.s === tk.e) { out.push({ cls: LIFECYCLE.has(nx.v) ? 'sl' : 'si', val: '@' + nx.v }); k++; continue; }
+            out.push({ cls: 'si', val: '@' }); continue;
+          }
+          if (v === ':') {
+            const nx = L[k + 1], nn = L[k + 2];
+            if (nx && nx.t === 'pu' && nx.v === ':' && nx.s === tk.e && nn && nn.t === 'id' && nn.s === nx.e) { out.push({ cls: 'si', val: '::' + nn.v }); k += 2; continue; }
+          }
+          if (v === '%') {
+            const nx = L[k + 1];
+            if (nx && nx.t === 'id' && nx.s === tk.e && /^[A-Z]/.test(nx.v)) { out.push({ cls: 'si', val: '%' + nx.v }); k++; continue; }
+          }
+          if (v === '\u03c8') { out.push({ cls: 'si', val: v }); continue; } // ψ — the triad accessor rides punct (lex gap noted)
+          out.push({ cls: 'pu', val: v });
+        }
+        if (!format) { // overlay mode: verbatim text, spans only
+          let html = '';
+          for (const t of out) html += t.cls === null ? esc(t.val) : (t.cls === 'pu' ? '<span class="spu">' + esc(t.val) + '</span>' : '<span class="' + t.cls + '">' + esc(t.val) + '</span>');
+          return html;
+        }
+        // ── format:true — the ORIGINAL PicoPrettify structural reflow, over tokens ──
+        let result = '', indentLevel = 0, parenDepth = 0, requestNewline = false;
+        const tab = '    ';
+        const A = out.filter(t => t.cls !== null || t.val.trim() !== '' ? true : true); // keep all; ws is meaningful for inline runs
+        const solidAfter = k => { for (let j = k + 1; j < A.length; j++) { const t = A[j]; if (t.cls === null && t.val.trim() === '') { if (t.val.includes('\n')) return { br: true }; continue; } return { t }; } return {}; };
+        for (let k = 0; k < A.length; k++) {
+          let t = A[k];
+          const isWs = t.cls === null && t.val.trim() === '';
+          const kind = t.cls === 'pu' ? (t.val === '{' ? 'open' : t.val === '}' ? 'clos' : t.val === ';' ? 'semi' : t.val === '(' ? 'opn_p' : t.val === ')' ? 'cls_p' : /^[\[\],.]$/.test(t.val) ? 'spu' : 'pu') : t.cls;
+          if (requestNewline) {
+            if (isWs) continue;
+            if (kind === 'clos') { indentLevel = Math.max(0, indentLevel - 1); result = result.replace(/\s+$/, '') + '\n' + tab.repeat(indentLevel); requestNewline = false; }
+            else if (kind !== 'semi' && kind !== 'spu' && kind !== 'cls_p') { result = result.replace(/\s+$/, '') + '\n' + tab.repeat(indentLevel); requestNewline = false; }
+          } else if (kind === 'clos') {
+            indentLevel = Math.max(0, indentLevel - 1);
+            if (!result.endsWith('\n' + tab.repeat(indentLevel))) result = result.replace(/\s+$/, '') + '\n' + tab.repeat(indentLevel);
+          }
+          if (isWs) { result += /\s$/.test(result) || result === '' ? '' : ' '; continue; } // collapse runs; reflow owns line breaks
+          switch (kind) {
+            case 'sc':
+              result += '<span class="sc">' + esc(t.val) + '</span>';
+              if (t.line) requestNewline = true;
+              break;
+            case 'open': {
+              const peek = solidAfter(k);
+              if (peek.t && peek.t.cls === 'pu' && peek.t.val === '}') { // {} — the empty pair, inline
+                if (/(?:\w|\]|\))(?:<\/span>)?$/.test(result)) result += ' ';
+                result += '<span class="spu">{}</span>';
+                while (A[k + 1] && !(A[k + 1].cls === 'pu' && A[k + 1].val === '}')) k++;
+                k++;
+                break;
+              }
+              if (/(?:\w|\]|\))(?:<\/span>)?$/.test(result)) result += ' ';
+              result += '<span class="spu">{</span>'; indentLevel++; requestNewline = true;
+              break;
+            }
+            case 'clos': {
+              result += '<span class="spu">}</span>';
+              if (parenDepth === 0) {
+                const peek = solidAfter(k);
+                const cont = peek.t && peek.t.cls === 'sk' && /^(?:catch|else|finally|while)$/.test(peek.t.val);
+                if (!cont) requestNewline = true;
+              }
+              break;
+            }
+            case 'semi': {
+              result += '<span class="spu">;</span>';
+              if (parenDepth === 0) {
+                const peek = solidAfter(k);
+                const inlineCm = peek.t && peek.t.cls === 'sc';
+                if (!inlineCm) requestNewline = true;
+              } else result += ' ';
+              break;
+            }
+            case 'opn_p': parenDepth++; result += '<span class="spu">(</span>'; break;
+            case 'cls_p': parenDepth = Math.max(0, parenDepth - 1); result += '<span class="spu">)</span>'; break;
+            case 'spu': case 'pu': result += '<span class="spu">' + esc(t.val) + '</span>'; break;
+            default: result += t.cls === null ? esc(t.val) : '<span class="' + t.cls + '">' + esc(t.val) + '</span>';
+          }
+        }
+        return result.trim();
+      }
+      // === END inlined PicoPrettify ===
+      PicoPrettify = prettify;
+    } catch (e) { return; }
+    window.PicoPrettify = PicoPrettify;
+    [].slice.call(document.querySelectorAll('main pre > code')).forEach(function (code) {
+      var src = code.textContent;  // already-decoded plain text; no textarea round-trip (it re-parses <tags>)
+      var lang = /\$|@mount|extends Div|effect\(|::|show\$/.test(src) ? 'is' : 'js';
+      try {
+        var html = PicoPrettify(src, { lang: lang });
+        if (html && /class=/.test(html)) { code.innerHTML = html; code.parentNode.classList.add('prettified'); }
+      } catch (e) { /* plain escaped source stands */ }
+    });
+  })();
+  </script>
+  </body>
+  </html>

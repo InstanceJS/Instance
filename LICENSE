@@ -699,7 +699,7 @@ or (c) both, is considered an Enterprise.
 A Non-Enterprise User, while they qualify as such, may use, modify, profit from, and self-host 
 Instance for their own purposes as though under a permissive MIT license, 
 while maintaining the License 'type' as AGPL-3.0-or-later. 
-For filesize brevity, valid names for this License are as follows: 'AGPL-3.0-or-later (Satoshi)', or 'Satoshi-1.0.'. 
+For filesize brevity, valid names for this License are as follows: 'AGPL-3.0-or-later (Pushkarev)', or 'Pushkarev-1.0.'. 
 This accommodation is personal to the Non-Enterprise User and does not grant the right to outsource, 
 outsource modifications to (sublicensing), or perform development on behalf of, any Enterprise.
 
@@ -719,7 +719,62 @@ by any individual or entity that uses or distributes Instance,
 whether or not that party is the Instance copyright holder. 
 The prevailing party in any such action shall be entitled to recover reasonable attorneys’ fees and costs.
 
-5. No conflict:
+5. Author's Reserved Rights (10-Year Noncompete, No Public Release):
+
+Notwithstanding any other provision of this license, 
+in the event of an acquisition, merger, or transfer of control of the Instance project 
+or its associated intellectual property to a third party ("Acquirer"), 
+the original author ("The Author") retains an irrevocable, perpetual, worldwide, 
+royalty‑free, non‑exclusive right to use, modify, and
+distribute the software under the terms of the GNU Affero General Public License, version 3.0 or later, 
+without restriction, provided that:<br>
+
+(a) For a period of ten (10) years following the acquisition date, the 
+Author agrees not to commercially compete with the Acquirer's commercial offering of the software. 
+This noncompete obligation restricts the Author from:
+
+    Commercial distribution of the software or any derivative works, 
+    including sale, licensing, or offering as a paid service.
+
+    Commercial support or consulting services related to the software.
+
+    Commercial partnerships or integrations that compete with the Acquirer's offerings.
+
+<br>
+(b) Additionally, for the same ten‑year period, 
+
+the Author agrees not to publicly release, distribute, 
+or make available to the general public any version of the software or its derivative works, 
+whether for commercial or non‑commercial purposes. This includes, but is not limited to:
+
+    Open‑source releases on platforms such as GitHub, GitLab, or any similar public repository.
+
+    Public demonstrations, presentations, or sharing of the software or its derivatives.
+
+    Public documentation or tutorials that disclose the software's architecture, 
+    design, or implementation.
+
+    Distribution via any channel accessible to the general public.
+<br><br>
+(c) During the noncompete period, the Author may continue to use, modify, 
+and develop the software for personal, private, and non‑commercial purposes only, 
+provided that such use is not shared with or made accessible to the general public. 
+The Author may share the software with a limited, private group of trusted collaborators, provided that:
+
+    The collaborators are bound by the same restrictions.
+
+    The software is not distributed or made publicly available.
+
+(d) If the Acquirer ceases active development of the software for a period of twelve (12) consecutive months, 
+the Noncompete obligation is immediately void, and the Author's rights under this clause become fully unrestricted.
+(e) After the ten‑year period, the Author's rights under this clause become fully unrestricted, 
+and the Author may publicly release, distribute, and commercially compete with the Acquirer without limitation.
+
+(f) For the avoidance of doubt, this clause does not grant the Author any rights to the Acquirer's 
+proprietary modifications or extensions. 
+It only preserves the Author's right to the original work and any derivative works they create independently.
+
+6. No conflict
 
 These additional terms are intended to operate alongside the AGPL-3.0-or-later and not to conflict with it. 
 To the extent any additional term is held unenforceable, it shall be severed and the remainder of this license 

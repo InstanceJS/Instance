@@ -727,7 +727,7 @@ or its associated intellectual property to a third party ("Acquirer"),
 the original author ("The Author") retains an irrevocable, perpetual, worldwide, 
 royalty‑free, non‑exclusive right to use, modify, and
 distribute the software under the terms of the GNU Affero General Public License, version 3.0 or later, 
-without restriction, provided that:<br>
+without restriction, provided that:
 
 (a) For a period of ten (10) years following the acquisition date, the 
 Author agrees not to commercially compete with the Acquirer's commercial offering of the software. 
@@ -740,7 +740,6 @@ This noncompete obligation restricts the Author from:
 
     Commercial partnerships or integrations that compete with the Acquirer's offerings.
 
-<br>
 (b) Additionally, for the same ten‑year period, 
 
 the Author agrees not to publicly release, distribute, 
@@ -755,7 +754,7 @@ whether for commercial or non‑commercial purposes. This includes, but is not l
     design, or implementation.
 
     Distribution via any channel accessible to the general public.
-<br><br>
+
 (c) During the noncompete period, the Author may continue to use, modify, 
 and develop the software for personal, private, and non‑commercial purposes only, 
 provided that such use is not shared with or made accessible to the general public. 
